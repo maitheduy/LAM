@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dr. Mai Thế Duy · Portfolio</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #f4f7fb;
+      font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+      padding: 2rem 1rem;
+      color: #1e2b3c;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 32px;
+      box-shadow: 0 20px 40px -12px rgba(0, 20, 40, 0.25);
+      padding: 2rem 2.5rem;
+      transition: all 0.2s;
+    }
+
+    /* header / profile row */
+    .profile-header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      align-items: center;
+      border-bottom: 2px solid #e9edf4;
+      padding-bottom: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .avatar-wrapper {
+      flex: 0 0 140px;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: #eef2f7;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.05);
+      border: 3px solid white;
+      outline: 1px solid #d0d9e6;
+    }
+
+    .avatar-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .profile-title {
+      flex: 1;
+    }
+
+    .profile-title h1 {
+      font-size: 2.6rem;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+      color: #0b1a2b;
+      margin-bottom: 0.25rem;
+    }
+
+    .profile-title .subhead {
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: #2c5775;
+      background: #e3ecf5;
+      display: inline-block;
+      padding: 0.2rem 1rem;
+      border-radius: 30px;
+      margin-top: 0.1rem;
+    }
+
+    .contact-badge {
+      margin-top: 0.75rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.2rem;
+      font-size: 0.95rem;
+      color: #1f3b54;
+    }
+
+    .contact-badge span {
+      background: #f0f4fa;
+      padding: 0.25rem 0.8rem;
+      border-radius: 40px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .contact-badge i {
+      opacity: 0.7;
+    }
+
+    .section-title {
+      font-size: 1.7rem;
+      font-weight: 600;
+      color: #112b3f;
+      border-left: 6px solid #2b7a9e;
+      padding-left: 1rem;
+      margin: 2.5rem 0 1.5rem 0;
+    }
+
+    .grid-2col {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.8rem 2.5rem;
+    }
+
+    .info-card {
+      background: #f9fbfd;
+      border-radius: 24px;
+      padding: 1.4rem 1.8rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+      border: 1px solid #eef2f8;
+      transition: 0.15s;
+    }
+
+    .info-card h3 {
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: #1b3b57;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .info-card ul, .info-card p {
+      color: #1f3348;
+      line-height: 1.6;
+      font-size: 0.98rem;
+    }
+
+    .info-card ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .info-card li {
+      padding: 0.2rem 0;
+      border-bottom: 1px dashed #dfe7f0;
+    }
+
+    .info-card li:last-child {
+      border: none;
+    }
+
+    .badge-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 0.6rem;
+      margin-top: 0.3rem;
+    }
+
+    .badge-list span {
+      background: #e2ebf5;
+      padding: 0.2rem 1rem;
+      border-radius: 40px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #1b4868;
+    }
+
+    .timeline-item {
+      margin-bottom: 1rem;
+    }
+
+    .timeline-item strong {
+      display: inline-block;
+      min-width: 90px;
+      color: #09527a;
+      font-weight: 600;
+    }
+
+    .pub-item {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #e4ecf5;
+    }
+
+    .pub-item:last-child {
+      border: none;
+    }
+
+    .pub-item .title {
+      font-weight: 600;
+      color: #0b2d47;
+    }
+
+    .ref-item {
+      background: #f1f6fc;
+      border-radius: 18px;
+      padding: 0.9rem 1.4rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .ref-item .name {
+      font-weight: 600;
+      color: #003057;
+    }
+
+    .ref-item .affil {
+      font-size: 0.9rem;
+      opacity: 0.85;
+    }
+
+    .flex-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.6rem;
+    }
+
+    hr {
+      border: none;
+      border-top: 2px solid #e3eaf2;
+      margin: 2rem 0 0.5rem;
+    }
+
+    @media (max-width: 650px) {
+      .container { padding: 1.5rem; }
+      .profile-header { flex-direction: column; align-items: flex-start; }
+      .profile-title h1 { font-size: 2.2rem; }
+      .avatar-wrapper { width: 120px; height: 120px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container" id="portfolio">
+
+  <!-- ===== HEADER ===== -->
+  <div class="profile-header">
+    <div class="avatar-wrapper">
+      <!-- link ảnh theo yêu cầu -->
+      <img src="https://i.ibb.co/MyCBWWmv/Screenshot-2026-07-19-at-23-33-41.png" alt="Dr. Mai Thế Duy" />
+    </div>
+    <div class="profile-title">
+      <h1>Mai Thế Duy</h1>
+      <div class="subhead">Tiến sĩ Toán học · Giảng viên ĐH FPT</div>
+      <div class="contact-badge">
+        <span>📧 duymt2@fe.edu.vn</span>
+        <span>📞 (+84) 929458246</span>
+        <span>📍 Renton, WA · Hồ Chí Minh</span>
+        <span>🔗 linkedin.com/in/mai-the-duy-365695157</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== THÔNG TIN CÁ NHÂN ===== -->
+  <div class="section-title">📋 Thông tin cá nhân</div>
+  <div class="grid-2col">
+    <div class="info-card"><h3>📌 Cơ bản</h3>
+      <ul>
+        <li><strong>Quốc tịch:</strong> Việt Nam</li>
+        <li><strong>Hộ chiếu:</strong> E01985263</li>
+        <li><strong>Ngày sinh:</strong> 17/09/1973</li>
+        <li><strong>Giới tính:</strong> Nam · Đã kết hôn</li>
+        <li><strong>Sức khoẻ:</strong> Tốt</li>
+        <li><strong>Ngôn ngữ:</strong> Việt, Anh, Nga, Đức</li>
+      </ul>
+    </div>
+    <div class="info-card"><h3>📍 Địa chỉ</h3>
+      <ul>
+        <li><strong>Thường trú:</strong> 70 Nguyễn Xí, P.26, Q.Bình Thạnh, TP.HCM</li>
+        <li><strong>Tạm trú (Hoa Kỳ):</strong> 1332 Duvall Ave NE A311, Renton, WA 98059</li>
+        <li><strong>Email cá nhân:</strong> vnwfpb@gmail.com</li>
+        <li><strong>ĐT Hoa Kỳ:</strong> +1 6106201376</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== LĨNH VỰC QUAN TÂM ===== -->
+  <div class="section-title">🧠 Lĩnh vực quan tâm</div>
+  <div class="info-card" style="background: #f4f9ff; border-radius: 28px; padding: 1.2rem 2rem;">
+    <div class="badge-list">
+      <span>Toán học cao cấp</span><span>Lập trình tuyến tính</span><span>Xác suất & Thống kê</span>
+      <span>Matlab</span><span>Fractal 3D</span><span>Mô hình kinh tế toán</span>
+      <span>Phương pháp giảng dạy</span><span>Khoa học không gian</span><span>Sóng con</span>
+      <span>Giảng dạy TikTok</span><span>Advanced Mathematics for Engineers</span>
+    </div>
+  </div>
+
+  <!-- ===== GIÁO DỤC + KINH NGHIỆM ===== -->
+  <div class="section-title">🎓 Giáo dục</div>
+  <div class="grid-2col">
+    <div class="info-card"><h3>📚 Học vấn</h3>
+      <ul>
+        <li><strong>1980–1992:</strong> Tiểu học & THPT Thanh Hóa</li>
+        <li><strong>1992–1996:</strong> ĐH Sư phạm Vinh, Nghệ An</li>
+        <li><strong>1997–2000:</strong> ĐH Khoa học Tự nhiên, ĐHQG Hà Nội</li>
+        <li><strong>2006–2011:</strong> Tiến sĩ Toán học, ĐH Ernst-Moritz-Arndt (Đức)</li>
+      </ul>
+    </div>
+    <div class="info-card"><h3>💼 Kinh nghiệm làm việc</h3>
+      <ul>
+        <li><strong>2000–2001:</strong> Biên tập viên, Toán học & Tuổi trẻ</li>
+        <li><strong>2001–2006:</strong> Giảng viên Toán, ĐH Hải Phòng</li>
+        <li><strong>2006–2011:</strong> NCS Tiến sĩ Fractal, ĐH Greifswald</li>
+        <li><strong>2011–2012:</strong> Trưởng khoa Toán phân tích, ĐH Hải Phòng</li>
+        <li><strong>2013–2017:</strong> Giảng viên, ĐH Tài chính – Marketing</li>
+        <li><strong>2018–nay:</strong> Giảng viên, ĐH FPT TP.HCM</li>
+        <li><strong>2012:</strong> Nghiên cứu viên, ĐH Duy Tân</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== HỢP TÁC GIẢNG DẠY + VINH DANH ===== -->
+  <div class="grid-2col">
+    <div class="info-card"><h3>🤝 Hợp tác giảng dạy</h3>
+      <ul>
+        <li><strong>2013:</strong> Thỉnh giảng ĐH FPT (Việt Nam)</li>
+        <li><strong>2014:</strong> Giáo sư thỉnh giảng ĐH Gorno-Altaisk (Nga)</li>
+      </ul>
+    </div>
+    <div class="info-card"><h3>🏆 Vinh danh & giải thưởng</h3>
+      <ul>
+        <li><strong>2011–2012:</strong> Giấy khen Chiến sĩ thi đua xuất sắc, ĐH Hải Phòng</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== KỸ NĂNG ===== -->
+  <div class="section-title">⚙️ Kỹ năng & năng lực</div>
+  <div class="grid-2col">
+    <div class="info-card"><h3>🔤 Ngôn ngữ & AI</h3>
+      <ul>
+        <li><strong>Tiếng Anh</strong> thành thạo (phiên dịch, dịch thuật)</li>
+        <li>Đọc hiểu tiếng Nga, Đức</li>
+        <li>Viết Prompt cho AI (GPT-4, tạo sách, slide, hình học)</li>
+        <li>Làm việc với mô hình ngôn ngữ, ML cơ bản</li>
+      </ul>
+    </div>
+    <div class="info-card"><h3>💻 Kỹ thuật & đặc biệt</h3>
+      <ul>
+        <li>Matlab, Python, LaTeX, đồ họa</li>
+        <li>Phân tích, tư duy phản biện, tổng hợp thông tin</li>
+        <li>Quản lý thời gian, dự án</li>
+        <li><strong>Prompt engineering:</strong> tạo sách, toán học, vẽ hình, slide, trắc nghiệm</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== CHỨNG CHỈ ===== -->
+  <div class="section-title">📜 Chứng chỉ & phát triển chuyên môn</div>
+  <div class="info-card" style="background: #f2f7fe;">
+    <div style="display: flex; flex-wrap: wrap; gap: 0.3rem 1.2rem;">
+      <span style="background: white; padding: 0.2rem 1rem; border-radius: 30px;">🔐 Applied Cryptography (Coursera)</span>
+      <span style="background: white; padding: 0.2rem 1rem; border-radius: 30px;">🔐 Symmetric Cryptography</span>
+      <span style="background: white; padding: 0.2rem 1rem; border-radius: 30px;">🔐 Asymmetric Cryptography</span>
+      <span style="background: white; padding: 0.2rem 1rem; border-radius: 30px;">🔐 Classical Cryptosystems</span>
+      <span style="background: white; padding: 0.2rem 1rem; border-radius: 30px;">📦 Blockchain Specialization</span>
+      <span style="background: white; padding: 0.2rem 1rem; border-radius: 30px;">📦 Smart Contracts · DApps</span>
+      <span style="background: white; padding: 0.2rem 1rem; border-radius: 30px;">📊 Financial Markets</span>
+      <span style="background: white; padding: 0.2rem 1rem; border-radius: 30px;">🧠 Critical Thinking · Problem Solving</span>
+      <span style="background: white; padding: 0.2rem 1rem; border-radius: 30px;">🐍 Python Intermediate (Sololearn)</span>
+      <span style="background: white; padding: 0.2rem 1rem; border-radius: 30px;">C · Python Introduction</span>
+    </div>
+  </div>
+
+  <!-- ===== NGHIÊN CỨU KHOA HỌC ===== -->
+  <div class="section-title">🔬 Hoạt động nghiên cứu khoa học</div>
+  <div class="info-card">
+    <ul>
+      <li>Reviewer Hội đồng thẩm định "10 bộ đề thi thử cao học Kinh tế Toán", ĐH Tài chính – Marketing (2013)</li>
+      <li>Thành viên Hội đồng thẩm định sách giáo khoa Mô hình Kinh tế Toán (2013)</li>
+      <li>Bài viết: "Một số suy nghĩ về Nghiên cứu Khoa học và Hợp tác" – Hội nghị Khoa Cơ bản (2013)</li>
+      <li>Dạy kèm sinh viên Olympic Toán học (25 buổi, 2012–2013)</li>
+      <li>Giảng viên thỉnh giảng về Phân tích Fractal – ĐH Gorno-Altaisk, Nga (2014)</li>
+      <li>Thư ký Hội nghị Qf2015 "Tài chính Định lượng" – ĐH Tài chính – Marketing (2015)</li>
+      <li>Thành viên Hội đồng chọn sách giáo khoa Toán A1,A2,A3,C1,C2, Xác suất, Thống kê Y học – ĐH Nguyễn Tất Thành (2022)</li>
+    </ul>
+  </div>
+
+  <!-- ===== CÔNG BỐ & TRÌNH BÀY ===== -->
+  <div class="section-title">📄 Công bố & trình bày</div>
+  <div class="info-card">
+    <div class="pub-item"><span class="title">C.Bandt, M.Duy, M.Mesing</span> – Fractal geometry in 3D, Mathematical Intelligencer 32(2010)</div>
+    <div class="pub-item"><span class="title">M.Duy</span> – Self-similar structures in 2D & 3D, Luận án Tiến sĩ, Greifswald 2011</div>
+    <div class="pub-item"><span class="title">Mai Thế Duy, Krapchenko.A.C</span> – Duôi trượt, Hội thảo quốc tế Gorno-Altaysk (2013)</div>
+    <div class="pub-item"><span class="title">Mai Thế Duy</span> – Fractals of finite type in 3D, Springer (2014)</div>
+    <div class="pub-item"><span class="title">S.Norton, D.Phương Thảo, M.Duy</span> – Modeling reasoning in fractions, APMC 19(2) 2014</div>
+    <div class="pub-item"><span class="title">D.Phương Thảo, M.Duy, S.Norton</span> – Tài liệu tự học "Chia phân số", Tạp chí Giáo dục (2013)</div>
+    <div class="pub-item"><span class="title">S.Norton, D.Phương Thảo, M.Duy</span> – Engagement in maths, Curriculum Perspectives 36(1) 2016</div>
+    <div class="pub-item"><span class="title">Nguyễn Việt Hùng, Mai Thế Duy, Vũ Thị Hồng Thanh</span> – R-IFS and attractors, arXiv 2023, MAA&QIT2024</div>
+    <div style="margin-top: 1rem;"><strong>Presentations:</strong> Hội thảo Gorno-Altaisk (2012), Hội nghị Toán Quốc gia (2013), Hội nghị Fractals & Wavelets (Ấn Độ, 2013), ĐH Duy Tân (2014), ĐH Công nghiệp Thực phẩm (2015), v.v.</div>
+  </div>
+
+  <!-- ===== ĐẶC ĐIỂM TÍNH CÁCH + THAM KHẢO ===== -->
+  <div class="grid-2col">
+    <div class="info-card"><h3>🌟 Đặc điểm tính cách</h3>
+      <ul>
+        <li>Thân thiện, tích cực, có trách nhiệm</li>
+        <li>Nhiệt tình, cởi mở, quan tâm</li>
+        <li>Chăm chỉ, linh hoạt, tự giác</li>
+      </ul>
+    </div>
+    <div class="info-card"><h3>📇 Tham khảo</h3>
+      <div class="ref-item"><div class="name">GS.TS Christoph Bandt</div><div class="affil">ĐH Ernst-Moritz-Arndt, Greifswald · bandt@uni-greifswald.de</div></div>
+      <div class="ref-item"><div class="name">TS Lê Trường Tùng</div><div class="affil">ĐH FPT · (+84) 0909319260 · TungLT@fe.edu.vn</div></div>
+      <div class="ref-item"><div class="name">GS.TS Tetenov A.V.</div><div class="affil">ĐH Gorno-Altaisk · a.tetenov@gmail.com</div></div>
+    </div>
+  </div>
+
+  <hr />
+  <div style="text-align: center; font-size: 0.9rem; color: #4d6887; margin-top: 1rem;">
+    <span>📌 Portfolio được tạo từ CV · Tiến sĩ Mai Thế Duy</span>
+  </div>
+</div>
+<!-- script tĩnh (không có hành vi động, chỉ giữ cấu trúc) -->
+<script>
+  (function() {
+    // static javascript – giữ nguyên để hiển thị ảnh và thông tin tĩnh
+    console.log('Portfolio CV – Dr. Mai Thế Duy (static)');
+    // có thể thêm xử lý nhẹ như kiểm tra ảnh nếu cần
+    const img = document.querySelector('.avatar-wrapper img');
+    if (img) {
+      img.setAttribute('alt', 'Dr. Mai Thế Duy – ảnh đại diện');
+    }
+  })();
+</script>
+</body>
+</html>
