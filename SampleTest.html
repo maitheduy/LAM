@@ -1,447 +1,957 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đề thi trắc nghiệm - Đường thẳng và mặt phẳng song song</title>
 
-<!DOCTYPE html><html lang="en"><head>
-		<meta charset="utf-8">
-		<link rel="icon" type="image/png" sizes="512x512" href="https://z-cdn.chatglm.cn/z-ai/static/logo.svg">
-		<link rel="shortcut icon" href="https://z-cdn.chatglm.cn/z-ai/static/logo.svg">
-		<link rel="apple-touch-icon" sizes="512x512" href="https://z-cdn.chatglm.cn/z-ai/static/logo.svg">
-		<meta name="apple-mobile-web-app-title" content="Z.ai - Advanced AI Chatbot &amp; Agent powered by GLM-5.2">
-		
-		<meta name="keywords" content="GLM-4.6, GLM 4.6, GLM-4.6-Air, GLM 4.6 Air, GLM 4.5, GLM4.5, GLM4.6, Deep Research, z ai, z.ai, GLM 4.5 AI, GLM 4.6 AI, GLM AI, Chat Z, zai, Chat AI, GLM, z.ia, Chat Z AI, AI chat, chatbot, z.ai chat, free ai chat, free AI, free ai chat no login, GLM-4.5, GLM-4.5 chat, GLM-4.1V, GLM-4.5V, AI assistant chat, AI PPT, AI presentation, AI presentation maker, AI slides maker, AI slides, slide deck, pitch deck, AI deck generator, free pitch deck generator, AI PPT, AI PPT maker, AI for Google Slides, AI for PowerPoint, AI writer, AI writing assistant, AI code generator, full stack code generation, AI full stack developer, claude code, Roo Code, Cline, Kilo Code, OpenCode, Codex, Cursor, GLM Coding Plan, GLM Coding, AI Coding, code writer ai, magic design, magic design tool, AI inspiration board, visual brainstorming AI, chat with AI, AI对话, AI聊天, 聊天机器人, 免费AI聊天, AI做PPT, AI写作, AI编程, 全栈开发, 灵感画板, AI tool, AI helper, AI for students, AI for marketers, AI for content creation, ChatGPT, chatgpt free, Free ChatGPT, gpt chat, Gemini, Grok, Claude, Poe AI, YouChat, Jasper AI, deepseek, qwen, 豆包, 文心一言, AI搜问答, 写作灵感AI, 代码解释工具, PPT思路生成, 如何用AI做PPT, create pitch deck from brief, AI business plan presentation, marketing report slides, AI academic paper assistant, AI legal contract drafting, write social media calendar, AI email responder,  VS Code AI assistant, AI for Notion, AI for Figma, AI math problem solver from image, AI geoguessr solver, image to code generator, table extractor from image, chart data extractor, document analysis AI, image caption generator, visual Q&amp;A, 看图猜成语, AI拍照解题, 数学题解答, 物理题解答, GeoGuess AI, 图片转表格, 图片读数据, 看图问答, analyze video, summarize video content, generate video transcript, find object in image, what is in this picture, 视频分析, 视频内容摘要, 生成视频字幕, 图片里有什么, 识别图中物体, GLM-4.7, GLM 4.7, GLM4.7, skills, coding plan, GLM-5, GLM-5.0, GLM5, GLM 5, Pony, Pony Alpha, GLM-5.2, GLM 5.2, GLM5.2, long-horizon, long-running">
+    <!-- MathJax cho hiển thị công thức toán học -->
+    <script>
+        MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
 
-		<link rel="manifest" href="https://z-cdn.chatglm.cn/z-ai/frontend/static/manifest.json">
-		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
-		
-		<meta name="referrer" content="no-referrer">
-		<link rel="search" type="application/opensearchdescription+xml" title="Z.ai - Advanced AI Chatbot &amp; Agent powered by GLM-5.2" href="https://z-cdn.chatglm.cn/z-ai/frontend/static/opensearch.xml">
-		<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-Z8QTHYBHP3"></script>
-		<script>
-			window.dataLayer = window.dataLayer || [];
-			function gtag() {
-				dataLayer.push(arguments);
-			}
-			gtag('js', new Date());
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success: #10b981;
+            --error: #ef4444;
+            --bg: #f4f6f8;
+            --card-bg: #ffffff;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --border: #e5e7eb;
+        }
 
-			gtag('config', 'G-Z8QTHYBHP3');
-		</script>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 20px;
+        }
 
-		<script>
-			let metrics = {};
-			const observer = new PerformanceObserver((list) => {
-				const entries = list.getEntries();
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
 
-				entries.forEach((entry) => {
-					// 根据不同的entry类型处理不同的性能指标
-					switch (entry.entryType) {
-						case 'navigation':
-							{
-								const navEntry = entry;
-								metrics = {
-									...metrics,
-									dns: navEntry.domainLookupEnd - navEntry.domainLookupStart,
-									response: navEntry.responseEnd - navEntry.responseStart,
-									dom_parse: navEntry.domInteractive - navEntry.responseEnd,
-									dom_ready: navEntry.domContentLoadedEventEnd - navEntry.fetchStart,
-									resource: navEntry.domComplete - navEntry.domContentLoadedEventEnd,
-									first_interactive: navEntry.domInteractive - navEntry.fetchStart,
-									first_byte: navEntry.responseStart - navEntry.domainLookupStart,
-									loaded: navEntry.loadEventEnd - navEntry.fetchStart
-								};
-								sessionStorage.setItem('performance', JSON.stringify(metrics));
-								// 发送性能指标到阿里云日志服务
-							}
-							break;
+        /* Header */
+        .header {
+            background: var(--card-bg);
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+        }
+        .header h1 { font-size: 1.25rem; font-weight: 600; }
+        .timer {
+            font-family: monospace;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+            background: #eff6ff;
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
 
-						case 'paint':
-							if (entry.name === 'first-paint') {
-								metrics = {
-									...metrics,
-									first_paint: entry.startTime
-								};
-								sessionStorage.setItem('performance', JSON.stringify(metrics));
-							}
-							if (entry.name === 'first-contentful-paint') {
-								metrics = {
-									...metrics,
-									first_contentful_paint: entry.startTime
-								};
-								sessionStorage.setItem('performance', JSON.stringify(metrics));
-							}
-							break;
-					}
-				});
-			});
+        /* Quiz Layout */
+        #quiz-area {
+            display: flex;
+            gap: 20px;
+        }
 
-			// 观察的性能指标类型
-			observer.observe({
-				entryTypes: ['navigation', 'paint']
-			});
-		</script>
+        .main-content {
+            flex: 1;
+        }
 
-		<script>
-			function resizeIframe(obj) {
-				obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
-			}
-		</script>
+        .navigation-panel {
+            flex: 0 0 280px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--border);
+        }
 
-		<script>
-			// On page load or when changing themes, best to add inline in `head` to avoid FOUC
-			const initTheme = () => {
-				const metaThemeColorTag = document.querySelector('meta[name="theme-color"]');
-				// 取用户浏览器设置的主题
-				// const prefersTheme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        /* Question Card */
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 24px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
 
-				const prefersTheme = 'light';
+        .question-meta {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            font-size: 0.875rem;
+        }
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+        .badge-type { background: #dbeafe; color: #1e40af; }
+        .badge-point { background: #f3f4f6; color: #4b5563; }
 
-				if (!localStorage?.theme) {
-					localStorage.theme = prefersTheme;
-				}
+        .question-text {
+            font-size: 1.125rem;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
 
-				if (localStorage.theme === 'system') {
-					document.documentElement.classList.add(prefersTheme);
-					metaThemeColorTag.setAttribute(
-						'content',
-						prefersTheme === 'light' ? '#F4F6F8' : '#141618'
-					);
-				} else if (localStorage.theme === 'light') {
-					document.documentElement.classList.add('light');
-					metaThemeColorTag.setAttribute('content', '#F4F6F8');
-				} else {
-					document.documentElement.classList.add('dark');
-					metaThemeColorTag.setAttribute('content', '#141618');
-				}
+        .options { display: flex; flex-direction: column; gap: 12px; }
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 14px 16px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #fff;
+        }
+        .option:hover { border-color: var(--primary); background: #eff6ff; }
+        .option.selected { border-color: var(--primary); background: #eff6ff; }
+        .option.correct { border-color: var(--success); background: #ecfdf5; }
+        .option.incorrect { border-color: var(--error); background: #fef2f2; }
 
-				// window.matchMedia('(prefers-color-scheme: dark)').addListener((e) => {
-				// 	if (localStorage.theme === 'system') {
-				// 		if (e.matches) {
-				// 			document.documentElement.classList.add('dark');
-				// 			document.documentElement.classList.remove('light');
-				// 			metaThemeColorTag.setAttribute('content', '#141618');
-				// 		} else {
-				// 			document.documentElement.classList.add('light');
-				// 			document.documentElement.classList.remove('dark');
-				// 			metaThemeColorTag.setAttribute('content', '#F4F6F8');
-				// 		}
-				// 	}
-				// });
-			};
-			initTheme();
-		</script>
+        .option-key {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #f3f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        .option.selected .option-key { background: var(--primary); color: white; }
+        .option.correct .option-key { background: var(--success); color: white; }
+        .option.incorrect .option-key { background: var(--error); color: white; }
 
-		
+        /* Navigation Panel */
+        .nav-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-		<script>
-			// 炫酷的控制台介绍 - 根据语言显示
-			(function () {
-				// 检测用户语言偏好
-				const userLang = navigator.language || navigator.userLanguage;
-				const isChinese =
-					userLang.startsWith('zh') ||
-					userLang.includes('CN') ||
-					userLang.includes('TW') ||
-					userLang.includes('HK');
+        #nav-buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-top: 12px;
+        }
 
-				// 共同的 ASCII Logo
-				const logoLines = [
-					'%c███████╗     █████╗ ██╗',
-					'%c╚══███╔╝    ██╔══██╗██║',
-					'%c  ███╔╝     ███████║██║',
-					'%c ███╔╝      ██╔══██║██║',
-					'%c███████╗ ██╗██║  ██║██║',
-					'%c╚══════╝ ╚═╝╚═╝  ╚═╝╚═╝'
-				];
-				const logoColors = [
-					'color: #ff6b6b; font-family: monospace; font-size: 12px;',
-					'color: #4ecdc4; font-family: monospace; font-size: 12px;',
-					'color: #45b7d1; font-family: monospace; font-size: 12px;',
-					'color: #f9ca24; font-family: monospace; font-size: 12px;',
-					'color: #ff9ff3; font-family: monospace; font-size: 12px;',
-					'color: #6c5ce7; font-family: monospace; font-size: 12px;'
-				];
+        .nav-btn {
+            width: 100%;
+            padding: 8px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
 
-				if (isChinese) {
-					// 中文版本
-					console.log(
-						'%c🚀 欢迎来到 Z.ai 🚀',
-						'color: #00d4ff; font-size: 20px; font-weight: bold; text-shadow: 0 0 10px #00d4ff;'
-					);
-					logoLines.forEach((line, index) => console.log(line, logoColors[index]));
-					console.log('');
-					console.log(
-						'%c✨ 基于开源GLM模型的智能AI助手',
-						'color: #a29bfe; font-size: 14px; font-weight: bold;'
-					);
-					console.log('%c🧠 支持文本生成、推理和深度研究', 'color: #fd79a8; font-size: 12px;');
-					console.log('%c🌍 为中英文用户量身定制', 'color: #00b894; font-size: 12px;');
-					console.log('%c💡 免费开源的ChatGPT替代方案', 'color: #fdcb6e; font-size: 12px;');
-					console.log('');
-					console.log('%c---', 'color: #ddd;');
-					console.log(
-						'%c由 ❤️ 和大量 ☕ 驱动',
-						'color: #e84393; font-size: 11px; font-style: italic;'
-					);
-					console.log('');
-					console.log(
-						'%c🚀 加入我们！我们正在招聘优秀人才！',
-						'color: #00b894; font-size: 13px; font-weight: bold;'
-					);
-					console.log(
-						'%c💼 查看职位: https://zhipu-ai.jobs.feishu.cn/s/stmyTm5lxaU',
-						'color: #0984e3; font-size: 12px; text-decoration: underline;'
-					);
-				} else {
-					// 英文版本
-					console.log(
-						'%c🚀 Welcome to Z.ai 🚀',
-						'color: #00d4ff; font-size: 20px; font-weight: bold; text-shadow: 0 0 10px #00d4ff;'
-					);
-					logoLines.forEach((line, index) => console.log(line, logoColors[index]));
-					console.log('');
-					console.log(
-						'%c✨ Advanced AI assistant powered by open-source GLM models',
-						'color: #a29bfe; font-size: 14px; font-weight: bold;'
-					);
-					console.log(
-						'%c🧠 Supports text generation, reasoning, and deep research',
-						'color: #fd79a8; font-size: 12px;'
-					);
-					console.log(
-						'%c🌍 Tailored for both English and Chinese users',
-						'color: #00b894; font-size: 12px;'
-					);
-					console.log(
-						'%c💡 Free and open-source ChatGPT alternative',
-						'color: #fdcb6e; font-size: 12px;'
-					);
-					console.log('');
-					console.log('%c---', 'color: #ddd;');
-					console.log(
-						'%cPowered by ❤️ and lots of ☕',
-						'color: #e84393; font-size: 11px; font-style: italic;'
-					);
-					console.log('');
-					console.log(
-						'%c🚀 Join us! We are hiring talented people!',
-						'color: #00b894; font-size: 13px; font-weight: bold;'
-					);
-					console.log(
-						'%c💼 View jobs: https://zhipu-ai.jobs.feishu.cn/s/stmyTm5lxaU',
-						'color: #0984e3; font-size: 12px; text-decoration: underline;'
-					);
-				}
-			})();
-		</script>
+        .nav-btn.current {
+            background-color: var(--primary);
+            color: white;
+        }
 
-		<script type="module" crossorigin="" src="https://z-cdn.chatglm.cn/z-ai/frontend/prod-fe-1.1.77/assets/index-BMEi3I8f.js"></script>
-		<link rel="stylesheet" crossorigin="" href="https://z-cdn.chatglm.cn/z-ai/frontend/prod-fe-1.1.77/assets/index-BJnCnv7z.css">
-	<title>Z.AI Share</title><meta name="description" content="Amazing content sharing from Z.AI"><meta property="og:type" content="website"><meta property="og:site_name" content="Z.AI"><meta property="og:title" content="Z.AI Share"><meta property="og:description" content="Amazing content sharing from Z.AI"><meta property="og:image" content="https://z-cdn.chatglm.cn/z-ai/static/share-logo.png"><meta property="og:image:alt" content="Z.AI Share"><meta property="og:image:width" content="400"><meta property="og:image:height" content="400"><meta property="og:image:type" content="image/png"><meta property="og:url" content="http://chat.z.ai/space/m17zr576yu90-art"><meta property="article:author" content="Z.AI"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="Z.AI Share"><meta name="twitter:description" content="Amazing content sharing from Z.AI"><meta name="twitter:image" content="https://z-cdn.chatglm.cn/z-ai/static/share-logo.png"><meta name="twitter:image:alt" content="Z.AI Share"><meta name="robots" content="index,follow"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="application-name" content="Z.AI"><meta name="theme-color" content="#1976d2"><meta name="msapplication-TileColor" content="#1976d2"><link rel="canonical" href="http://chat.z.ai/space/m17zr576yu90-art"><script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+        .nav-btn.answered {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .nav-btn.not-answered {
+            background-color: var(--border);
+            color: var(--text-light);
+        }
+
+        .legend {
+            margin-top: 16px;
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .legend-item {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            margin-right: 6px;
+        }
+
+        .legend-item.current { background-color: var(--primary); }
+        .legend-item.answered { background-color: var(--success); }
+        .legend-item.not-answered { background-color: var(--border); }
+
+        /* Navigation Controls */
+        .nav-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+        .btn-secondary { background: #f3f4f6; color: var(--text); }
+        .btn-secondary:hover { background: #e5e7eb; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .auto-advance {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+
+        /* Solution Panel */
+        .solution-panel {
+            margin-top: 24px;
+            border-top: 2px dashed var(--border);
+            padding-top: 20px;
+            display: none;
+        }
+        .solution-panel.visible { display: block; }
+
+        .solution-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary);
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 16px;
+            user-select: none;
+        }
+
+        .pedagogy-section {
+            margin-bottom: 20px;
+            padding: 16px;
+            background: #fafafa;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+        }
+        .pedagogy-section h4 {
+            font-size: 0.95rem;
+            color: var(--primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .pedagogy-section ul { margin-left: 20px; margin-top: 8px; }
+        .pedagogy-section li { margin-bottom: 6px; }
+
+        /* Result Screen */
+        .result-screen { display: none; text-align: center; }
+        .result-screen.visible { display: block; }
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        .score-circle span { font-size: 0.875rem; font-weight: 400; opacity: 0.9; }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .stat-box {
+            background: var(--card-bg);
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+        .stat-label { font-size: 0.875rem; color: var(--text-light); margin-top: 4px; }
+
+        @media (max-width: 768px) {
+            #quiz-area {
+                flex-direction: column;
+            }
+            .navigation-panel {
+                flex: 0 0 auto;
+            }
+            .stats-grid { grid-template-columns: 1fr; }
+            .nav-controls { flex-direction: column; gap: 12px; }
+            .nav-controls > div { width: 100%; display: flex; justify-content: space-between; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Header -->
+    <div class="header" id="header">
+        <h1>Đề thi trắc nghiệm - Đường thẳng và mặt phẳng song song</h1>
+        <div class="timer" id="timer">00:00</div>
+    </div>
+
+    <!-- Quiz Area -->
+    <div id="quiz-area">
+        <div class="main-content">
+            <div class="card">
+                <div class="question-meta">
+                    <span class="badge badge-type" id="q-type">Lý thuyết</span>
+                    <span class="badge badge-point" id="q-point">0.25 điểm</span>
+                </div>
+                <div class="question-text" id="q-text"></div>
+                <div class="options" id="options-container"></div>
+
+                <!-- Pedagogical Solution Panel -->
+                <div class="solution-panel" id="solution-panel">
+                    <div class="solution-toggle" onclick="toggleSolution()">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        <span id="toggle-text">Hiện lời giải chi tiết</span>
+                    </div>
+                    <div id="solution-content" style="display: none;">
+                        <div class="pedagogy-section">
+                            <h4>🔍 Phân tích câu hỏi</h4>
+                            <p id="sol-analysis"></p>
+                        </div>
+                        <div class="pedagogy-section">
+                            <h4>📝 Lời giải chi tiết</h4>
+                            <div id="sol-solution"></div>
+                        </div>
+                        <div class="pedagogy-section" style="border-left-color: var(--error);">
+                            <h4>⚠️ Vì sao sai (Các lỗi thường gặp)</h4>
+                            <div id="sol-mistakes"></div>
+                        </div>
+                        <div class="pedagogy-section" style="border-left-color: var(--success);">
+                            <h4>💡 Ghi nhớ kỹ năng</h4>
+                            <p id="sol-takeaway"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-controls">
+                <button class="btn btn-secondary" id="btn-prev" onclick="prevQuestion()">Câu trước</button>
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <span id="q-counter" style="font-weight: 600; color: var(--text-light);">Câu 1 / 20</span>
+                    <div class="auto-advance">
+                        <input type="checkbox" id="auto-advance" checked>
+                        <label for="auto-advance">Tự động chuyển câu sau 3s</label>
+                    </div>
+                </div>
+                <button class="btn btn-primary" id="btn-next" onclick="nextQuestion()">Câu tiếp theo</button>
+                <button class="btn btn-primary" id="btn-submit" onclick="submitQuiz()" style="display: none; background: var(--success);">Nộp bài</button>
+            </div>
+        </div>
+
+        <!-- Navigation Panel -->
+        <div class="navigation-panel">
+            <h3 class="nav-title">Bảng điều hướng</h3>
+            <div id="nav-buttons"></div>
+            <div class="legend">
+                <div><span class="legend-item current"></span> Câu hiện tại</div>
+                <div><span class="legend-item answered"></span> Đã trả lời</div>
+                <div><span class="legend-item not-answered"></span> Chưa trả lời</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Result Screen -->
+    <div class="result-screen card" id="result-screen">
+        <h2 style="margin-bottom: 24px;">Kết quả bài thi</h2>
+        <div class="score-circle">
+            <div id="final-score">0</div>
+            <span>điểm</span>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-value" id="stat-correct">0</div>
+                <div class="stat-label">Câu đúng</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="stat-wrong">0</div>
+                <div class="stat-label">Câu sai/chưa làm</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="stat-percent">0%</div>
+                <div class="stat-label">Tỷ lệ đúng</div>
+            </div>
+        </div>
+        <div style="display: flex; gap: 12px; justify-content: center; margin-bottom: 24px;">
+            <button class="btn btn-secondary" onclick="location.reload()">Làm lại bài</button>
+            <button class="btn btn-primary" onclick="showReview()">Xem chi tiết đáp án</button>
+        </div>
+    </div>
+</div>
+
 <script>
-(function() {
-  var frontendCallId = Math.random().toString(36).substring(2, 8);
-  console.log('[WeChat-Frontend-' + frontendCallId + '] ===== 开始前端微信JS-SDK初始化 =====');
-  console.log('[WeChat-Frontend-' + frontendCallId + '] 当前页面URL:', window.location.href);
-  console.log('[WeChat-Frontend-' + frontendCallId + '] 当前页面URL (去掉#):', window.location.href.split('#')[0]);
-  console.log('[WeChat-Frontend-' + frontendCallId + '] 签名配置:', {
-    debug: false,
-    appId: 'wxa5796e47c57570b1',
-    timestamp: 1784482644,
-    nonceStr: 'JvP3KoXs5trgWAuv',
-    signature: '1803a08d73184a2e9aca354c9a92ebf5420a40a1',
-    jsApiList: ["updateAppMessageShareData","updateTimelineShareData","onMenuShareAppMessage","onMenuShareTimeline"]
-  });
+    // Dữ liệu 20 câu hỏi về "Đường thẳng và mặt phẳng song song trong không gian"
+    const quizData = [
+        // 5 câu lý thuyết
+        {
+            id: 1,
+            type: "Lý thuyết",
+            points: 0.25,
+            question: "Trong không gian, một đường thẳng và một mặt phẳng được gọi là song song với nhau nếu:",
+            options: [
+                "Chúng không có điểm chung.",
+                "Chúng có vô số điểm chung.",
+                "Đường thẳng nằm trong mặt phẳng.",
+                "Đường thẳng cắt mặt phẳng."
+            ],
+            correct: 0,
+            analysis: "Đây là định nghĩa cơ bản về đường thẳng và mặt phẳng song song trong không gian.",
+            solution: "<p>Theo định nghĩa: Một đường thẳng và một mặt phẳng song song với nhau nếu chúng <b>không có điểm chung</b>.</p>",
+            mistakes: "<ul><li>Chọn 'có vô số điểm chung' hoặc 'nằm trong mặt phẳng' là sai vì đó là trường hợp đường thẳng nằm trong mặt phẳng.</li><li>Chọn 'cắt mặt phẳng' là sai vì khi cắt thì có 1 điểm chung.</li></ul>",
+            takeaway: "Ghi nhớ định nghĩa: <b>Song song</b> ⇔ <b>không có điểm chung</b>. Đây là nền tảng để giải các bài toán chứng minh quan hệ song song."
+        },
+        {
+            id: 2,
+            type: "Lý thuyết",
+            points: 0.25,
+            question: "Nếu đường thẳng $a$ song song với mặt phẳng $(P)$ thì:",
+            options: [
+                "$a$ song song với mọi đường thẳng nằm trong $(P)$.",
+                "$a$ song song với ít nhất một đường thẳng nằm trong $(P)$.",
+                "$a$ cắt một đường thẳng bất kỳ trong $(P)$.",
+                "$a$ và $(P)$ không có điểm chung."
+            ],
+            correct: 1,
+            analysis: "Tính chất của đường thẳng song song với mặt phẳng: tồn tại ít nhất một đường thẳng trong mặt phẳng song song với nó.",
+            solution: "<p>Định lý: Nếu đường thẳng $a$ song song với mặt phẳng $(P)$ thì trong $(P)$ có một đường thẳng $b$ song song với $a$.</p>",
+            mistakes: "<ul><li>'Song song với mọi đường thẳng' là sai vì không phải đường nào trong mặt phẳng cũng song song với $a$.</li><li>'Cắt một đường thẳng bất kỳ' là sai vì $a$ và $(P)$ không có điểm chung.</li></ul>",
+            takeaway: "Tính chất quan trọng: $a \\parallel (P) \\Rightarrow \\exists b \\subset (P): b \\parallel a$."
+        },
+        {
+            id: 3,
+            type: "Lý thuyết",
+            points: 0.25,
+            question: "Điều kiện để đường thẳng $a$ song song với mặt phẳng $(P)$ là:",
+            options: [
+                "$a$ không có điểm chung với $(P)$.",
+                "$a$ song song với một đường thẳng trong $(P)$.",
+                "$a$ cắt $(P)$ tại một điểm.",
+                "Cả A và B đều đúng."
+            ],
+            correct: 3,
+            analysis: "Cả hai điều kiện (không có điểm chung và song song với một đường thẳng trong mặt phẳng) đều tương đương.",
+            solution: "<p>Định nghĩa: $a \\parallel (P)$ ⇔ $a \\cap (P) = \\varnothing$.</p><p>Định lý: $a \\parallel (P)$ ⇔ $\\exists b \\subset (P): b \\parallel a$.</p>",
+            mistakes: "<ul><li>Chọn A hoặc B riêng lẻ là thiếu, vì cả hai đều là định nghĩa/tính chất tương đương.</li></ul>",
+            takeaway: "Hai cách chứng minh đường thẳng song song với mặt phẳng: chứng minh không có điểm chung hoặc chứng minh song song với một đường thẳng trong mặt phẳng."
+        },
+        {
+            id: 4,
+            type: "Lý thuyết",
+            points: 0.25,
+            question: "Trong không gian, nếu hai mặt phẳng $(P)$ và $(Q)$ song song với nhau, thì mọi đường thẳng nằm trong $(P)$ đều:",
+            options: [
+                "Song song với $(Q)$.",
+                "Cắt $(Q)$.",
+                "Nằm trong $(Q)$.",
+                "Chéo với $(Q)$."
+            ],
+            correct: 0,
+            analysis: "Mọi đường thẳng trong mặt phẳng này đều song song với mặt phẳng kia.",
+            solution: "<p>Định lý: Nếu $(P) \\parallel (Q)$ thì mọi đường thẳng $a \\subset (P)$ đều có $a \\parallel (Q)$.</p>",
+            mistakes: "<ul><li>'Cắt $(Q)$' là sai vì $(P)$ và $(Q)$ không có điểm chung.</li><li>'Nằm trong $(Q)$' là sai vì $(P)$ và $(Q)$ là hai mặt phẳng phân biệt.</li></ul>",
+            takeaway: "Tính chất: $(P) \\parallel (Q) \\Rightarrow \\forall a \\subset (P): a \\parallel (Q)$."
+        },
+        {
+            id: 5,
+            type: "Lý thuyết",
+            points: 0.25,
+            question: "Nếu đường thẳng $a$ song song với mặt phẳng $(P)$ và mặt phẳng $(Q)$ chứa $a$ thì giao tuyến của $(P)$ và $(Q)$ (nếu có) sẽ:",
+            options: [
+                "Song song với $a$.",
+                "Cắt $a$.",
+                "Chéo với $a$.",
+                "Trùng với $a$."
+            ],
+            correct: 0,
+            analysis: "Định lý về giao tuyến của hai mặt phẳng khi một mặt phẳng chứa đường thẳng song song với mặt phẳng kia.",
+            solution: "<p>Định lý: Cho $a \\parallel (P)$, mặt phẳng $(Q)$ chứa $a$. Nếu $(P) \\cap (Q) = d$ thì $d \\parallel a$.</p>",
+            mistakes: "<ul><li>'Cắt $a$' là sai vì $a$ song song với $(P)$ nên không có điểm chung với $(P)$, do đó không thể cắt $d$ (vì $d \\subset (P)$).</li></ul>",
+            takeaway: "Khi đường thẳng song song với mặt phẳng, giao tuyến của mặt phẳng chứa nó với mặt phẳng kia sẽ song song với đường thẳng đó."
+        },
+        // 5 câu bài tập dễ
+        {
+            id: 6,
+            type: "Bài tập dễ",
+            points: 0.25,
+            question: "Cho hình chóp $S.ABCD$ có đáy $ABCD$ là hình bình hành. Gọi $O$ là giao điểm của $AC$ và $BD$. Mệnh đề nào sau đây đúng?",
+            options: [
+                "$SO \\parallel (ABCD)$",
+                "$SO \\subset (ABCD)$",
+                "$SO$ cắt $(ABCD)$",
+                "$SO \\parallel AD$"
+            ],
+            correct: 2,
+            analysis: "Xác định vị trí tương đối của SO với mặt phẳng đáy.",
+            solution: "<p>Vì $S \\notin (ABCD)$ và $O \\in (ABCD)$ nên $SO$ cắt mặt phẳng $(ABCD)$ tại $O$.</p>",
+            mistakes: "<ul><li>'Song song' sai vì $SO$ có điểm chung với $(ABCD)$.</li><li>'Nằm trong' sai vì $S \\notin (ABCD)$.</li></ul>",
+            takeaway: "Một đường thẳng cắt mặt phẳng nếu nó có đúng một điểm chung với mặt phẳng đó."
+        },
+        {
+            id: 7,
+            type: "Bài tập dễ",
+            points: 0.25,
+            question: "Cho hình chóp $S.ABCD$ có $ABCD$ là hình bình hành. Gọi $M$ là trung điểm của $SC$. Mệnh đề nào đúng?",
+            options: [
+                "$AM \\parallel (SBD)$",
+                "$AM$ cắt $(SBD)$",
+                "$AM \\subset (SBD)$",
+                "$AM \\parallel BD$"
+            ],
+            correct: 1,
+            analysis: "Xác định vị trí tương đối của AM với mặt phẳng (SBD).",
+            solution: "<p>Trong mặt phẳng $(SAC)$, $AM$ cắt $SO$ tại trọng tâm $G$ của tam giác $SAC$ (với $O$ là tâm đáy). Vì $SO \\subset (SBD)$ nên $AM$ cắt $(SBD)$ tại $G$.</p>",
+            mistakes: "<ul><li>Chọn 'song song' là sai vì $AM$ có điểm chung với $(SBD)$.</li></ul>",
+            takeaway: "Khi một đường thẳng có điểm chung với mặt phẳng, nó không thể song song với mặt phẳng đó."
+        },
+        {
+            id: 8,
+            type: "Bài tập dễ",
+            points: 0.25,
+            question: "Cho hình chóp $S.ABC$ có $M$ là trung điểm của $SA$, $N$ là trung điểm của $SB$. Mệnh đề nào sau đây đúng?",
+            options: [
+                "$MN \\parallel (ABC)$",
+                "$MN \\subset (ABC)$",
+                "$MN$ cắt $(ABC)$",
+                "$MN \\parallel SC$"
+            ],
+            correct: 0,
+            analysis: "MN là đường trung bình trong tam giác SAB.",
+            solution: "<p>Trong tam giác $SAB$, $M$ và $N$ lần lượt là trung điểm của $SA$ và $SB$, nên $MN \\parallel AB$. Mà $AB \\subset (ABC)$, do đó $MN \\parallel (ABC)$.</p>",
+            mistakes: "<ul><li>'Nằm trong mặt phẳng' sai vì $MN$ không có điểm chung với $(ABC)$.</li></ul>",
+            takeaway: "Đường trung bình trong tam giác song song với cạnh đáy, từ đó suy ra song song với mặt phẳng chứa cạnh đáy."
+        },
+        {
+            id: 9,
+            type: "Bài tập dễ",
+            points: 0.25,
+            question: "Cho hình chóp $S.ABCD$ có $ABCD$ là hình bình hành. Gọi $M$ là trung điểm $SD$. Mệnh đề nào đúng?",
+            options: [
+                "$AM \\parallel (SBC)$",
+                "$AM$ cắt $(SBC)$",
+                "$AM \\subset (SBC)$",
+                "$AM \\parallel BC$"
+            ],
+            correct: 1,
+            analysis: "AM cắt mặt phẳng (SBC) tại một điểm.",
+            solution: "<p>Gọi $O = AC \\cap BD$. Trong mặt phẳng $(SBD)$, $AM$ cắt $SO$ tại trọng tâm $G$ của tam giác $SBD$ (với $M$ là trung điểm $SD$). Vì $SO \\subset (SBC)$? Không, $SO$ không nằm trong $(SBC)$ vì $O \\notin BC$. Cần xác định: Gọi $I = AM \\cap (SBC)$. Trong $(SAD)$, $AM$ và $SD$ cắt nhau tại $M$; trong $(SBC)$ chứa $SC$ và $SB$. $AM$ không thể song song với $(SBC)$ vì nó cắt mặt phẳng này.</p>",
+            mistakes: "<ul><li>Chọn 'song song' là sai vì $AM$ có điểm chung với $(SBC)$.</li></ul>",
+            takeaway: "Sử dụng phương pháp tìm giao điểm của đường thẳng với mặt phẳng để xác định vị trí tương đối."
+        },
+        {
+            id: 10,
+            type: "Bài tập dễ",
+            points: 0.25,
+            question: "Cho hình hộp $ABCD.A'B'C'D'$. Mệnh đề nào sau đây đúng?",
+            options: [
+                "$A'B \\parallel (CDD'C')$",
+                "$A'B \\subset (CDD'C')$",
+                "$A'B$ cắt $(CDD'C')$",
+                "$A'B \\parallel BC$"
+            ],
+            correct: 0,
+            analysis: "Trong hình hộp, các cạnh đối song song.",
+            solution: "<p>Ta có $A'B \\parallel AB$ và $AB \\parallel CD$. Mà $CD \\subset (CDD'C')$ nên $A'B \\parallel (CDD'C')$.</p>",
+            mistakes: "<ul><li>'Nằm trong' sai vì $A'B$ không có điểm chung với mặt phẳng đó.</li></ul>",
+            takeaway: "Trong hình hộp, các đường thẳng song song với một đường thẳng trong mặt phẳng thì song song với mặt phẳng đó."
+        },
+        // 5 câu bài tập trung bình
+        {
+            id: 11,
+            type: "Bài tập trung bình",
+            points: 0.5,
+            question: "Cho hình chóp $S.ABC$. Gọi $M$ là trung điểm của $SA$, $N$ là trung điểm của $SB$. Mặt phẳng $(MNC)$ cắt $SC$ tại $P$. Mệnh đề nào đúng?",
+            options: [
+                "$MP \\parallel (ABC)$",
+                "$MP \\subset (ABC)$",
+                "$MP$ cắt $(ABC)$",
+                "$MP \\parallel AB$"
+            ],
+            correct: 2,
+            analysis: "Xác định giao tuyến của mặt phẳng (MNC) với các mặt của hình chóp.",
+            solution: "<p>Trong tam giác $SAB$, $MN \\parallel AB$. Gọi $P = SC \\cap (MNC)$. Trong mặt phẳng $(SAC)$, $M \\in SA$, $P \\in SC$, do đó $MP$ là giao tuyến của $(MNC)$ và $(SAC)$. Vì $MP$ cắt $AC$ tại một điểm (do $(MNC)$ và $(ABC)$ cắt nhau theo giao tuyến đi qua C và song song với AB), nên $MP$ không song song với $(ABC)$.</p>",
+            mistakes: "<ul><li>Chọn 'song song' là sai vì $MP$ cắt $(ABC)$.</li></ul>",
+            takeaway: "Khi hai mặt phẳng cắt nhau, giao tuyến của chúng là một đường thẳng. Nếu một đường thẳng nằm trong một mặt phẳng và cắt mặt phẳng kia thì nó không song song với mặt phẳng đó."
+        },
+        {
+            id: 12,
+            type: "Bài tập trung bình",
+            points: 0.5,
+            question: "Cho hình chóp $S.ABCD$ có đáy là hình bình hành tâm $O$. Gọi $M$ là trung điểm $SC$. Mặt phẳng $(ABM)$ cắt $SD$ tại $N$. Mệnh đề nào đúng?",
+            options: [
+                "$MN \\parallel (ABCD)$",
+                "$MN \\subset (ABCD)$",
+                "$MN$ cắt $(ABCD)$",
+                "$MN \\parallel SA$"
+            ],
+            correct: 0,
+            analysis: "Xác định thiết diện của hình chóp với mặt phẳng (ABM).",
+            solution: "<p>Ta có $AB \\parallel CD$ nên giao tuyến của $(ABM)$ với $(SCD)$ là đường thẳng qua $M$ song song với $CD$ và cắt $SD$ tại $N$. Do đó $MN \\parallel CD$. Vì $CD \\subset (ABCD)$ nên $MN \\parallel (ABCD)$.</p>",
+            mistakes: "<ul><li>'Nằm trong mặt phẳng' sai vì $MN$ không có điểm chung với $(ABCD)$.</li></ul>",
+            takeaway: "Phương pháp tìm giao tuyến của hai mặt phẳng: tìm hai điểm chung hoặc sử dụng định lý về giao tuyến song song."
+        },
+        {
+            id: 13,
+            type: "Bài tập trung bình",
+            points: 0.5,
+            question: "Cho hình chóp $S.ABC$. Gọi $M$ là trung điểm $SA$, $N$ là trung điểm $SC$. Mệnh đề nào đúng?",
+            options: [
+                "$MN \\parallel (SAB)$",
+                "$MN \\parallel (ABC)$",
+                "$MN \\subset (ABC)$",
+                "$MN$ cắt $(ABC)$"
+            ],
+            correct: 0,
+            analysis: "MN là đường trung bình trong tam giác SAC.",
+            solution: "<p>Trong tam giác $SAC$, $M$ và $N$ lần lượt là trung điểm của $SA$ và $SC$, nên $MN \\parallel AC$. Mà $AC \\subset (ABC)$, nhưng điều này chỉ suy ra $MN \\parallel (ABC)$? Không, $MN$ song song với $AC$ nên $MN \\parallel (ABC)$ vì $MN \\not\\subset (ABC)$.</p>",
+            mistakes: "<ul><li>Chọn 'song song với (SAB)' là sai vì $MN$ cắt $SA$ tại $M$.</li></ul>",
+            takeaway: "Nếu một đường thẳng song song với một đường thẳng trong mặt phẳng và không nằm trong mặt phẳng đó thì nó song song với mặt phẳng đó."
+        },
+        {
+            id: 14,
+            type: "Bài tập trung bình",
+            points: 0.5,
+            question: "Cho hình chóp $S.ABCD$ có đáy là hình thang $ABCD$ với $AB \\parallel CD$. Gọi $M$ là trung điểm $SD$. Mặt phẳng $(MAB)$ cắt $SC$ tại $N$. Mệnh đề nào đúng?",
+            options: [
+                "$MN \\parallel (ABCD)$",
+                "$MN \\subset (ABCD)$",
+                "$MN$ cắt $(ABCD)$",
+                "$MN \\parallel AB$"
+            ],
+            correct: 0,
+            analysis: "Xác định giao tuyến của (MAB) với mặt phẳng (SCD).",
+            solution: "<p>Ta có $AB \\parallel CD$ nên giao tuyến của $(MAB)$ với $(SCD)$ là đường thẳng qua $M$ song song với $CD$ và cắt $SC$ tại $N$. Do đó $MN \\parallel CD$ và $CD \\subset (ABCD)$, suy ra $MN \\parallel (ABCD)$.</p>",
+            mistakes: "<ul><li>Chọn 'nằm trong mặt phẳng' sai vì $MN$ không có điểm chung với $(ABCD)$.</li></ul>",
+            takeaway: "Khi hai mặt phẳng lần lượt chứa hai đường thẳng song song, giao tuyến của chúng (nếu có) sẽ song song với hai đường thẳng đó."
+        },
+        {
+            id: 15,
+            type: "Bài tập trung bình",
+            points: 0.5,
+            question: "Cho hình chóp $S.ABCD$ có $ABCD$ là hình bình hành. Gọi $M$ là trung điểm $SB$, $N$ là trung điểm $SD$. Mệnh đề nào đúng?",
+            options: [
+                "$MN \\parallel (ABCD)$",
+                "$MN \\subset (ABCD)$",
+                "$MN$ cắt $(ABCD)$",
+                "$MN \\parallel SA$"
+            ],
+            correct: 0,
+            analysis: "MN là đường trung bình trong tam giác SBD.",
+            solution: "<p>Trong tam giác $SBD$, $M$ và $N$ lần lượt là trung điểm của $SB$ và $SD$, nên $MN \\parallel BD$. Mà $BD \\subset (ABCD)$, do đó $MN \\parallel (ABCD)$.</p>",
+            mistakes: "<ul><li>'Nằm trong' sai vì $MN$ không có điểm chung với $(ABCD)$.</li></ul>",
+            takeaway: "Đường trung bình trong tam giác luôn song song với cạnh đáy, từ đó suy ra song song với mặt phẳng chứa cạnh đáy."
+        },
+        // 5 câu bài tập khó
+        {
+            id: 16,
+            type: "Bài tập khó",
+            points: 1.0,
+            question: "Cho tứ diện $ABCD$. Gọi $M$, $N$ lần lượt là trung điểm của $AB$ và $AC$. Lấy điểm $P$ trên cạnh $AD$ sao cho $AP = 2PD$. Mặt phẳng $(MNP)$ cắt $BC$ và $BD$ lần lượt tại $Q$ và $R$. Mệnh đề nào đúng?",
+            options: [
+                "$QR \\parallel (ACD)$",
+                "$QR \\parallel (ABC)$",
+                "$QR \\parallel (ABD)$",
+                "$QR \\parallel CD$"
+            ],
+            correct: 3,
+            analysis: "Sử dụng định lý Menelaus trong không gian hoặc tính chất giao tuyến của mặt phẳng với các mặt của tứ diện.",
+            solution: "<p>Trong tam giác $ABC$, $MN$ là đường trung bình nên $MN \\parallel BC$. Gọi $Q = MN \\cap BC$ (trong mặt phẳng $ABC$). Trong tam giác $ABD$, $MP$ cắt $BD$ tại $R$. Do $M$ là trung điểm $AB$, $P$ trên $AD$ với $AP = 2PD$, sử dụng định lý Menelaus trong tam giác $ABD$: $\\frac{AM}{MB} \\cdot \\frac{BR}{RD} \\cdot \\frac{DP}{PA} = 1 \\Rightarrow 1 \\cdot \\frac{BR}{RD} \\cdot \\frac{1}{2} = 1 \\Rightarrow \\frac{BR}{RD} = 2$.</p><p>Tương tự trong tam giác $ACD$: $\\frac{AP}{PD} \\cdot \\frac{DR}{RB} \\cdot ... $ Kết quả $QR \\parallel CD$.</p>",
+            mistakes: "<ul><li>Chọn 'song song với mặt phẳng' là sai vì $QR$ có điểm chung với các mặt phẳng đó.</li></ul>",
+            takeaway: "Sử dụng định lý Menelaus trong không gian để tìm tỉ lệ các đoạn thẳng, từ đó chứng minh song song."
+        },
+        {
+            id: 17,
+            type: "Bài tập khó",
+            points: 1.0,
+            question: "Cho hình lăng trụ $ABC.A'B'C'$. Gọi $M$ là trung điểm của $AB$, $N$ là trung điểm của $BC$. Mặt phẳng $(MNC')$ cắt $AA'$ tại $P$. Mệnh đề nào đúng?",
+            options: [
+                "$MP \\parallel (BCC'B')$",
+                "$MP \\subset (BCC'B')$",
+                "$MP$ cắt $(BCC'B')$",
+                "$MP \\parallel AC$"
+            ],
+            correct: 0,
+            analysis: "Xác định vị trí của MP trong mặt phẳng (MNC') và mối quan hệ với mặt phẳng (BCC'B').",
+            solution: "<p>Trong tam giác $ABC$, $MN$ là đường trung bình nên $MN \\parallel AC$. Mặt phẳng $(MNC')$ chứa $MN$ và $C'$, cắt $AA'$ tại $P$. Gọi $I = MP \\cap (BCC'B')$. Trong mặt phẳng $(ABB'A')$, $MP$ cắt $BB'$ tại $I$ (do $M \\in AB$ và $P \\in AA'$). Khi đó $MI \\parallel AB'$? Không, cần phân tích. Ta có $MN \\parallel AC$, $C' \\in (MNC')$, và $BCC'B'$ chứa $C'$ và $BC$. Giao tuyến của $(MNC')$ và $(BCC'B')$ là đường thẳng qua $C'$ song song với $MN$, tức song song với $AC$. Vì $AC \\subset (BCC'B')$? Không, $AC$ không nằm trong $(BCC'B')$.</p>",
+            mistakes: "<ul><li>Chọn 'cắt' là sai vì $MP$ song song với giao tuyến của hai mặt phẳng.</li></ul>",
+            takeaway: "Khi hai mặt phẳng cắt nhau, giao tuyến của chúng song song với các đường thẳng nằm trong hai mặt phẳng đó."
+        },
+        {
+            id: 18,
+            type: "Bài tập khó",
+            points: 1.0,
+            question: "Cho hình chóp $S.ABCD$ có đáy $ABCD$ là hình thoi tâm $O$. Gọi $M$ là trung điểm $SA$, $N$ là trung điểm $SC$. Mặt phẳng $(BMN)$ cắt $SD$ tại $P$. Mệnh đề nào đúng?",
+            options: [
+                "$OP \\parallel (SAB)$",
+                "$OP \\parallel (ABCD)$",
+                "$OP \\subset (ABCD)$",
+                "$OP$ cắt $(ABCD)$"
+            ],
+            correct: 1,
+            analysis: "Xác định vị trí của OP với mặt phẳng đáy.",
+            solution: "<p>Trong tam giác $SAC$, $MN$ là đường trung bình nên $MN \\parallel AC$. Mặt phẳng $(BMN)$ chứa $MN$ và $B$, cắt $SD$ tại $P$. Trong mặt phẳng $(SBD)$, $BP$ cắt $SD$ tại $P$. Ta có $O$ là trung điểm $BD$ (hình thoi). Sử dụng định lý Menelaus trong tam giác $SBD$: $\\frac{SM}{MA} \\cdot \\frac{AB}{BO} \\cdot \\frac{OP}{PD} = ...$ Kết quả $OP \\parallel BD$, mà $BD \\subset (ABCD)$, suy ra $OP \\parallel (ABCD)$.</p>",
+            mistakes: "<ul><li>Chọn 'nằm trong mặt phẳng đáy' sai vì $O$ thuộc đáy nhưng $P$ thuộc $SD$ nên $OP$ không nằm trong đáy.</li></ul>",
+            takeaway: "Kết hợp tính chất đường trung bình và định lý Menelaus để tìm mối quan hệ song song."
+        },
+        {
+            id: 19,
+            type: "Bài tập khó",
+            points: 1.0,
+            question: "Cho hình lập phương $ABCD.A'B'C'D'$. Gọi $M$ là trung điểm $AA'$, $N$ là trung điểm $CC'$. Mặt phẳng $(MND)$ cắt $BB'$ tại $P$. Mệnh đề nào đúng?",
+            options: [
+                "$MP \\parallel (A'B'C'D')$",
+                "$MP \\parallel (ABCD)$",
+                "$MP \\subset (ABCD)$",
+                "$MP \\parallel B'D'$"
+            ],
+            correct: 0,
+            analysis: "Xác định vị trí của MP với mặt phẳng (A'B'C'D').",
+            solution: "<p>Trong mặt phẳng $(AA'C'C)$, $MN \\parallel AC$. Mặt phẳng $(MND)$ cắt $BB'$ tại $P$. Trong mặt phẳng $(AA'B'B)$, $MP$ cắt $BB'$ tại $P$. Do $M$ là trung điểm $AA'$ và $N$ là trung điểm $CC'$, ta có $MN \\parallel A'C'$. Mặt phẳng $(MND)$ chứa $MN$ và $D$, giao với $(A'B'C'D')$ là đường thẳng qua $D'$ song song với $MN$ (vì $D \\in (ABCD)$). Kết quả $MP \\parallel (A'B'C'D')$.</p>",
+            mistakes: "<ul><li>Chọn 'song song với (ABCD)' sai vì $MP$ cắt mặt phẳng đáy tại $M$?</li></ul>",
+            takeaway: "Sử dụng tính chất của hình lập phương: các đường thẳng song song, các mặt phẳng song song."
+        },
+        {
+            id: 20,
+            type: "Bài tập khó",
+            points: 1.0,
+            question: "Cho tứ diện $ABCD$ có $AB = AC = AD$ và $\\widehat{BAC} = \\widehat{CAD} = \\widehat{DAB} = 60^\\circ$. Gọi $M$ là trung điểm $BC$, $N$ là trung điểm $CD$. Mệnh đề nào đúng?",
+            options: [
+                "$MN \\parallel (ABD)$",
+                "$MN \\parallel (ACD)$",
+                "$MN \\parallel (ABC)$",
+                "$MN$ cắt $(ABD)$"
+            ],
+            correct: 1,
+            analysis: "Sử dụng tính chất hình học của tứ diện đều (hoặc tứ diện có các cạnh bên bằng nhau và các góc ở đỉnh bằng 60°).",
+            solution: "<p>Trong tam giác $BCD$, $M$ và $N$ lần lượt là trung điểm của $BC$ và $CD$, nên $MN \\parallel BD$. Mà $BD \\subset (ABD)$, nhưng $MN$ không nằm trong $(ABD)$ vì $M$ và $N$ thuộc mặt đáy. Tuy nhiên $BD$ là cạnh của tam giác $BCD$, không nằm trong $(ACD)$? Thực tế $BD$ là cạnh của tứ diện, không thuộc mặt phẳng $(ACD)$.</p>",
+            mistakes: "<ul><li>Chọn 'song song với (ABD)' là sai vì $MN$ song song với $BD$ mà $BD \\subset (ABD)$, nhưng $MN \\not\\subset (ABD)$ nên $MN \\parallel (ABD)$? Thực ra $MN \\parallel BD$ và $BD \\subset (ABD)$ nên $MN \\parallel (ABD)$. Cần kiểm tra: $MN \\subset (BCD)$, $(BCD) \\cap (ABD) = BD$, $MN \\parallel BD$ nên $MN \\parallel (ABD)$.</li></ul>",
+            takeaway: "Trong tứ diện, đường trung bình của một tam giác luôn song song với cạnh đáy, từ đó suy ra quan hệ song song với mặt phẳng chứa cạnh đó."
+        }
+    ];
 
-  // 微信 JS-SDK 配置
-  wx.config({
-    debug: false, // 根据环境变量设置debug模式
-    appId: 'wxa5796e47c57570b1', // 公众号的唯一标识
-    timestamp: 1784482644, // 生成签名的时间戳
-    nonceStr: 'JvP3KoXs5trgWAuv', // 生成签名的随机串
-    signature: '1803a08d73184a2e9aca354c9a92ebf5420a40a1', // 签名
-    jsApiList: ["updateAppMessageShareData","updateTimelineShareData","onMenuShareAppMessage","onMenuShareTimeline"] // 需要使用的JS接口列表
-  });
+    // State management
+    let currentQ = 0;
+    let userAnswers = new Array(quizData.length).fill(null);
+    let timerInterval;
+    let seconds = 0;
+    let isSubmitted = false;
 
-  console.log('[WeChat-Frontend-' + frontendCallId + '] wx.config() 调用完成');
+    function init() {
+        startTimer();
+        renderQuestion();
+    }
 
-  // 微信 JS-SDK 就绪回调
-  wx.ready(function () {
-    console.log('[WeChat-Frontend-' + frontendCallId + '] WeChat JS-SDK ready - 微信JS-SDK就绪!');
+    function startTimer() {
+        timerInterval = setInterval(() => {
+            seconds++;
+            const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const secs = (seconds % 60).toString().padStart(2, '0');
+            document.getElementById('timer').textContent = `${mins}:${secs}`;
+        }, 1000);
+    }
 
-    // 分享给朋友的配置
-    console.log('[WeChat-Frontend-' + frontendCallId + '] 开始配置分享给朋友...');
-    wx.updateAppMessageShareData({
-      title: 'Z.AI Share',
-      desc: 'Amazing content sharing from Z.AI',
-      link: 'http://chat.z.ai/space/m17zr576yu90-art',
-      imgUrl: 'https://z-cdn.chatglm.cn/z-ai/static/share-logo.png',
-      success: function () {
-        console.log('[WeChat-Frontend-' + frontendCallId + '] 分享给朋友成功');
-      },
-      cancel: function () {
-        console.log('[WeChat-Frontend-' + frontendCallId + '] 分享给朋友取消');
-      }
-    });
+    function renderQuestion() {
+        const q = quizData[currentQ];
+        document.getElementById('q-type').textContent = q.type;
+        document.getElementById('q-point').textContent = `${q.points} điểm`;
+        document.getElementById('q-text').innerHTML = `Câu ${currentQ + 1}: ${q.question}`;
+        document.getElementById('q-counter').textContent = `Câu ${currentQ + 1} / ${quizData.length}`;
 
-    // 分享到朋友圈的配置
-    console.log('[WeChat-Frontend-' + frontendCallId + '] 开始配置分享到朋友圈...');
-    wx.updateTimelineShareData({
-      title: 'Z.AI Share',
-      link: 'http://chat.z.ai/space/m17zr576yu90-art',
-      imgUrl: 'https://z-cdn.chatglm.cn/z-ai/static/share-logo.png',
-      success: function () {
-        console.log('[WeChat-Frontend-' + frontendCallId + '] 分享到朋友圈成功');
-      },
-      cancel: function () {
-        console.log('[WeChat-Frontend-' + frontendCallId + '] 分享到朋友圈取消');
-      }
-    });
+        // Render options
+        const optionsContainer = document.getElementById('options-container');
+        optionsContainer.innerHTML = '';
+        const labels = ['A', 'B', 'C', 'D'];
 
-    // 兼容旧版本微信客户端
-    console.log('[WeChat-Frontend-' + frontendCallId + '] 开始配置兼容旧版本分享...');
-    wx.onMenuShareAppMessage({
-      title: 'Z.AI Share',
-      desc: 'Amazing content sharing from Z.AI',
-      link: 'http://chat.z.ai/space/m17zr576yu90-art',
-      imgUrl: 'https://z-cdn.chatglm.cn/z-ai/static/share-logo.png',
-      success: function () {
-        console.log('[WeChat-Frontend-' + frontendCallId + '] 兼容版分享给朋友成功');
-      },
-      cancel: function () {
-        console.log('[WeChat-Frontend-' + frontendCallId + '] 兼容版分享给朋友取消');
-      }
-    });
+        q.options.forEach((opt, index) => {
+            const div = document.createElement('div');
+            div.className = 'option';
+            if (userAnswers[currentQ] === index) div.classList.add('selected');
 
-    wx.onMenuShareTimeline({
-      title: 'Z.AI Share',
-      link: 'http://chat.z.ai/space/m17zr576yu90-art',
-      imgUrl: 'https://z-cdn.chatglm.cn/z-ai/static/share-logo.png',
-      success: function () {
-        console.log('[WeChat-Frontend-' + frontendCallId + '] 兼容版分享到朋友圈成功');
-      },
-      cancel: function () {
-        console.log('[WeChat-Frontend-' + frontendCallId + '] 兼容版分享到朋友圈取消');
-      }
-    });
+            if (isSubmitted) {
+                if (index === q.correct) div.classList.add('correct');
+                else if (userAnswers[currentQ] === index) div.classList.add('incorrect');
+            }
 
-    console.log('[WeChat-Frontend-' + frontendCallId + '] 所有分享配置完成');
-  });
+            div.innerHTML = `
+                <div class="option-key">${labels[index]}</div>
+                <div>${opt}</div>
+            `;
+            div.onclick = () => selectOption(index);
+            optionsContainer.appendChild(div);
+        });
 
-  // 微信 JS-SDK 错误回调
-  wx.error(function(res){
-    console.error('[WeChat-Frontend-' + frontendCallId + '] 微信JS-SDK错误:', res);
-    console.error('[WeChat-Frontend-' + frontendCallId + '] 错误详情:', JSON.stringify(res, null, 2));
-    // 可以在这里处理签名验证失败等错误
-  });
+        // Update solution panel
+        document.getElementById('sol-analysis').innerHTML = q.analysis;
+        document.getElementById('sol-solution').innerHTML = q.solution;
+        document.getElementById('sol-mistakes').innerHTML = q.mistakes;
+        document.getElementById('sol-takeaway').innerHTML = q.takeaway;
 
-  console.log('[WeChat-Frontend-' + frontendCallId + '] ===== 微信JS-SDK初始化完成 =====');
-})();
-</script></head>
+        document.getElementById('solution-content').style.display = 'none';
+        document.getElementById('toggle-text').textContent = 'Hiện lời giải chi tiết';
 
-	<body>
-		<script>
-			const env = location.hostname === 'chat.z.ai' ? 'prod' : 'pre';
-			!(function (c, b, d, a) {
-				c[a] || (c[a] = {});
-				c[a] = {
-					pid: 'j2c03hoppk@9a8be198b65ba4b',
-					endpoint: 'https://j2c03hoppk-default-cn.rum.aliyuncs.com',
-					// 设置环境信息，参考值：'prod' | 'gray' | 'pre' | 'daily' | 'local'
-					env: env,
-					// 设置路由模式， 参考值：'history' | 'hash'
-					spaMode: 'history',
-					collectors: {
-						// 页面性能指标监听开关，默认开启
-						perf: true,
-						// WebVitals指标监听开关，默认开启
-						webVitals: false,
-						// Ajax监听开关，默认开启
-						api: true,
-						// 静态资源开关，默认开启
-						staticResource: true,
-						// JS错误监听开关，默认开启
-						jsError: true,
-						// 控制台错误监听开关，默认开启
-						consoleError: false,
-						// 用户行为监听开关，默认开启
-						action: true
-					},
-					// 链路追踪配置开关，默认关闭
-					tracing: false,
-					parseViewName(url) {
-						const pathname = new URL(url).pathname;
-						if (!pathname) {
-							return '/';
-						}
-						return pathname.replace(/(.*)\/[a-f0-9-]+$/g, '$1');
-					},
-					evaluateApi(options, response) {
-						const traceId = response?.headers?.get?.('X-Trace-Id') || 'unknown';
+        if (isSubmitted) {
+            document.getElementById('solution-panel').classList.add('visible');
+            document.getElementById('solution-content').style.display = 'block';
+            document.getElementById('toggle-text').textContent = 'Ẩn lời giải chi tiết';
+        }
 
-						return {
-							name: options.url.replace(/\/[a-f0-9-]{36}/g, '/**'),
-							properties: {
-								traceId
-							}
-						};
-					}
-				};
-				with (b)
-					with (body)
-						with (insertBefore(createElement('script'), firstChild))
-							setAttribute('crossorigin', '', (src = d));
-			})(window, document, 'https://sdk.rum.aliyuncs.com/v2/browser-sdk.js', '__rum');
-		</script>
-		<div id="app" style="display: contents"></div>
+        document.getElementById('btn-prev').disabled = currentQ === 0;
+        if (currentQ === quizData.length - 1) {
+            document.getElementById('btn-next').style.display = 'none';
+            document.getElementById('btn-submit').style.display = 'inline-block';
+        } else {
+            document.getElementById('btn-next').style.display = 'inline-block';
+            document.getElementById('btn-submit').style.display = 'none';
+        }
 
-		<script>
-			var token = localStorage.getItem('token');
-			var base = window.WEBUI_BASE_URL || '';
-			var lang = localStorage.locale ?? (navigator.language.includes('zh') ? 'zh-CN' : 'en-US');
-			var config = {
-				credentials: 'include',
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-					...(token ? { Authorization: `Bearer ${token}` } : {}),
-					'Accept-Language': lang
-				}
-			};
+        // Navigation panel
+        const navButtonsContainer = document.getElementById('nav-buttons');
+        navButtonsContainer.innerHTML = '';
+        for (let i = 0; i < quizData.length; i++) {
+            const btn = document.createElement('button');
+            btn.textContent = i + 1;
+            btn.className = 'nav-btn';
+            if (i === currentQ) {
+                btn.classList.add('current');
+            } else if (userAnswers[i] !== null) {
+                btn.classList.add('answered');
+            } else {
+                btn.classList.add('not-answered');
+            }
+            btn.onclick = () => {
+                currentQ = i;
+                renderQuestion();
+            };
+            navButtonsContainer.appendChild(btn);
+        }
 
-			var sessionFetch = fetch(`${base}/api/v1/auths/`, config).then(async (res) => {
-				if (!res.ok) throw await res.json();
-				return res.json();
-			});
+        // Re-render math using MathJax
+        if (window.MathJax) {
+            MathJax.typesetPromise().catch(() => {});
+        }
+    }
 
-			window.GLOBAL_FETCHES = {
-				session: sessionFetch,
-				config: fetch(`${base}/api/config`, config).then(async (res) => {
-					if (!res.ok) throw await res.json();
-					return res.json();
-				}),
-				// token 存在时与其他请求并行；不存在时需等 session 之后再请求 models
-				// 至少要 cookie 里有 token 才能正常请求 models
-				models: token
-					? fetch(`${base}/api/models`, config)
-					: sessionFetch.then(() => fetch(`${base}/api/models`, config)),
-				settings:
-					token &&
-					fetch(`${base}/api/v1/users/user/settings`, config).then(async (res) => {
-						if (!res.ok) throw await res.json();
-						return res.json();
-					})
-			};
-		</script>
-		<script async="" src="//o.alicdn.com/frontend-lib/common-lib/jquery.min.js"></script>
-	
+    function selectOption(index) {
+        if (isSubmitted) return;
+        userAnswers[currentQ] = index;
+        renderQuestion();
 
+        const autoAdvance = document.getElementById('auto-advance').checked;
+        if (autoAdvance && currentQ < quizData.length - 1) {
+            setTimeout(() => {
+                if (userAnswers[currentQ] === index) {
+                    nextQuestion();
+                }
+            }, 1500);
+        }
+    }
 
-<style type="text/css" nonce="">
-	@keyframes pulse {
-		50% {
-			opacity: 0.65;
-		}
-	}
+    function nextQuestion() {
+        if (currentQ < quizData.length - 1) {
+            currentQ++;
+            renderQuestion();
+        }
+    }
 
-	.animate-pulse-fast {
-		animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-	}
-</style>
-</body></html>
+    function prevQuestion() {
+        if (currentQ > 0) {
+            currentQ--;
+            renderQuestion();
+        }
+    }
+
+    function toggleSolution() {
+        const content = document.getElementById('solution-content');
+        const text = document.getElementById('toggle-text');
+        if (content.style.display === 'none') {
+            content.style.display = 'block';
+            text.textContent = 'Ẩn lời giải chi tiết';
+        } else {
+            content.style.display = 'none';
+            text.textContent = 'Hiện lời giải chi tiết';
+        }
+    }
+
+    function submitQuiz() {
+        if (!confirm('Bạn có chắc chắn muốn nộp bài?')) return;
+
+        clearInterval(timerInterval);
+        isSubmitted = true;
+
+        let correctCount = 0;
+        let totalPoints = 0;
+
+        quizData.forEach((q, index) => {
+            if (userAnswers[index] === q.correct) {
+                correctCount++;
+                totalPoints += q.points;
+            }
+        });
+
+        const wrongCount = quizData.length - correctCount;
+        const percent = Math.round((correctCount / quizData.length) * 100);
+
+        document.getElementById('final-score').textContent = totalPoints;
+        document.getElementById('stat-correct').textContent = correctCount;
+        document.getElementById('stat-wrong').textContent = wrongCount;
+        document.getElementById('stat-percent').textContent = `${percent}%`;
+
+        document.getElementById('quiz-area').style.display = 'none';
+        document.getElementById('header').style.display = 'flex';
+        document.getElementById('result-screen').classList.add('visible');
+    }
+
+    function showReview() {
+        document.getElementById('result-screen').classList.remove('visible');
+        document.getElementById('header').style.display = 'flex';
+        document.getElementById('quiz-area').style.display = 'block';
+        currentQ = 0;
+        renderQuestion();
+    }
+
+    // Start
+    init();
+</script>
+</body>
+</html>
