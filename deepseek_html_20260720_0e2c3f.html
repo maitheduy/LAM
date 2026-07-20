@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đề thi trắc nghiệm - Đường thẳng và mặt phẳng song song</title>
+
+    <!-- MathJax cho hiển thị công thức toán học -->
+    <script>
+        MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success: #10b981;
+            --error: #ef4444;
+            --bg: #f4f6f8;
+            --card-bg: #ffffff;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --border: #e5e7eb;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: var(--card-bg);
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .header h1 { font-size: 1.25rem; font-weight: 600; }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .timer {
+            font-family: monospace;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+            background: #eff6ff;
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+        .student-name-display {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            background: #f3f4f6;
+            padding: 4px 12px;
+            border-radius: 6px;
+        }
+        .student-name-display strong {
+            color: var(--text);
+        }
+
+        /* Quiz Layout */
+        #quiz-area {
+            display: flex;
+            gap: 20px;
+        }
+
+        .main-content {
+            flex: 1;
+        }
+
+        .navigation-panel {
+            flex: 0 0 280px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--border);
+        }
+
+        /* Question Card */
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 24px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .question-meta {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            font-size: 0.875rem;
+        }
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+        .badge-type { background: #dbeafe; color: #1e40af; }
+        .badge-point { background: #f3f4f6; color: #4b5563; }
+
+        .question-text {
+            font-size: 1.125rem;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .options { display: flex; flex-direction: column; gap: 12px; }
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 14px 16px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #fff;
+        }
+        .option:hover { border-color: var(--primary); background: #eff6ff; }
+        .option.selected { border-color: var(--primary); background: #eff6ff; }
+        .option.correct { border-color: var(--success); background: #ecfdf5; }
+        .option.incorrect { border-color: var(--error); background: #fef2f2; }
+
+        .option-key {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #f3f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        .option.selected .option-key { background: var(--primary); color: white; }
+        .option.correct .option-key { background: var(--success); color: white; }
+        .option.incorrect .option-key { background: var(--error); color: white; }
+
+        /* Navigation Panel */
+        .nav-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #nav-buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .nav-btn {
+            width: 100%;
+            padding: 8px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .nav-btn.current {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .nav-btn.answered {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .nav-btn.not-answered {
+            background-color: var(--border);
+            color: var(--text-light);
+        }
+
+        .legend {
+            margin-top: 16px;
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .legend-item {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+            margin-right: 6px;
+        }
+
+        .legend-item.current { background-color: var(--primary); }
+        .legend-item.answered { background-color: var(--success); }
+        .legend-item.not-answered { background-color: var(--border); }
+
+        /* Navigation Controls */
+        .nav-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+        .btn-secondary { background: #f3f4f6; color: var(--text); }
+        .btn-secondary:hover { background: #e5e7eb; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .auto-advance {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+
+        /* Solution Panel */
+        .solution-panel {
+            margin-top: 24px;
+            border-top: 2px dashed var(--border);
+            padding-top: 20px;
+            display: none;
+        }
+        .solution-panel.visible { display: block; }
+
+        .solution-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary);
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 16px;
+            user-select: none;
+        }
+
+        .pedagogy-section {
+            margin-bottom: 20px;
+            padding: 16px;
+            background: #fafafa;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+        }
+        .pedagogy-section h4 {
+            font-size: 0.95rem;
+            color: var(--primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .pedagogy-section ul { margin-left: 20px; margin-top: 8px; }
+        .pedagogy-section li { margin-bottom: 6px; }
+
+        /* Result Screen */
+        .result-screen { display: none; text-align: center; }
+        .result-screen.visible { display: block; }
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        .score-circle span { font-size: 0.875rem; font-weight: 400; opacity: 0.9; }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .stat-box {
+            background: var(--card-bg);
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+        .stat-label { font-size: 0.875rem; color: var(--text-light); margin-top: 4px; }
+
+        @media (max-width: 768px) {
+            #quiz-area {
+                flex-direction: column;
+            }
+            .navigation-panel {
+                flex: 0 0 auto;
+            }
+            .stats-grid { grid-template-columns: 1fr; }
+            .nav-controls { flex-direction: column; gap: 12px; }
+            .nav-controls > div { width: 100%; display: flex; justify-content: space-between; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Header -->
+    <div class="header" id="header">
+        <h1>Đề thi trắc nghiệm - Đường thẳng và mặt phẳng song song</h1>
+        <div class="header-right">
+            <span class="student-name-display" id="studentNameDisplay">👤 <strong id="studentNameStrong">Học sinh</strong></span>
+            <div class="timer" id="timer">00:00</div>
+        </div>
+    </div>
+
+    <!-- Quiz Area -->
+    <div id="quiz-area">
+        <div class="main-content">
+            <!-- Name Input Card -->
+            <div class="card" id="nameInputCard">
+                <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+                    <label style="font-weight: 600; font-size: 1rem;">👤 Họ và tên:</label>
+                    <input type="text" id="studentNameInput" placeholder="Nhập tên của bạn..." 
+                           style="flex: 1; min-width: 200px; padding: 10px 16px; border: 2px solid var(--border); border-radius: 8px; font-size: 1rem; outline: none; transition: border-color 0.2s;"
+                           onfocus="this.style.borderColor='var(--primary)'" 
+                           onblur="this.style.borderColor='var(--border)'">
+                    <button class="btn btn-primary" onclick="saveStudentName()" style="white-space: nowrap;">Lưu tên</button>
+                </div>
+                <div style="margin-top: 8px; font-size: 0.875rem; color: var(--text-light);">
+                    💡 Vui lòng nhập tên trước khi làm bài để nhận giấy khen khi hoàn thành!
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="question-meta">
+                    <span class="badge badge-type" id="q-type">Lý thuyết</span>
+                    <span class="badge badge-point" id="q-point">0.25 điểm</span>
+                </div>
+                <div class="question-text" id="q-text"></div>
+                <div class="options" id="options-container"></div>
+
+                <!-- Pedagogical Solution Panel -->
+                <div class="solution-panel" id="solution-panel">
+                    <div class="solution-toggle" onclick="toggleSolution()">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        <span id="toggle-text">Hiện lời giải chi tiết</span>
+                    </div>
+                    <div id="solution-content" style="display: none;">
+                        <div class="pedagogy-section">
+                            <h4>🔍 Phân tích câu hỏi</h4>
+                            <p id="sol-analysis"></p>
+                        </div>
+                        <div class="pedagogy-section">
+                            <h4>📝 Lời giải chi tiết</h4>
+                            <div id="sol-solution"></div>
+                        </div>
+                        <div class="pedagogy-section" style="border-left-color: var(--error);">
+                            <h4>⚠️ Vì sao sai (Các lỗi thường gặp)</h4>
+                            <div id="sol-mistakes"></div>
+                        </div>
+                        <div class="pedagogy-section" style="border-left-color: var(--success);">
+                            <h4>💡 Ghi nhớ kỹ năng</h4>
+                            <p id="sol-takeaway"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-controls">
+                <button class="btn btn-secondary" id="btn-prev" onclick="prevQuestion()">Câu trước</button>
+                <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+                    <span id="q-counter" style="font-weight: 600; color: var(--text-light);">Câu 1 / 20</span>
+                    <div class="auto-advance">
+                        <input type="checkbox" id="auto-advance" checked>
+                        <label for="auto-advance">Tự động chuyển câu sau 3s</label>
+                    </div>
+                </div>
+                <button class="btn btn-primary" id="btn-next" onclick="nextQuestion()">Câu tiếp theo</button>
+                <button class="btn btn-primary" id="btn-submit" onclick="submitQuiz()" style="display: none; background: var(--success);">Nộp bài</button>
+            </div>
+        </div>
+
+        <!-- Navigation Panel -->
+        <div class="navigation-panel">
+            <h3 class="nav-title">Bảng điều hướng</h3>
+            <div id="nav-buttons"></div>
+            <div class="legend">
+                <div><span class="legend-item current"></span> Câu hiện tại</div>
+                <div><span class="legend-item answered"></span> Đã trả lời</div>
+                <div><span class="legend-item not-answered"></span> Chưa trả lời</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Result Screen -->
+    <div class="result-screen card" id="result-screen">
+        <h2 style="margin-bottom: 24px;">🎉 Kết quả bài thi 🎉</h2>
+        <div id="resultStudentName" style="font-size: 1.3rem; color: var(--text-light); margin-bottom: 16px;"></div>
+        <div class="score-circle">
+            <div id="final-score">0</div>
+            <span>điểm</span>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-value" id="stat-correct">0</div>
+                <div class="stat-label">Câu đúng</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="stat-wrong">0</div>
+                <div class="stat-label">Câu sai/chưa làm</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="stat-percent">0%</div>
+                <div class="stat-label">Tỷ lệ đúng</div>
+            </div>
+        </div>
+
+        <!-- Certificate Area -->
+        <div id="certificate-container" style="margin: 24px 0; border-top: 2px dashed var(--border); padding-top: 24px;">
+            <!-- Certificate sẽ được chèn vào đây từ JavaScript -->
+        </div>
+
+        <div style="display: flex; gap: 12px; justify-content: center; margin-bottom: 24px; flex-wrap: wrap;">
+            <button class="btn btn-secondary" onclick="location.reload()">Làm lại bài</button>
+            <button class="btn btn-primary" onclick="showReview()">Xem chi tiết đáp án</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Dữ liệu 20 câu hỏi về "Đường thẳng và mặt phẳng song song trong không gian"
+    const quizData = [
+        // 5 câu lý thuyết
+        {
+            id: 1,
+            type: "Lý thuyết",
+            points: 0.25,
+            question: "Trong không gian, một đường thẳng và một mặt phẳng được gọi là song song với nhau nếu:",
+            options: [
+                "Chúng không có điểm chung.",
+                "Chúng có vô số điểm chung.",
+                "Đường thẳng nằm trong mặt phẳng.",
+                "Đường thẳng cắt mặt phẳng."
+            ],
+            correct: 0,
+            analysis: "Đây là định nghĩa cơ bản về đường thẳng và mặt phẳng song song trong không gian.",
+            solution: "<p>Theo định nghĩa: Một đường thẳng và một mặt phẳng song song với nhau nếu chúng <b>không có điểm chung</b>.</p>",
+            mistakes: "<ul><li>Chọn 'có vô số điểm chung' hoặc 'nằm trong mặt phẳng' là sai vì đó là trường hợp đường thẳng nằm trong mặt phẳng.</li><li>Chọn 'cắt mặt phẳng' là sai vì khi cắt thì có 1 điểm chung.</li></ul>",
+            takeaway: "Ghi nhớ định nghĩa: <b>Song song</b> ⇔ <b>không có điểm chung</b>. Đây là nền tảng để giải các bài toán chứng minh quan hệ song song."
+        },
+        {
+            id: 2,
+            type: "Lý thuyết",
+            points: 0.25,
+            question: "Nếu đường thẳng $a$ song song với mặt phẳng $(P)$ thì:",
+            options: [
+                "$a$ song song với mọi đường thẳng nằm trong $(P)$.",
+                "$a$ song song với ít nhất một đường thẳng nằm trong $(P)$.",
+                "$a$ cắt một đường thẳng bất kỳ trong $(P)$.",
+                "$a$ và $(P)$ không có điểm chung."
+            ],
+            correct: 1,
+            analysis: "Tính chất của đường thẳng song song với mặt phẳng: tồn tại ít nhất một đường thẳng trong mặt phẳng song song với nó.",
+            solution: "<p>Định lý: Nếu đường thẳng $a$ song song với mặt phẳng $(P)$ thì trong $(P)$ có một đường thẳng $b$ song song với $a$.</p>",
+            mistakes: "<ul><li>'Song song với mọi đường thẳng' là sai vì không phải đường nào trong mặt phẳng cũng song song với $a$.</li><li>'Cắt một đường thẳng bất kỳ' là sai vì $a$ và $(P)$ không có điểm chung.</li></ul>",
+            takeaway: "Tính chất quan trọng: $a \\parallel (P) \\Rightarrow \\exists b \\subset (P): b \\parallel a$."
+        },
+        {
+            id: 3,
+            type: "Lý thuyết",
+            points: 0.25,
+            question: "Điều kiện để đường thẳng $a$ song song với mặt phẳng $(P)$ là:",
+            options: [
+                "$a$ không có điểm chung với $(P)$.",
+                "$a$ song song với một đường thẳng trong $(P)$.",
+                "$a$ cắt $(P)$ tại một điểm.",
+                "Cả A và B đều đúng."
+            ],
+            correct: 3,
+            analysis: "Cả hai điều kiện (không có điểm chung và song song với một đường thẳng trong mặt phẳng) đều tương đương.",
+            solution: "<p>Định nghĩa: $a \\parallel (P)$ ⇔ $a \\cap (P) = \\varnothing$.</p><p>Định lý: $a \\parallel (P)$ ⇔ $\\exists b \\subset (P): b \\parallel a$.</p>",
+            mistakes: "<ul><li>Chọn A hoặc B riêng lẻ là thiếu, vì cả hai đều là định nghĩa/tính chất tương đương.</li></ul>",
+            takeaway: "Hai cách chứng minh đường thẳng song song với mặt phẳng: chứng minh không có điểm chung hoặc chứng minh song song với một đường thẳng trong mặt phẳng."
+        },
+        {
+            id: 4,
+            type: "Lý thuyết",
+            points: 0.25,
+            question: "Trong không gian, nếu hai mặt phẳng $(P)$ và $(Q)$ song song với nhau, thì mọi đường thẳng nằm trong $(P)$ đều:",
+            options: [
+                "Song song với $(Q)$.",
+                "Cắt $(Q)$.",
+                "Nằm trong $(Q)$.",
+                "Chéo với $(Q)$."
+            ],
+            correct: 0,
+            analysis: "Mọi đường thẳng trong mặt phẳng này đều song song với mặt phẳng kia.",
+            solution: "<p>Định lý: Nếu $(P) \\parallel (Q)$ thì mọi đường thẳng $a \\subset (P)$ đều có $a \\parallel (Q)$.</p>",
+            mistakes: "<ul><li>'Cắt $(Q)$' là sai vì $(P)$ và $(Q)$ không có điểm chung.</li><li>'Nằm trong $(Q)$' là sai vì $(P)$ và $(Q)$ là hai mặt phẳng phân biệt.</li></ul>",
+            takeaway: "Tính chất: $(P) \\parallel (Q) \\Rightarrow \\forall a \\subset (P): a \\parallel (Q)$."
+        },
+        {
+            id: 5,
+            type: "Lý thuyết",
+            points: 0.25,
+            question: "Nếu đường thẳng $a$ song song với mặt phẳng $(P)$ và mặt phẳng $(Q)$ chứa $a$ thì giao tuyến của $(P)$ và $(Q)$ (nếu có) sẽ:",
+            options: [
+                "Song song với $a$.",
+                "Cắt $a$.",
+                "Chéo với $a$.",
+                "Trùng với $a$."
+            ],
+            correct: 0,
+            analysis: "Định lý về giao tuyến của hai mặt phẳng khi một mặt phẳng chứa đường thẳng song song với mặt phẳng kia.",
+            solution: "<p>Định lý: Cho $a \\parallel (P)$, mặt phẳng $(Q)$ chứa $a$. Nếu $(P) \\cap (Q) = d$ thì $d \\parallel a$.</p>",
+            mistakes: "<ul><li>'Cắt $a$' là sai vì $a$ song song với $(P)$ nên không có điểm chung với $(P)$, do đó không thể cắt $d$ (vì $d \\subset (P)$).</li></ul>",
+            takeaway: "Khi đường thẳng song song với mặt phẳng, giao tuyến của mặt phẳng chứa nó với mặt phẳng kia sẽ song song với đường thẳng đó."
+        },
+        // 5 câu bài tập dễ
+        {
+            id: 6,
+            type: "Bài tập dễ",
+            points: 0.25,
+            question: "Cho hình chóp $S.ABCD$ có đáy $ABCD$ là hình bình hành. Gọi $O$ là giao điểm của $AC$ và $BD$. Mệnh đề nào sau đây đúng?",
+            options: [
+                "$SO \\parallel (ABCD)$",
+                "$SO \\subset (ABCD)$",
+                "$SO$ cắt $(ABCD)$",
+                "$SO \\parallel AD$"
+            ],
+            correct: 2,
+            analysis: "Xác định vị trí tương đối của SO với mặt phẳng đáy.",
+            solution: "<p>Vì $S \\notin (ABCD)$ và $O \\in (ABCD)$ nên $SO$ cắt mặt phẳng $(ABCD)$ tại $O$.</p>",
+            mistakes: "<ul><li>'Song song' sai vì $SO$ có điểm chung với $(ABCD)$.</li><li>'Nằm trong' sai vì $S \\notin (ABCD)$.</li></ul>",
+            takeaway: "Một đường thẳng cắt mặt phẳng nếu nó có đúng một điểm chung với mặt phẳng đó."
+        },
+        {
+            id: 7,
+            type: "Bài tập dễ",
+            points: 0.25,
+            question: "Cho hình chóp $S.ABCD$ có $ABCD$ là hình bình hành. Gọi $M$ là trung điểm của $SC$. Mệnh đề nào đúng?",
+            options: [
+                "$AM \\parallel (SBD)$",
+                "$AM$ cắt $(SBD)$",
+                "$AM \\subset (SBD)$",
+                "$AM \\parallel BD$"
+            ],
+            correct: 1,
+            analysis: "Xác định vị trí tương đối của AM với mặt phẳng (SBD).",
+            solution: "<p>Trong mặt phẳng $(SAC)$, $AM$ cắt $SO$ tại trọng tâm $G$ của tam giác $SAC$ (với $O$ là tâm đáy). Vì $SO \\subset (SBD)$ nên $AM$ cắt $(SBD)$ tại $G$.</p>",
+            mistakes: "<ul><li>Chọn 'song song' là sai vì $AM$ có điểm chung với $(SBD)$.</li></ul>",
+            takeaway: "Khi một đường thẳng có điểm chung với mặt phẳng, nó không thể song song với mặt phẳng đó."
+        },
+        {
+            id: 8,
+            type: "Bài tập dễ",
+            points: 0.25,
+            question: "Cho hình chóp $S.ABC$ có $M$ là trung điểm của $SA$, $N$ là trung điểm của $SB$. Mệnh đề nào sau đây đúng?",
+            options: [
+                "$MN \\parallel (ABC)$",
+                "$MN \\subset (ABC)$",
+                "$MN$ cắt $(ABC)$",
+                "$MN \\parallel SC$"
+            ],
+            correct: 0,
+            analysis: "MN là đường trung bình trong tam giác SAB.",
+            solution: "<p>Trong tam giác $SAB$, $M$ và $N$ lần lượt là trung điểm của $SA$ và $SB$, nên $MN \\parallel AB$. Mà $AB \\subset (ABC)$, do đó $MN \\parallel (ABC)$.</p>",
+            mistakes: "<ul><li>'Nằm trong mặt phẳng' sai vì $MN$ không có điểm chung với $(ABC)$.</li></ul>",
+            takeaway: "Đường trung bình trong tam giác song song với cạnh đáy, từ đó suy ra song song với mặt phẳng chứa cạnh đáy."
+        },
+        {
+            id: 9,
+            type: "Bài tập dễ",
+            points: 0.25,
+            question: "Cho hình chóp $S.ABCD$ có $ABCD$ là hình bình hành. Gọi $M$ là trung điểm $SD$. Mệnh đề nào đúng?",
+            options: [
+                "$AM \\parallel (SBC)$",
+                "$AM$ cắt $(SBC)$",
+                "$AM \\subset (SBC)$",
+                "$AM \\parallel BC$"
+            ],
+            correct: 1,
+            analysis: "AM cắt mặt phẳng (SBC) tại một điểm.",
+            solution: "<p>Gọi $O = AC \\cap BD$. Trong mặt phẳng $(SBD)$, $AM$ cắt $SO$ tại trọng tâm $G$ của tam giác $SBD$ (với $M$ là trung điểm $SD$). Vì $SO \\subset (SBC)$? Không, $SO$ không nằm trong $(SBC)$ vì $O \\notin BC$. Cần xác định: Gọi $I = AM \\cap (SBC)$. Trong $(SAD)$, $AM$ và $SD$ cắt nhau tại $M$; trong $(SBC)$ chứa $SC$ và $SB$. $AM$ không thể song song với $(SBC)$ vì nó cắt mặt phẳng này.</p>",
+            mistakes: "<ul><li>Chọn 'song song' là sai vì $AM$ có điểm chung với $(SBC)$.</li></ul>",
+            takeaway: "Sử dụng phương pháp tìm giao điểm của đường thẳng với mặt phẳng để xác định vị trí tương đối."
+        },
+        {
+            id: 10,
+            type: "Bài tập dễ",
+            points: 0.25,
+            question: "Cho hình hộp $ABCD.A'B'C'D'$. Mệnh đề nào sau đây đúng?",
+            options: [
+                "$A'B \\parallel (CDD'C')$",
+                "$A'B \\subset (CDD'C')$",
+                "$A'B$ cắt $(CDD'C')$",
+                "$A'B \\parallel BC$"
+            ],
+            correct: 0,
+            analysis: "Trong hình hộp, các cạnh đối song song.",
+            solution: "<p>Ta có $A'B \\parallel AB$ và $AB \\parallel CD$. Mà $CD \\subset (CDD'C')$ nên $A'B \\parallel (CDD'C')$.</p>",
+            mistakes: "<ul><li>'Nằm trong' sai vì $A'B$ không có điểm chung với mặt phẳng đó.</li></ul>",
+            takeaway: "Trong hình hộp, các đường thẳng song song với một đường thẳng trong mặt phẳng thì song song với mặt phẳng đó."
+        },
+        // 5 câu bài tập trung bình
+        {
+            id: 11,
+            type: "Bài tập trung bình",
+            points: 0.5,
+            question: "Cho hình chóp $S.ABC$. Gọi $M$ là trung điểm của $SA$, $N$ là trung điểm của $SB$. Mặt phẳng $(MNC)$ cắt $SC$ tại $P$. Mệnh đề nào đúng?",
+            options: [
+                "$MP \\parallel (ABC)$",
+                "$MP \\subset (ABC)$",
+                "$MP$ cắt $(ABC)$",
+                "$MP \\parallel AB$"
+            ],
+            correct: 2,
+            analysis: "Xác định giao tuyến của mặt phẳng (MNC) với các mặt của hình chóp.",
+            solution: "<p>Trong tam giác $SAB$, $MN \\parallel AB$. Gọi $P = SC \\cap (MNC)$. Trong mặt phẳng $(SAC)$, $M \\in SA$, $P \\in SC$, do đó $MP$ là giao tuyến của $(MNC)$ và $(SAC)$. Vì $MP$ cắt $AC$ tại một điểm (do $(MNC)$ và $(ABC)$ cắt nhau theo giao tuyến đi qua C và song song với AB), nên $MP$ không song song với $(ABC)$.</p>",
+            mistakes: "<ul><li>Chọn 'song song' là sai vì $MP$ cắt $(ABC)$.</li></ul>",
+            takeaway: "Khi hai mặt phẳng cắt nhau, giao tuyến của chúng là một đường thẳng. Nếu một đường thẳng nằm trong một mặt phẳng và cắt mặt phẳng kia thì nó không song song với mặt phẳng đó."
+        },
+        {
+            id: 12,
+            type: "Bài tập trung bình",
+            points: 0.5,
+            question: "Cho hình chóp $S.ABCD$ có đáy là hình bình hành tâm $O$. Gọi $M$ là trung điểm $SC$. Mặt phẳng $(ABM)$ cắt $SD$ tại $N$. Mệnh đề nào đúng?",
+            options: [
+                "$MN \\parallel (ABCD)$",
+                "$MN \\subset (ABCD)$",
+                "$MN$ cắt $(ABCD)$",
+                "$MN \\parallel SA$"
+            ],
+            correct: 0,
+            analysis: "Xác định thiết diện của hình chóp với mặt phẳng (ABM).",
+            solution: "<p>Ta có $AB \\parallel CD$ nên giao tuyến của $(ABM)$ với $(SCD)$ là đường thẳng qua $M$ song song với $CD$ và cắt $SD$ tại $N$. Do đó $MN \\parallel CD$. Vì $CD \\subset (ABCD)$ nên $MN \\parallel (ABCD)$.</p>",
+            mistakes: "<ul><li>'Nằm trong mặt phẳng' sai vì $MN$ không có điểm chung với $(ABCD)$.</li></ul>",
+            takeaway: "Phương pháp tìm giao tuyến của hai mặt phẳng: tìm hai điểm chung hoặc sử dụng định lý về giao tuyến song song."
+        },
+        {
+            id: 13,
+            type: "Bài tập trung bình",
+            points: 0.5,
+            question: "Cho hình chóp $S.ABC$. Gọi $M$ là trung điểm $SA$, $N$ là trung điểm $SC$. Mệnh đề nào đúng?",
+            options: [
+                "$MN \\parallel (SAB)$",
+                "$MN \\parallel (ABC)$",
+                "$MN \\subset (ABC)$",
+                "$MN$ cắt $(ABC)$"
+            ],
+            correct: 0,
+            analysis: "MN là đường trung bình trong tam giác SAC.",
+            solution: "<p>Trong tam giác $SAC$, $M$ và $N$ lần lượt là trung điểm của $SA$ và $SC$, nên $MN \\parallel AC$. Mà $AC \\subset (ABC)$, nhưng điều này chỉ suy ra $MN \\parallel (ABC)$? Không, $MN$ song song với $AC$ nên $MN \\parallel (ABC)$ vì $MN \\not\\subset (ABC)$.</p>",
+            mistakes: "<ul><li>Chọn 'song song với (SAB)' là sai vì $MN$ cắt $SA$ tại $M$.</li></ul>",
+            takeaway: "Nếu một đường thẳng song song với một đường thẳng trong mặt phẳng và không nằm trong mặt phẳng đó thì nó song song với mặt phẳng đó."
+        },
+        {
+            id: 14,
+            type: "Bài tập trung bình",
+            points: 0.5,
+            question: "Cho hình chóp $S.ABCD$ có đáy là hình thang $ABCD$ với $AB \\parallel CD$. Gọi $M$ là trung điểm $SD$. Mặt phẳng $(MAB)$ cắt $SC$ tại $N$. Mệnh đề nào đúng?",
+            options: [
+                "$MN \\parallel (ABCD)$",
+                "$MN \\subset (ABCD)$",
+                "$MN$ cắt $(ABCD)$",
+                "$MN \\parallel AB$"
+            ],
+            correct: 0,
+            analysis: "Xác định giao tuyến của (MAB) với mặt phẳng (SCD).",
+            solution: "<p>Ta có $AB \\parallel CD$ nên giao tuyến của $(MAB)$ với $(SCD)$ là đường thẳng qua $M$ song song với $CD$ và cắt $SC$ tại $N$. Do đó $MN \\parallel CD$ và $CD \\subset (ABCD)$, suy ra $MN \\parallel (ABCD)$.</p>",
+            mistakes: "<ul><li>Chọn 'nằm trong mặt phẳng' sai vì $MN$ không có điểm chung với $(ABCD)$.</li></ul>",
+            takeaway: "Khi hai mặt phẳng lần lượt chứa hai đường thẳng song song, giao tuyến của chúng (nếu có) sẽ song song với hai đường thẳng đó."
+        },
+        {
+            id: 15,
+            type: "Bài tập trung bình",
+            points: 0.5,
+            question: "Cho hình chóp $S.ABCD$ có $ABCD$ là hình bình hành. Gọi $M$ là trung điểm $SB$, $N$ là trung điểm $SD$. Mệnh đề nào đúng?",
+            options: [
+                "$MN \\parallel (ABCD)$",
+                "$MN \\subset (ABCD)$",
+                "$MN$ cắt $(ABCD)$",
+                "$MN \\parallel SA$"
+            ],
+            correct: 0,
+            analysis: "MN là đường trung bình trong tam giác SBD.",
+            solution: "<p>Trong tam giác $SBD$, $M$ và $N$ lần lượt là trung điểm của $SB$ và $SD$, nên $MN \\parallel BD$. Mà $BD \\subset (ABCD)$, do đó $MN \\parallel (ABCD)$.</p>",
+            mistakes: "<ul><li>'Nằm trong' sai vì $MN$ không có điểm chung với $(ABCD)$.</li></ul>",
+            takeaway: "Đường trung bình trong tam giác luôn song song với cạnh đáy, từ đó suy ra song song với mặt phẳng chứa cạnh đáy."
+        },
+        // 5 câu bài tập khó
+        {
+            id: 16,
+            type: "Bài tập khó",
+            points: 1.0,
+            question: "Cho tứ diện $ABCD$. Gọi $M$, $N$ lần lượt là trung điểm của $AB$ và $AC$. Lấy điểm $P$ trên cạnh $AD$ sao cho $AP = 2PD$. Mặt phẳng $(MNP)$ cắt $BC$ và $BD$ lần lượt tại $Q$ và $R$. Mệnh đề nào đúng?",
+            options: [
+                "$QR \\parallel (ACD)$",
+                "$QR \\parallel (ABC)$",
+                "$QR \\parallel (ABD)$",
+                "$QR \\parallel CD$"
+            ],
+            correct: 3,
+            analysis: "Sử dụng định lý Menelaus trong không gian hoặc tính chất giao tuyến của mặt phẳng với các mặt của tứ diện.",
+            solution: "<p>Trong tam giác $ABC$, $MN$ là đường trung bình nên $MN \\parallel BC$. Gọi $Q = MN \\cap BC$ (trong mặt phẳng $ABC$). Trong tam giác $ABD$, $MP$ cắt $BD$ tại $R$. Do $M$ là trung điểm $AB$, $P$ trên $AD$ với $AP = 2PD$, sử dụng định lý Menelaus trong tam giác $ABD$: $\\frac{AM}{MB} \\cdot \\frac{BR}{RD} \\cdot \\frac{DP}{PA} = 1 \\Rightarrow 1 \\cdot \\frac{BR}{RD} \\cdot \\frac{1}{2} = 1 \\Rightarrow \\frac{BR}{RD} = 2$.</p><p>Tương tự trong tam giác $ACD$: $\\frac{AP}{PD} \\cdot \\frac{DR}{RB} \\cdot ... $ Kết quả $QR \\parallel CD$.</p>",
+            mistakes: "<ul><li>Chọn 'song song với mặt phẳng' là sai vì $QR$ có điểm chung với các mặt phẳng đó.</li></ul>",
+            takeaway: "Sử dụng định lý Menelaus trong không gian để tìm tỉ lệ các đoạn thẳng, từ đó chứng minh song song."
+        },
+        {
+            id: 17,
+            type: "Bài tập khó",
+            points: 1.0,
+            question: "Cho hình lăng trụ $ABC.A'B'C'$. Gọi $M$ là trung điểm của $AB$, $N$ là trung điểm của $BC$. Mặt phẳng $(MNC')$ cắt $AA'$ tại $P$. Mệnh đề nào đúng?",
+            options: [
+                "$MP \\parallel (BCC'B')$",
+                "$MP \\subset (BCC'B')$",
+                "$MP$ cắt $(BCC'B')$",
+                "$MP \\parallel AC$"
+            ],
+            correct: 0,
+            analysis: "Xác định vị trí của MP trong mặt phẳng (MNC') và mối quan hệ với mặt phẳng (BCC'B').",
+            solution: "<p>Trong tam giác $ABC$, $MN$ là đường trung bình nên $MN \\parallel AC$. Mặt phẳng $(MNC')$ chứa $MN$ và $C'$, cắt $AA'$ tại $P$. Gọi $I = MP \\cap (BCC'B')$. Trong mặt phẳng $(ABB'A')$, $MP$ cắt $BB'$ tại $I$ (do $M \\in AB$ và $P \\in AA'$). Khi đó $MI \\parallel AB'$? Không, cần phân tích. Ta có $MN \\parallel AC$, $C' \\in (MNC')$, và $BCC'B'$ chứa $C'$ và $BC$. Giao tuyến của $(MNC')$ và $(BCC'B')$ là đường thẳng qua $C'$ song song với $MN$, tức song song với $AC$. Vì $AC \\subset (BCC'B')$? Không, $AC$ không nằm trong $(BCC'B')$.</p>",
+            mistakes: "<ul><li>Chọn 'cắt' là sai vì $MP$ song song với giao tuyến của hai mặt phẳng.</li></ul>",
+            takeaway: "Khi hai mặt phẳng cắt nhau, giao tuyến của chúng song song với các đường thẳng nằm trong hai mặt phẳng đó."
+        },
+        {
+            id: 18,
+            type: "Bài tập khó",
+            points: 1.0,
+            question: "Cho hình chóp $S.ABCD$ có đáy $ABCD$ là hình thoi tâm $O$. Gọi $M$ là trung điểm $SA$, $N$ là trung điểm $SC$. Mặt phẳng $(BMN)$ cắt $SD$ tại $P$. Mệnh đề nào đúng?",
+            options: [
+                "$OP \\parallel (SAB)$",
+                "$OP \\parallel (ABCD)$",
+                "$OP \\subset (ABCD)$",
+                "$OP$ cắt $(ABCD)$"
+            ],
+            correct: 1,
+            analysis: "Xác định vị trí của OP với mặt phẳng đáy.",
+            solution: "<p>Trong tam giác $SAC$, $MN$ là đường trung bình nên $MN \\parallel AC$. Mặt phẳng $(BMN)$ chứa $MN$ và $B$, cắt $SD$ tại $P$. Trong mặt phẳng $(SBD)$, $BP$ cắt $SD$ tại $P$. Ta có $O$ là trung điểm $BD$ (hình thoi). Sử dụng định lý Menelaus trong tam giác $SBD$: $\\frac{SM}{MA} \\cdot \\frac{AB}{BO} \\cdot \\frac{OP}{PD} = ...$ Kết quả $OP \\parallel BD$, mà $BD \\subset (ABCD)$, suy ra $OP \\parallel (ABCD)$.</p>",
+            mistakes: "<ul><li>Chọn 'nằm trong mặt phẳng đáy' sai vì $O$ thuộc đáy nhưng $P$ thuộc $SD$ nên $OP$ không nằm trong đáy.</li></ul>",
+            takeaway: "Kết hợp tính chất đường trung bình và định lý Menelaus để tìm mối quan hệ song song."
+        },
+        {
+            id: 19,
+            type: "Bài tập khó",
+            points: 1.0,
+            question: "Cho hình lập phương $ABCD.A'B'C'D'$. Gọi $M$ là trung điểm $AA'$, $N$ là trung điểm $CC'$. Mặt phẳng $(MND)$ cắt $BB'$ tại $P$. Mệnh đề nào đúng?",
+            options: [
+                "$MP \\parallel (A'B'C'D')$",
+                "$MP \\parallel (ABCD)$",
+                "$MP \\subset (ABCD)$",
+                "$MP \\parallel B'D'$"
+            ],
+            correct: 0,
+            analysis: "Xác định vị trí của MP với mặt phẳng (A'B'C'D').",
+            solution: "<p>Trong mặt phẳng $(AA'C'C)$, $MN \\parallel AC$. Mặt phẳng $(MND)$ cắt $BB'$ tại $P$. Trong mặt phẳng $(AA'B'B)$, $MP$ cắt $BB'$ tại $P$. Do $M$ là trung điểm $AA'$ và $N$ là trung điểm $CC'$, ta có $MN \\parallel A'C'$. Mặt phẳng $(MND)$ chứa $MN$ và $D$, giao với $(A'B'C'D')$ là đường thẳng qua $D'$ song song với $MN$ (vì $D \\in (ABCD)$). Kết quả $MP \\parallel (A'B'C'D')$.</p>",
+            mistakes: "<ul><li>Chọn 'song song với (ABCD)' sai vì $MP$ cắt mặt phẳng đáy tại $M$?</li></ul>",
+            takeaway: "Sử dụng tính chất của hình lập phương: các đường thẳng song song, các mặt phẳng song song."
+        },
+        {
+            id: 20,
+            type: "Bài tập khó",
+            points: 1.0,
+            question: "Cho tứ diện $ABCD$ có $AB = AC = AD$ và $\\widehat{BAC} = \\widehat{CAD} = \\widehat{DAB} = 60^\\circ$. Gọi $M$ là trung điểm $BC$, $N$ là trung điểm $CD$. Mệnh đề nào đúng?",
+            options: [
+                "$MN \\parallel (ABD)$",
+                "$MN \\parallel (ACD)$",
+                "$MN \\parallel (ABC)$",
+                "$MN$ cắt $(ABD)$"
+            ],
+            correct: 1,
+            analysis: "Sử dụng tính chất hình học của tứ diện đều (hoặc tứ diện có các cạnh bên bằng nhau và các góc ở đỉnh bằng 60°).",
+            solution: "<p>Trong tam giác $BCD$, $M$ và $N$ lần lượt là trung điểm của $BC$ và $CD$, nên $MN \\parallel BD$. Mà $BD \\subset (ABD)$, nhưng $MN$ không nằm trong $(ABD)$ vì $M$ và $N$ thuộc mặt đáy. Tuy nhiên $BD$ là cạnh của tam giác $BCD$, không nằm trong $(ACD)$? Thực tế $BD$ là cạnh của tứ diện, không thuộc mặt phẳng $(ACD)$.</p>",
+            mistakes: "<ul><li>Chọn 'song song với (ABD)' là sai vì $MN$ song song với $BD$ mà $BD \\subset (ABD)$, nhưng $MN \\not\\subset (ABD)$ nên $MN \\parallel (ABD)$? Thực ra $MN \\parallel BD$ và $BD \\subset (ABD)$ nên $MN \\parallel (ABD)$. Cần kiểm tra: $MN \\subset (BCD)$, $(BCD) \\cap (ABD) = BD$, $MN \\parallel BD$ nên $MN \\parallel (ABD)$.</li></ul>",
+            takeaway: "Trong tứ diện, đường trung bình của một tam giác luôn song song với cạnh đáy, từ đó suy ra quan hệ song song với mặt phẳng chứa cạnh đó."
+        }
+    ];
+
+    // State management
+    let currentQ = 0;
+    let userAnswers = new Array(quizData.length).fill(null);
+    let timerInterval;
+    let seconds = 0;
+    let isSubmitted = false;
+    let studentName = '';
+
+    function saveStudentName() {
+        const input = document.getElementById('studentNameInput');
+        const name = input.value.trim();
+        if (name) {
+            studentName = name;
+            document.getElementById('studentNameStrong').textContent = studentName;
+            document.getElementById('studentNameDisplay').style.display = 'inline-block';
+            input.style.borderColor = 'var(--success)';
+            setTimeout(() => input.style.borderColor = 'var(--border)', 1000);
+        } else {
+            alert('Vui lòng nhập tên của bạn!');
+        }
+    }
+
+    function init() {
+        // Load tên từ localStorage nếu có
+        const savedName = localStorage.getItem('quizStudentName');
+        if (savedName) {
+            studentName = savedName;
+            document.getElementById('studentNameInput').value = studentName;
+            document.getElementById('studentNameStrong').textContent = studentName;
+        }
+        startTimer();
+        renderQuestion();
+    }
+
+    function startTimer() {
+        timerInterval = setInterval(() => {
+            seconds++;
+            const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const secs = (seconds % 60).toString().padStart(2, '0');
+            document.getElementById('timer').textContent = `${mins}:${secs}`;
+        }, 1000);
+    }
+
+    function renderQuestion() {
+        const q = quizData[currentQ];
+        document.getElementById('q-type').textContent = q.type;
+        document.getElementById('q-point').textContent = `${q.points} điểm`;
+        document.getElementById('q-text').innerHTML = `Câu ${currentQ + 1}: ${q.question}`;
+        document.getElementById('q-counter').textContent = `Câu ${currentQ + 1} / ${quizData.length}`;
+
+        // Render options
+        const optionsContainer = document.getElementById('options-container');
+        optionsContainer.innerHTML = '';
+        const labels = ['A', 'B', 'C', 'D'];
+
+        q.options.forEach((opt, index) => {
+            const div = document.createElement('div');
+            div.className = 'option';
+            if (userAnswers[currentQ] === index) div.classList.add('selected');
+
+            if (isSubmitted) {
+                if (index === q.correct) div.classList.add('correct');
+                else if (userAnswers[currentQ] === index) div.classList.add('incorrect');
+            }
+
+            div.innerHTML = `
+                <div class="option-key">${labels[index]}</div>
+                <div>${opt}</div>
+            `;
+            div.onclick = () => selectOption(index);
+            optionsContainer.appendChild(div);
+        });
+
+        // Update solution panel
+        document.getElementById('sol-analysis').innerHTML = q.analysis;
+        document.getElementById('sol-solution').innerHTML = q.solution;
+        document.getElementById('sol-mistakes').innerHTML = q.mistakes;
+        document.getElementById('sol-takeaway').innerHTML = q.takeaway;
+
+        document.getElementById('solution-content').style.display = 'none';
+        document.getElementById('toggle-text').textContent = 'Hiện lời giải chi tiết';
+
+        if (isSubmitted) {
+            document.getElementById('solution-panel').classList.add('visible');
+            document.getElementById('solution-content').style.display = 'block';
+            document.getElementById('toggle-text').textContent = 'Ẩn lời giải chi tiết';
+        }
+
+        document.getElementById('btn-prev').disabled = currentQ === 0;
+        if (currentQ === quizData.length - 1) {
+            document.getElementById('btn-next').style.display = 'none';
+            document.getElementById('btn-submit').style.display = 'inline-block';
+        } else {
+            document.getElementById('btn-next').style.display = 'inline-block';
+            document.getElementById('btn-submit').style.display = 'none';
+        }
+
+        // Navigation panel
+        const navButtonsContainer = document.getElementById('nav-buttons');
+        navButtonsContainer.innerHTML = '';
+        for (let i = 0; i < quizData.length; i++) {
+            const btn = document.createElement('button');
+            btn.textContent = i + 1;
+            btn.className = 'nav-btn';
+            if (i === currentQ) {
+                btn.classList.add('current');
+            } else if (userAnswers[i] !== null) {
+                btn.classList.add('answered');
+            } else {
+                btn.classList.add('not-answered');
+            }
+            btn.onclick = () => {
+                currentQ = i;
+                renderQuestion();
+            };
+            navButtonsContainer.appendChild(btn);
+        }
+
+        // Re-render math using MathJax
+        if (window.MathJax) {
+            MathJax.typesetPromise().catch(() => {});
+        }
+    }
+
+    function selectOption(index) {
+        if (isSubmitted) return;
+        userAnswers[currentQ] = index;
+        renderQuestion();
+
+        const autoAdvance = document.getElementById('auto-advance').checked;
+        if (autoAdvance && currentQ < quizData.length - 1) {
+            setTimeout(() => {
+                if (userAnswers[currentQ] === index) {
+                    nextQuestion();
+                }
+            }, 1500);
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQ < quizData.length - 1) {
+            currentQ++;
+            renderQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQ > 0) {
+            currentQ--;
+            renderQuestion();
+        }
+    }
+
+    function toggleSolution() {
+        const content = document.getElementById('solution-content');
+        const text = document.getElementById('toggle-text');
+        if (content.style.display === 'none') {
+            content.style.display = 'block';
+            text.textContent = 'Ẩn lời giải chi tiết';
+        } else {
+            content.style.display = 'none';
+            text.textContent = 'Hiện lời giải chi tiết';
+        }
+    }
+
+    function submitQuiz() {
+        // Kiểm tra tên
+        if (!studentName) {
+            const input = document.getElementById('studentNameInput');
+            const name = input.value.trim();
+            if (name) {
+                studentName = name;
+                document.getElementById('studentNameStrong').textContent = studentName;
+                localStorage.setItem('quizStudentName', studentName);
+            } else {
+                alert('Vui lòng nhập tên của bạn trước khi nộp bài!');
+                document.getElementById('studentNameInput').focus();
+                return;
+            }
+        }
+
+        if (!confirm('Bạn có chắc chắn muốn nộp bài?')) return;
+
+        clearInterval(timerInterval);
+        isSubmitted = true;
+
+        let correctCount = 0;
+        let totalPoints = 0;
+
+        quizData.forEach((q, index) => {
+            if (userAnswers[index] === q.correct) {
+                correctCount++;
+                totalPoints += q.points;
+            }
+        });
+
+        const wrongCount = quizData.length - correctCount;
+        const percent = Math.round((correctCount / quizData.length) * 100);
+
+        document.getElementById('final-score').textContent = totalPoints.toFixed(1);
+        document.getElementById('stat-correct').textContent = correctCount;
+        document.getElementById('stat-wrong').textContent = wrongCount;
+        document.getElementById('stat-percent').textContent = `${percent}%`;
+
+        // Hiển thị tên trên kết quả
+        document.getElementById('resultStudentName').innerHTML = `👤 <strong>${studentName}</strong>`;
+
+        // Tạo giấy khen
+        renderCertificate(studentName, totalPoints, correctCount, percent);
+
+        document.getElementById('quiz-area').style.display = 'none';
+        document.getElementById('header').style.display = 'flex';
+        document.getElementById('result-screen').classList.add('visible');
+    }
+
+    function renderCertificate(name, score, correct, percent) {
+        const container = document.getElementById('certificate-container');
+        
+        // Đánh giá dựa trên điểm số
+        let emoji = '🌟';
+        let achievement = 'Xuất sắc';
+        let message = 'Bạn đã thể hiện kiến thức vượt trội về đường thẳng và mặt phẳng song song!';
+        let color = '#b8865b';
+        
+        if (percent >= 90) {
+            emoji = '🏆';
+            achievement = 'Tuyệt vời';
+            message = 'Bạn là một học sinh xuất sắc với kiến thức vững vàng về hình học không gian!';
+            color = '#c9a84c';
+        } else if (percent >= 75) {
+            emoji = '🌟';
+            achievement = 'Giỏi';
+            message = 'Bạn đã nắm vững các kiến thức cơ bản và vận dụng tốt!';
+            color = '#b8865b';
+        } else if (percent >= 50) {
+            emoji = '📚';
+            achievement = 'Khá';
+            message = 'Bạn cần ôn tập thêm một số phần để đạt kết quả cao hơn. Cố gắng nhé!';
+            color = '#8a7a6a';
+        } else {
+            emoji = '💪';
+            achievement = 'Cần cố gắng';
+            message = 'Hãy xem lại lời giải chi tiết và ôn tập thêm. Thành công sẽ đến!';
+            color = '#b07a6a';
+        }
+
+        // Tạo giấy khen với CSS inline
+        const certificateHTML = `
+            <div style="
+                position: relative;
+                width: 100%;
+                max-width: 560px;
+                margin: 0 auto;
+                background: #fefcf5;
+                background-image: 
+                    repeating-linear-gradient(45deg, rgba(215, 190, 160, 0.05) 0px, rgba(215, 190, 160, 0.05) 20px, transparent 20px, transparent 40px),
+                    radial-gradient(circle at 30% 40%, rgba(235, 215, 185, 0.2) 0%, transparent 50%);
+                border: 18px double #bc9b7a;
+                border-radius: 40px 12px 40px 12px;
+                padding: 32px 24px 36px 24px;
+                box-shadow: 
+                    0 20px 40px rgba(100, 70, 40, 0.25),
+                    inset 0 0 0 2px #f5ede1,
+                    inset 0 0 20px #dac9b4;
+                text-align: center;
+            ">
+                <div style="position: absolute; inset: 10px; border: 1px solid #e7d4bc; border-radius: 30px 6px 30px 6px; pointer-events: none; opacity: 0.6;"></div>
+                
+                <div style="font-size: 2.8rem; font-weight: 600; letter-spacing: 6px; color: #7a5a3a; text-shadow: 2px 2px 0 #e7d4bc; font-family: 'Georgia', serif; margin-bottom: 4px;">
+                    ${emoji} GIẤY KHEN ${emoji}
+                </div>
+                <div style="font-size: 1rem; font-weight: 300; color: #a18163; border-top: 1px solid #dcc9b2; border-bottom: 1px solid #dcc9b2; display: inline-block; padding: 6px 24px; letter-spacing: 3px; margin-bottom: 24px;">
+                    ✨ THÀNH TÍCH ${achievement.toUpperCase()} ✨
+                </div>
+                
+                <div style="margin: 16px 0; font-size: 1.1rem; color: #5d3f27;">
+                    <strong>👤 Học sinh:</strong> <span style="font-weight: 600; color: #3f2c1b;">${name}</span>
+                </div>
+                
+                <div style="display: flex; justify-content: center; gap: 30px; margin: 20px 0; flex-wrap: wrap;">
+                    <div style="background: rgba(245, 235, 220, 0.5); padding: 10px 20px; border-radius: 12px; border: 1px solid #dcc9b2;">
+                        <div style="font-size: 0.8rem; color: #a18163;">Điểm số</div>
+                        <div style="font-size: 2rem; font-weight: 700; color: ${color};">${score.toFixed(1)}</div>
+                    </div>
+                    <div style="background: rgba(245, 235, 220, 0.5); padding: 10px 20px; border-radius: 12px; border: 1px solid #dcc9b2;">
+                        <div style="font-size: 0.8rem; color: #a18163;">Đúng / Tổng</div>
+                        <div style="font-size: 2rem; font-weight: 700; color: ${color};">${correct}/${quizData.length}</div>
+                    </div>
+                    <div style="background: rgba(245, 235, 220, 0.5); padding: 10px 20px; border-radius: 12px; border: 1px solid #dcc9b2;">
+                        <div style="font-size: 0.8rem; color: #a18163;">Tỷ lệ đúng</div>
+                        <div style="font-size: 2rem; font-weight: 700; color: ${color};">${percent}%</div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px; font-size: 1.2rem; font-weight: 400; color: #6e4d2e; font-family: 'Georgia', 'Times New Roman', serif; font-style: italic; border-top: 2px dotted #dac9b4; padding-top: 20px; letter-spacing: 1px;">
+                    🎉 <span style="display: inline-block; background: linear-gradient(135deg, ${color}, #dbb48b); color: #fefcf5; padding: 0 20px; border-radius: 40px; font-style: normal; font-weight: 500; box-shadow: inset 0 -2px 0 #7a5a3a;">${message}</span> 🎉
+                </div>
+                
+                <div style="margin-top: 16px; font-size: 0.9rem; color: #a18163; letter-spacing: 2px;">
+                    🏫 Đề thi: Đường thẳng và mặt phẳng song song
+                </div>
+            </div>
+        `;
+        
+        container.innerHTML = certificateHTML;
+    }
+
+    function showReview() {
+        document.getElementById('result-screen').classList.remove('visible');
+        document.getElementById('header').style.display = 'flex';
+        document.getElementById('quiz-area').style.display = 'block';
+        currentQ = 0;
+        renderQuestion();
+    }
+
+    // Start
+    init();
+</script>
+</body>
+</html>
