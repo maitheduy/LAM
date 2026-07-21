@@ -1064,7 +1064,7 @@ function buildLearningProfile() {
         }
 
         if (!confirm('Bạn có chắc chắn muốn nộp bài?')) return;
-
+        buildLearningProfile();
         clearInterval(timerInterval);
         isSubmitted = true;
 
