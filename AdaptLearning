@@ -1080,6 +1080,14 @@ function buildLearningProfile() {
 
         const wrongCount = quizData.length - correctCount;
         const percent = Math.round((correctCount / quizData.length) * 100);
+        javascript
+        learningProfile.exam.score = totalPoints;
+        learningProfile.exam.percent = percent;
+        learningProfile.exam.correct = correctCount;
+        learningProfile.exam.wrong = wrongCount;
+        learningProfile.exam.time = seconds;
+        learningProfile.exam.submitTime = new Date().toLocaleString();
+
 
         document.getElementById('final-score').textContent = totalPoints.toFixed(1);
         document.getElementById('stat-correct').textContent = correctCount;
