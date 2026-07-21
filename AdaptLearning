@@ -1220,6 +1220,11 @@ function analyzeStrengths() {
 
         collectCorrectQuestions();
         collectWrongQuestions();
+
+        analyzeWeaknesses();
+        analyzeStrengths();
+
+
         console.log(learningProfile);
 
 
