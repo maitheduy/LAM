@@ -1018,6 +1018,39 @@ function analyzeStrengths() {
 
 }
 
+/********************************************************************
+ * Tạo Prompt cho AI
+ ********************************************************************/
+function buildAIPrompt() {
+
+    learningProfile.aiPrompt =
+`Bạn là một giáo viên Toán THPT có trên 20 năm kinh nghiệm.
+
+Dựa vào Learning Profile của học sinh dưới đây, hãy xây dựng một chương trình ôn tập cá nhân hóa.
+
+Yêu cầu:
+
+1. Phân tích các điểm mạnh và điểm yếu của học sinh.
+
+2. Ưu tiên các chủ đề xuất hiện trong weaknesses.
+
+3. Không lặp lại nguyên văn các câu hỏi cũ.
+
+4. Tạo một đề luyện tập mới với độ khó tăng dần.
+
+5. Sau mỗi câu hỏi phải có lời giải chi tiết.
+
+6. Giải thích vì sao học sinh dễ mắc lỗi.
+
+7. Đưa ra mẹo ghi nhớ ngắn gọn.
+
+8. Cuối bài hãy đánh giá mức độ tiến bộ mong đợi nếu học sinh hoàn thành đề luyện tập này.
+
+Dữ liệu học tập của học sinh nằm trong chính file JSON này.`;
+}
+
+
+
 
 
     function saveStudentName() {
