@@ -862,6 +862,33 @@ let learningProfile = {
 
     aiPrompt: ""
 };
+ ```javascript
+/********************************************************************
+ * Khởi tạo Learning Profile
+ ********************************************************************/
+function buildLearningProfile() {
+
+    learningProfile.student.name = studentName;
+
+    learningProfile.exam.title = document.title;
+    learningProfile.exam.subject = "";
+    learningProfile.exam.totalQuestions = quizData.length;
+    learningProfile.exam.score = 0;
+    learningProfile.exam.percent = 0;
+    learningProfile.exam.correct = 0;
+    learningProfile.exam.wrong = 0;
+    learningProfile.exam.time = 0;
+    learningProfile.exam.submitTime = "";
+
+    learningProfile.statistics = {};
+
+    learningProfile.correctQuestions = [];
+    learningProfile.wrongQuestions = [];
+    learningProfile.weaknesses = [];
+    learningProfile.strengths = [];
+    learningProfile.aiPrompt = "";
+}
+
 
     function saveStudentName() {
         const input = document.getElementById('studentNameInput');
