@@ -958,6 +958,35 @@ function collectWrongQuestions() {
 }
 
 
+/********************************************************************
+ * Phân tích điểm yếu theo chủ đề
+ ********************************************************************/
+function analyzeWeaknesses() {
+
+    const map = {};
+
+    learningProfile.wrongQuestions.forEach(item => {
+
+        const key = item.knowledge || "Chưa phân loại";
+
+        if (!map[key]) {
+            map[key] = {
+                topic: key,
+                wrong: 0
+            };
+        }
+
+        map[key].wrong++;
+
+    });
+
+    learningProfile.weaknesses = Object.values(map);
+
+    learningProfile.weaknesses.sort((a, b) => b.wrong - a.wrong);
+
+}
+
+
 }
 
 
