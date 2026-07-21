@@ -986,6 +986,35 @@ function analyzeWeaknesses() {
 
 }
 
+/********************************************************************
+ * Phân tích điểm mạnh theo chủ đề
+ ********************************************************************/
+function analyzeStrengths() {
+
+    const map = {};
+
+    learningProfile.correctQuestions.forEach(item => {
+
+        const key = item.knowledge || "Chưa phân loại";
+
+        if (!map[key]) {
+            map[key] = {
+                topic: key,
+                correct: 0
+            };
+        }
+
+        map[key].correct++;
+
+    });
+
+    learningProfile.strengths = Object.values(map);
+
+    learningProfile.strengths.sort((a, b) => b.correct - a.correct);
+
+}
+
+
 
 }
 
