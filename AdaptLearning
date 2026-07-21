@@ -1160,6 +1160,11 @@ function collectWrongQuestions() {
         learningProfile.exam.time = seconds;
         learningProfile.exam.submitTime = new Date().toLocaleString();
 
+        collectCorrectQuestions();
+        collectWrongQuestions();
+        console.log(learningProfile);
+
+
 
         document.getElementById('final-score').textContent = totalPoints.toFixed(1);
         document.getElementById('stat-correct').textContent = correctCount;
