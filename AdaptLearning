@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head>
+<head> 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đề thi trắc nghiệm - Đường thẳng và mặt phẳng song song</title>
@@ -822,6 +822,43 @@
     let seconds = 0;
     let isSubmitted = false;
     let studentName = '';
+    /********************************************************************
+ * Learning Profile
+ ********************************************************************/
+const APP_VERSION = "2.0";
+
+let learningProfile = {
+    appVersion: APP_VERSION,
+
+    student: {
+        name: "",
+        id: "",
+        class: "",
+        school: ""
+    },
+
+    exam: {
+        title: "",
+        subject: "",
+        totalQuestions: 0,
+        score: 0,
+        percent: 0,
+        correct: 0,
+        wrong: 0,
+        time: 0,
+        submitTime: ""
+    },
+
+    statistics: {},
+
+    wrongQuestions: [],
+    correctQuestions: [],
+
+    weaknesses: [],
+    strengths: [],
+
+    aiPrompt: ""
+};
 
     function saveStudentName() {
         const input = document.getElementById('studentNameInput');
