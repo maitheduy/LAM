@@ -1256,6 +1256,9 @@ Dữ liệu học tập của học sinh nằm trong chính file JSON này.`;
 
         analyzeWeaknesses();
         analyzeStrengths();
+ 
+        buildAIPrompt();
+ 
 
 
         console.log(learningProfile);
