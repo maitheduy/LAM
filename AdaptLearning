@@ -889,6 +889,39 @@ function buildLearningProfile() {
     learningProfile.aiPrompt = "";
 }
 
+/********************************************************************
+ * Thu thập các câu làm đúng
+ ********************************************************************/
+function collectCorrectQuestions() {
+
+    learningProfile.correctQuestions = [];
+
+    quizData.forEach((q, index) => {
+
+        if (userAnswers[index] === q.correct) {
+
+            learningProfile.correctQuestions.push({
+
+                id: q.id,
+                type: q.type,
+                knowledge: q.knowledge || "",
+                skill: q.skill || "",
+                difficulty: q.difficulty || "",
+
+                question: q.question,
+                options: q.options,
+
+                correctAnswer: q.correct,
+                studentAnswer: userAnswers[index]
+            });
+
+        }
+
+    });
+
+}
+
+
 
     function saveStudentName() {
         const input = document.getElementById('studentNameInput');
