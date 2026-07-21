@@ -98,6 +98,9 @@
             border-radius: 12px;
             padding: 16px;
             border: 1px solid var(--border);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
         }
 
         /* Question Card */
@@ -193,6 +196,7 @@
         .nav-btn.current {
             background-color: var(--primary);
             color: white;
+            box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);
         }
 
         .nav-btn.answered {
@@ -217,6 +221,7 @@
             height: 16px;
             border-radius: 4px;
             margin-right: 6px;
+            vertical-align: middle;
         }
 
         .legend-item.current { background-color: var(--primary); }
@@ -276,6 +281,7 @@
             margin-bottom: 16px;
             user-select: none;
         }
+        .solution-toggle:hover { color: var(--primary-hover); }
 
         .pedagogy-section {
             margin-bottom: 20px;
@@ -334,6 +340,7 @@
             }
             .navigation-panel {
                 flex: 0 0 auto;
+                position: static;
             }
             .stats-grid { grid-template-columns: 1fr; }
             .nav-controls { flex-direction: column; gap: 12px; }
@@ -347,7 +354,7 @@
     <div class="header" id="header">
         <h1>Đề thi trắc nghiệm - Đường thẳng và mặt phẳng song song</h1>
         <div class="header-right">
-            <span class="student-name-display" id="studentNameDisplay">👤 <strong id="studentNameStrong">Học sinh</strong></span>
+            <span class="student-name-display" id="studentNameDisplay" style="display: none;">👤 <strong id="studentNameStrong">Học sinh</strong></span>
             <div class="timer" id="timer">00:00</div>
         </div>
     </div>
@@ -411,7 +418,7 @@
                     <span id="q-counter" style="font-weight: 600; color: var(--text-light);">Câu 1 / 20</span>
                     <div class="auto-advance">
                         <input type="checkbox" id="auto-advance" checked>
-                        <label for="auto-advance">Tự động chuyển câu sau 3s</label>
+                        <label for="auto-advance">Tự động chuyển câu sau 1.5s</label>
                     </div>
                 </div>
                 <button class="btn btn-primary" id="btn-next" onclick="nextQuestion()">Câu tiếp theo</button>
@@ -564,10 +571,10 @@
             question: "Cho hình hộp $ABCD.A'B'C'D'$. Mệnh đề nào sau đây đúng?",
             options: ["$A'B \\parallel (CDD'C')$", "$A'B \\subset (CDD'C')$", "$A'B$ cắt $(CDD'C')$", "$A'B \\parallel BC$"],
             correct: 0,
-            analysis: "Trong hình hộp, các cạnh đối song song.",
-            solution: "<p>Ta có $A'B \\parallel AB$ (sai, thực tế $A'B$ không song song $AB$, nhưng $A'B' \\parallel AB \\parallel CD$). Chính xác hơn: $A'B$ nằm trong mp $(ABB'A')$ song song với mp $(DCC'D')$. Do đó $A'B \\parallel (CDD'C')$.</p>",
-            mistakes: "<ul><li>'Nằm trong' sai vì $A'B$ không có điểm chung với mặt phẳng đó.</li></ul>",
-            takeaway: "Trong hình hộp, các đường thẳng nằm trên mặt này sẽ song song với mặt đối diện."
+            analysis: "Trong hình hộp, các mặt đối diện song song với nhau.",
+            solution: "<p>Trong hình hộp, mặt phẳng $(ABB'A')$ song song với mặt phẳng $(DCC'D')$. Vì đường thẳng $A'B$ nằm hoàn toàn trong mặt phẳng $(ABB'A')$, nên $A'B$ song song với mặt phẳng $(CDD'C')$.</p>",
+            mistakes: "<ul><li>'Nằm trong' sai vì $A'B$ không có điểm chung với mặt phẳng $(CDD'C')$.</li></ul>",
+            takeaway: "Trong hình hộp, mọi đường thẳng nằm trên mặt này sẽ song song với mặt phẳng đối diện."
         },
         {
             id: 11, type: "Bài tập trung bình", points: 0.5, knowledge: "Thiết diện", skill: "Vận dụng cao", difficulty: "Medium",
@@ -593,7 +600,7 @@
             id: 13, type: "Bài tập trung bình", points: 0.5, knowledge: "Đường trung bình", skill: "Vận dụng", difficulty: "Medium",
             question: "Cho hình chóp $S.ABC$. Gọi $M$ là trung điểm $SA$, $N$ là trung điểm $SC$. Mệnh đề nào đúng?",
             options: ["$MN \\parallel (SAB)$", "$MN \\parallel (ABC)$", "$MN \\subset (ABC)$", "$MN$ cắt $(ABC)$"],
-            correct: 1, // Sửa lại đáp án đúng là MN // (ABC)
+            correct: 1, // Đáp án đúng là MN // (ABC)
             analysis: "MN là đường trung bình trong tam giác SAC.",
             solution: "<p>Trong tam giác $SAC$, $M$ và $N$ lần lượt là trung điểm của $SA$ và $SC$, nên $MN \\parallel AC$. Mà $AC \\subset (ABC)$ và $MN \\not\\subset (ABC)$, do đó $MN \\parallel (ABC)$.</p>",
             mistakes: "<ul><li>Chọn 'song song với (SAB)' là sai vì $MN$ cắt $SA$ tại $M$.</li></ul>",
@@ -678,11 +685,12 @@
     let seconds = 0;
     let isSubmitted = false;
     let studentName = '';
+    let autoAdvanceTimeout = null; // Thêm biến để quản lý timeout
 
     /********************************************************************
      * Learning Profile
      ********************************************************************/
-    const APP_VERSION = "2.0";
+    const APP_VERSION = "2.1"; // Cập nhật version
 
     let learningProfile = {
         appVersion: APP_VERSION,
@@ -797,40 +805,26 @@
         learningProfile.strengths = Object.values(map);
         learningProfile.strengths.sort((a, b) => b.correct - a.correct);
     }
-/********************************************************************
- * Thống kê kết quả theo chủ đề
- ********************************************************************/
-function buildStatistics() {
 
-    const stats = {};
-
-    quizData.forEach((q, index) => {
-
-        const key = q.knowledge || "Chưa phân loại";
-
-        if (!stats[key]) {
-
-            stats[key] = {
-                total: 0,
-                correct: 0,
-                wrong: 0
-            };
-
-        }
-
-        stats[key].total++;
-
-        if (userAnswers[index] === q.correct) {
-            stats[key].correct++;
-        } else {
-            stats[key].wrong++;
-        }
-
-    });
-
-    learningProfile.statistics = stats;
-
-}
+    /********************************************************************
+     * Thống kê kết quả theo chủ đề
+     ********************************************************************/
+    function buildStatistics() {
+        const stats = {};
+        quizData.forEach((q, index) => {
+            const key = q.knowledge || "Chưa phân loại";
+            if (!stats[key]) {
+                stats[key] = { total: 0, correct: 0, wrong: 0 };
+            }
+            stats[key].total++;
+            if (userAnswers[index] === q.correct) {
+                stats[key].correct++;
+            } else {
+                stats[key].wrong++;
+            }
+        });
+        learningProfile.statistics = stats;
+    }
 
     /********************************************************************
      * Tạo Prompt cho AI
@@ -843,17 +837,21 @@ function buildStatistics() {
      * Tải Learning Profile (.json)
      ********************************************************************/
     function downloadLearningProfile() {
-        const fileName = (studentName || "HocSinh").replace(/\s+/g, "_") + "_LearningProfile.json";
-        const json = JSON.stringify(learningProfile, null, 4);
-        const blob = new Blob([json], { type: "application/json;charset=utf-8" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        try {
+            const fileName = (studentName || "HocSinh").replace(/\s+/g, "_") + "_LearningProfile.json";
+            const json = JSON.stringify(learningProfile, null, 4);
+            const blob = new Blob([json], { type: "application/json;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } catch (e) {
+            console.error("Lỗi khi tải Learning Profile:", e);
+        }
     }
 
     function saveStudentName() {
@@ -864,7 +862,11 @@ function buildStatistics() {
             document.getElementById('studentNameStrong').textContent = studentName;
             document.getElementById('studentNameDisplay').style.display = 'inline-block';
             input.style.borderColor = 'var(--success)';
-            localStorage.setItem('quizStudentName', studentName);
+            try {
+                localStorage.setItem('quizStudentName', studentName);
+            } catch (e) {
+                console.warn("Không thể lưu vào localStorage:", e);
+            }
             setTimeout(() => input.style.borderColor = 'var(--border)', 1000);
         } else {
             alert('Vui lòng nhập tên của bạn!');
@@ -872,12 +874,16 @@ function buildStatistics() {
     }
 
     function init() {
-        const savedName = localStorage.getItem('quizStudentName');
-        if (savedName) {
-            studentName = savedName;
-            document.getElementById('studentNameInput').value = studentName;
-            document.getElementById('studentNameStrong').textContent = studentName;
-            document.getElementById('studentNameDisplay').style.display = 'inline-block';
+        try {
+            const savedName = localStorage.getItem('quizStudentName');
+            if (savedName) {
+                studentName = savedName;
+                document.getElementById('studentNameInput').value = studentName;
+                document.getElementById('studentNameStrong').textContent = studentName;
+                document.getElementById('studentNameDisplay').style.display = 'inline-block';
+            }
+        } catch (e) {
+            console.warn("Không thể đọc từ localStorage:", e);
         }
         startTimer();
         renderQuestion();
@@ -961,8 +967,9 @@ function buildStatistics() {
             navButtonsContainer.appendChild(btn);
         }
 
+        // Kích hoạt lại MathJax để render công thức sau khi cập nhật DOM
         if (window.MathJax) {
-            MathJax.typesetPromise().catch(() => {});
+            MathJax.typesetPromise().catch((err) => console.error("MathJax error:", err));
         }
     }
 
@@ -973,7 +980,11 @@ function buildStatistics() {
 
         const autoAdvance = document.getElementById('auto-advance').checked;
         if (autoAdvance && currentQ < quizData.length - 1) {
-            setTimeout(() => {
+            // Xóa timeout cũ nếu có để tránh nhảy câu dồn dập khi click nhanh
+            if (autoAdvanceTimeout) clearTimeout(autoAdvanceTimeout);
+            
+            autoAdvanceTimeout = setTimeout(() => {
+                // Kiểm tra lại xem người dùng có đổi lựa chọn trong lúc chờ không
                 if (userAnswers[currentQ] === index) {
                     nextQuestion();
                 }
@@ -1014,7 +1025,12 @@ function buildStatistics() {
             if (name) {
                 studentName = name;
                 document.getElementById('studentNameStrong').textContent = studentName;
-                localStorage.setItem('quizStudentName', studentName);
+                document.getElementById('studentNameDisplay').style.display = 'inline-block';
+                try {
+                    localStorage.setItem('quizStudentName', studentName);
+                } catch (e) {
+                    console.warn("Không thể lưu vào localStorage:", e);
+                }
             } else {
                 alert('Vui lòng nhập tên của bạn trước khi nộp bài!');
                 document.getElementById('studentNameInput').focus();
@@ -1057,7 +1073,7 @@ function buildStatistics() {
 
         downloadLearningProfile();
 
-        console.log(learningProfile);
+        console.log("Learning Profile:", learningProfile);
 
         document.getElementById('final-score').textContent = totalPoints.toFixed(1);
         document.getElementById('stat-correct').textContent = correctCount;
@@ -1070,6 +1086,9 @@ function buildStatistics() {
         document.getElementById('quiz-area').style.display = 'none';
         document.getElementById('header').style.display = 'flex';
         document.getElementById('result-screen').classList.add('visible');
+        
+        // Cuộn lên đầu trang để xem kết quả
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function renderCertificate(name, score, correct, percent) {
@@ -1165,8 +1184,13 @@ function buildStatistics() {
         document.getElementById('result-screen').classList.remove('visible');
         document.getElementById('header').style.display = 'flex';
         document.getElementById('quiz-area').style.display = 'block';
+        
+        // Ẩn ô nhập tên khi xem lại để giao diện gọn gàng hơn
+        document.getElementById('nameInputCard').style.display = 'none';
+        
         currentQ = 0;
         renderQuestion();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     // Start
