@@ -1049,6 +1049,43 @@ Yêu cầu:
 Dữ liệu học tập của học sinh nằm trong chính file JSON này.`;
 }
 
+/********************************************************************
+ * Tải Learning Profile (.json)
+ ********************************************************************/
+function downloadLearningProfile() {
+
+    const fileName =
+        (studentName || "HocSinh")
+            .replace(/\s+/g, "_")
+        + "_LearningProfile.json";
+
+    const json = JSON.stringify(learningProfile, null, 4);
+
+    const blob = new Blob(
+        [json],
+        {
+            type: "application/json;charset=utf-8"
+        }
+    );
+
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+
+    a.href = url;
+    a.download = fileName;
+
+    document.body.appendChild(a);
+
+    a.click();
+
+    document.body.removeChild(a);
+
+    URL.revokeObjectURL(url);
+
+}
+
+
 
 
 
