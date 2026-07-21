@@ -1052,6 +1052,7 @@ function buildStatistics() {
         collectWrongQuestions();
         analyzeWeaknesses();
         analyzeStrengths();
+        buildStatistics();
         buildAIPrompt();
 
         downloadLearningProfile();
