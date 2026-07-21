@@ -474,6 +474,9 @@
             id: 1,
             type: "Lý thuyết",
             points: 0.25,
+            knowledge: "Đường thẳng song song với mặt phẳng",
+            skill: "Nhận biết định nghĩa",
+            difficulty: "Theory",
             question: "Trong không gian, một đường thẳng và một mặt phẳng được gọi là song song với nhau nếu:",
             options: [
                 "Chúng không có điểm chung.",
