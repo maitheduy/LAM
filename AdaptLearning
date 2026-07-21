@@ -797,6 +797,40 @@
         learningProfile.strengths = Object.values(map);
         learningProfile.strengths.sort((a, b) => b.correct - a.correct);
     }
+/********************************************************************
+ * Thống kê kết quả theo chủ đề
+ ********************************************************************/
+function buildStatistics() {
+
+    const stats = {};
+
+    quizData.forEach((q, index) => {
+
+        const key = q.knowledge || "Chưa phân loại";
+
+        if (!stats[key]) {
+
+            stats[key] = {
+                total: 0,
+                correct: 0,
+                wrong: 0
+            };
+
+        }
+
+        stats[key].total++;
+
+        if (userAnswers[index] === q.correct) {
+            stats[key].correct++;
+        } else {
+            stats[key].wrong++;
+        }
+
+    });
+
+    learningProfile.statistics = stats;
+
+}
 
     /********************************************************************
      * Tạo Prompt cho AI
