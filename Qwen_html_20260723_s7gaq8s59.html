@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đề thi trắc nghiệm - Hai đường thẳng chéo nhau</title>
+ 
+    <script>
+        MathJax = {
+            tex: { 
+                inlineMath: [['$', '$'], ['\\(', '\\)']], 
+                displayMath: [['$$', '$$'], ['\\[', '\\]']] 
+            },
+            svg: { fontCache: 'global' },
+            options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+ 
+    <style>
+        :root {
+            --primary: #2563eb; --primary-hover: #1d4ed8; --success: #10b981;
+            --error: #ef4444; --bg: #f4f6f8; --card-bg: #ffffff;
+            --text: #1f2937; --text-light: #6b7280; --border: #e5e7eb;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg); color: var(--text); line-height: 1.6; padding: 20px;
+        }
+        .container { max-width: 1100px; margin: 0 auto; }
+        .header {
+            background: var(--card-bg); padding: 16px 24px; border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; justify-content: space-between;
+            align-items: center; font-size: 24px; border: 1px solid var(--border); flex-wrap: wrap; gap: 10px;
+        }
+        .header h1 { font-size: 1.25rem; font-weight: 600; }
+        .header-right { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+        .timer {
+            font-family: monospace; font-size: 1.1rem; font-weight: 600; color: var(--primary);
+            background: #eff6ff; padding: 6px 12px; border-radius: 6px;
+        }
+        .student-name-display {
+            font-size: 0.95rem; color: var(--text-light); background: #f3f4f6;
+            padding: 4px 12px; border-radius: 6px;
+        }
+        .student-name-display strong { color: var(--text); }
+        #quiz-area { display: flex; gap: 20px; }
+        .main-content { flex: 1; min-width: 0; }
+        .navigation-panel {
+            flex: 0 0 280px; background: var(--card-bg); border-radius: 12px; padding: 16px;
+            border: 1px solid var(--border); height: fit-content; position: sticky; top: 20px;
+        }
+        .card {
+            background: var(--card-bg); border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 24px; margin-bottom: 20px; border: 1px solid var(--border);
+        }
+        .question-meta { display: flex; gap: 12px; margin-bottom: 16px; font-size: 0.875rem; }
+        .badge { padding: 4px 10px; border-radius: 20px; font-weight: 500; }
+        .badge-type { background: #dbeafe; color: #1e40af; }
+        .badge-point { background: #f3f4f6; color: #4b5563; }
+        .question-text { font-size: 1.125rem; font-weight: 500; margin-bottom: 20px; }
+        
+        #plot-container {
+            width: 100%; height: 380px; background: #fafafa; border-radius: 8px;
+            margin-bottom: 20px; border: 1px solid var(--border); overflow: hidden; position: relative;
+        }
+        
+        .options { display: flex; flex-direction: column; gap: 12px; }
+        .option {
+            display: flex; align-items: center; padding: 14px 16px; border: 2px solid var(--border);
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff;
+        }
+        .option:hover { border-color: var(--primary); background: #eff6ff; }
+        .option.selected { border-color: var(--primary); background: #eff6ff; }
+        .option.correct { border-color: var(--success); background: #ecfdf5; }
+        .option.incorrect { border-color: var(--error); background: #fef2f2; }
+        .option-key {
+            width: 28px; height: 28px; border-radius: 50%; background: #f3f4f6;
+            display: flex; align-items: center; justify-content: center; font-weight: 600;
+            margin-right: 12px; flex-shrink: 0; font-size: 0.875rem;
+        }
+        .option.selected .option-key { background: var(--primary); color: white; }
+        .option.correct .option-key { background: var(--success); color: white; }
+        .option.incorrect .option-key { background: var(--error); color: white; }
+        
+        .nav-title { font-weight: 600; font-size: 1.1rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        #nav-buttons { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 12px; }
+        .nav-btn {
+            width: 100%; padding: 8px; border-radius: 6px; border: none; cursor: pointer;
+            font-weight: 500; transition: all 0.2s; font-size: 0.9rem;
+        }
+        .nav-btn.current { background-color: var(--primary); color: white; box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3); }
+        .nav-btn.answered { background-color: var(--success); color: white; }
+        .nav-btn.not-answered { background-color: var(--border); color: var(--text-light); }
+        .legend { margin-top: 16px; font-size: 0.8rem; color: var(--text-light); }
+        .legend-item {
+            display: inline-block; width: 16px; height: 16px; border-radius: 4px;
+            margin-right: 6px; vertical-align: middle;
+        }
+        .legend-item.current { background-color: var(--primary); }
+        .legend-item.answered { background-color: var(--success); }
+        .legend-item.not-answered { background-color: var(--border); }
+        
+        .nav-controls {
+            display: flex; justify-content: space-between; align-items: center; margin-top: 24px;
+            padding-top: 20px; border-top: 1px solid var(--border); flex-wrap: wrap; gap: 10px;
+        }
+        .btn {
+            padding: 10px 20px; border-radius: 8px; border: none; font-weight: 500;
+            cursor: pointer; transition: all 0.2s; font-size: 0.95rem;
+        }
+        .btn-secondary { background: #f3f4f6; color: var(--text); }
+        .btn-secondary:hover { background: #e5e7eb; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-download { background: #8b5cf6; color: white; }
+        .btn-download:hover { background: #7c3aed; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .auto-advance { display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: var(--text-light); }
+        
+        .solution-panel { margin-top: 24px; border-top: 2px dashed var(--border); padding-top: 20px; display: none; }
+        .solution-panel.visible { display: block; }
+        .solution-toggle {
+            display: flex; align-items: center; gap: 8px; color: var(--primary); font-weight: 600;
+            cursor: pointer; margin-bottom: 16px; user-select: none;
+        }
+        .solution-toggle:hover { color: var(--primary-hover); }
+        .pedagogy-section {
+            margin-top: 20px; padding: 16px; background: #fafafa; border-radius: 8px; border-left: 4px solid var(--primary);
+        }
+        .pedagogy-section h4 {
+            font-size: 0.95rem; color: var(--primary); margin-bottom: 8px;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .pedagogy-section ul { margin-left: 20px; margin-top: 8px; }
+        .pedagogy-section li { margin-bottom: 6px; }
+        
+        .result-screen { display: none; text-align: center; }
+        .result-screen.visible { display: block; }
+        .score-circle {
+            width: 120px; height: 120px; border-radius: 50%; background: var(--primary); color: white;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            margin: 0 auto 24px; font-size: 2rem; font-weight: 700;
+        }
+        .score-circle span { font-size: 0.875rem; font-weight: 400; opacity: 0.9; }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px; }
+        .stat-box { background: var(--card-bg); padding: 16px; border-radius: 8px; border: 1px solid var(--border); }
+        .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+        .stat-label { font-size: 0.875rem; color: var(--text-light); margin-top: 4px; }
+        .download-section {
+            margin: 16px 0 24px 0; padding: 20px; background: #f8f7ff;
+            border-radius: 12px; border: 2px dashed #c4b5fd;
+        }
+        .download-section .btn-download {
+            font-size: 1.05rem; padding: 14px 32px; display: inline-flex; align-items: center; gap: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            #quiz-area { flex-direction: column; }
+            .navigation-panel { flex: 0 0 auto; position: static; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .nav-controls { flex-direction: column; gap: 12px; }
+            .nav-controls > div { width: 100%; display: flex; justify-content: space-between; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header" id="header">
+        <h1>Đề thi trắc nghiệm - Hai đường thẳng chéo nhau</h1>
+        <div class="header-right">
+            <span class="student-name-display" id="studentNameDisplay" style="display: none;">👤 <strong id="studentNameStrong">Học sinh</strong></span>
+            <div class="timer" id="timer">00:00</div>
+        </div>
+    </div>
+ 
+    <div id="quiz-area">
+        <div class="main-content">
+            <div class="card" id="nameInputCard">
+                <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+                    <label style="font-weight: 600; font-size: 1rem;">👤 Họ và tên:</label>
+                    <input type="text" id="studentNameInput" placeholder="Nhập tên của bạn..." 
+                           style="flex: 1; min-width: 200px; padding: 10px 16px; border: 2px solid var(--border); border-radius: 8px; font-size: 1rem; outline: none; transition: border-color 0.2s;"
+                           onfocus="this.style.borderColor='var(--primary)'" 
+                           onblur="this.style.borderColor='var(--border)'">
+                    <button class="btn btn-primary" onclick="saveStudentName()" style="white-space: nowrap;">Lưu tên</button>
+                </div>
+                <div style="margin-top: 8px; font-size: 0.875rem; color: var(--text-light);">
+                    💡 Vui lòng nhập tên trước khi làm bài để nhận giấy khen khi hoàn thành!
+                </div>
+            </div>
+ 
+            <div class="card">
+                <div class="question-meta">
+                    <span class="badge badge-type" id="q-type">Lý thuyết</span>
+                    <span class="badge badge-point" id="q-point">0.25 điểm</span>
+                </div>
+                <div class="question-text" id="q-text"></div>
+                <div id="plot-container"></div>
+                <div class="options" id="options-container"></div>
+ 
+                <div class="solution-panel" id="solution-panel">
+                    <div class="solution-toggle" onclick="toggleSolution()">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        <span id="toggle-text">Hiện lời giải chi tiết</span>
+                    </div>
+                    <div id="solution-content" style="display: none;">
+                        <div class="pedagogy-section">
+                            <h4>🔍 Phân tích câu hỏi</h4>
+                            <p id="sol-analysis"></p>
+                        </div>
+                        <div class="pedagogy-section">
+                            <h4>📝 Lời giải chi tiết</h4>
+                            <div id="sol-solution"></div>
+                        </div>
+                        <div class="pedagogy-section" style="border-left-color: var(--error);">
+                            <h4>⚠️ Vì sao sai (Các lỗi thường gặp)</h4>
+                            <div id="sol-mistakes"></div>
+                        </div>
+                        <div class="pedagogy-section" style="border-left-color: var(--success);">
+                            <h4>💡 Ghi nhớ kỹ năng</h4>
+                            <p id="sol-takeaway"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+ 
+            <div class="nav-controls">
+                <button class="btn btn-secondary" id="btn-prev" onclick="prevQuestion()">Câu trước</button>
+                <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+                    <span id="q-counter" style="font-weight: 600; color: var(--text-light);">Câu 1 / 20</span>
+                    <div class="auto-advance">
+                        <input type="checkbox" id="auto-advance" checked>
+                        <label for="auto-advance">Tự động chuyển câu sau 1.5s</label>
+                    </div>
+                </div>
+                <button class="btn btn-primary" id="btn-next" onclick="nextQuestion()">Câu tiếp theo</button>
+                <button class="btn btn-primary" id="btn-submit" onclick="submitQuiz()" style="display: none; background: var(--success);">Nộp bài</button>
+            </div>
+        </div>
+ 
+        <div class="navigation-panel">
+            <h3 class="nav-title">Bảng điều hướng</h3>
+            <div id="nav-buttons"></div>
+            <div class="legend">
+                <div><span class="legend-item current"></span> Câu hiện tại</div>
+                <div><span class="legend-item answered"></span> Đã trả lời</div>
+                <div><span class="legend-item not-answered"></span> Chưa trả lời</div>
+            </div>
+        </div>
+    </div>
+ 
+    <div class="result-screen card" id="result-screen">
+        <h2 style="margin-bottom: 24px;">🎉 Kết quả bài thi 🎉</h2>
+        <div id="resultStudentName" style="font-size: 1.3rem; color: var(--text-light); margin-bottom: 16px;"></div>
+        <div class="score-circle">
+            <div id="final-score">0</div>
+            <span>điểm</span>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-value" id="stat-correct">0</div>
+                <div class="stat-label">Câu đúng</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="stat-wrong">0</div>
+                <div class="stat-label">Câu sai/chưa làm</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="stat-percent">0%</div>
+                <div class="stat-label">Tỷ lệ đúng</div>
+            </div>
+        </div>
+ 
+        <div class="download-section" id="download-section">
+            <div style="font-size: 0.95rem; color: var(--text-light); margin-bottom: 12px;">
+                📥 Tải xuống báo cáo học tập chi tiết (Learning Profile)
+            </div>
+            <button class="btn btn-download" onclick="downloadLearningProfile()">⬇️ Tải Learning Profile</button>
+            <div style="font-size: 0.8rem; color: var(--text-light); margin-top: 10px;">
+                File JSON chứa phân tích điểm mạnh, điểm yếu, các câu sai và đề xuất ôn tập
+            </div>
+        </div>
+ 
+        <div id="certificate-container" style="margin-top: 24px 0; border-top: 2px dashed var(--border); padding-top: 24px;"></div>
+ 
+        <div style="display: flex; gap: 12px; justify-content: center; margin-top: 24px; flex-wrap: wrap;">
+            <button class="btn btn-secondary" onclick="location.reload()">Làm lại bài</button>
+            <button class="btn btn-primary" onclick="showReview()">Xem chi tiết đáp án</button>
+        </div>
+    </div>
+</div>
+ 
+<script>
+    const quizData = [
+        // --- 5 CÂU LÝ THUYẾT ---
+        {
+            id: 1, type: "Lý thuyết", points: 0.25, knowledge: "Định nghĩa", skill: "Nhận biết", difficulty: "Theory",
+            question: "Trong không gian, hai đường thẳng được gọi là chéo nhau khi và chỉ khi:",
+            options: ["Chúng không có điểm chung.", "Chúng không song song và không cắt nhau.", "Chúng không đồng phẳng.", "Chúng vuông góc với nhau."],
+            correct: 2,
+            plotData: {
+                vertices: [[0,0,0], [4,0,0], [4,3,0], [0,3,0], [1,1,3], [3,2,3]],
+                edges: [[0,1], [1,2], [2,3], [3,0], [0,4], [1,4], [2,5], [3,5]],
+                points: {"A": [0,0,0], "B": [4,0,0], "C": [4,3,0], "D": [0,3,0], "S": [2,1.5,3]},
+                highlight_edges: [[0,4], [2,3]],
+                customTraces: []
+            },
+            analysis: "Đây là định nghĩa cốt lõi nhất về hai đường thẳng chéo nhau trong hình học không gian.",
+            solution: "<p>Hai đường thẳng được gọi là chéo nhau nếu chúng <b>không đồng phẳng</b> (không cùng nằm trên bất kỳ mặt phẳng nào). Điều này kéo theo chúng không cắt nhau và không song song.</p>",
+            mistakes: "<ul><li>'Không có điểm chung': Sai, vì hai đường thẳng song song cũng không có điểm chung nhưng chúng đồng phẳng.</li><li>'Không song song và không cắt nhau': Đây là hệ quả, nhưng định nghĩa chính xác và gốc rễ là 'không đồng phẳng'.</li></ul>",
+            takeaway: "Ghi nhớ: <b>Chéo nhau ⇔ Không đồng phẳng</b>. Đây là tiêu chí vàng để phân biệt với song song."
+        },
+        {
+            id: 2, type: "Lý thuyết", points: 0.25, knowledge: "Tính chất", skill: "Nhận biết", difficulty: "Theory",
+            question: "Cho hai đường thẳng chéo nhau $a$ và $b$. Có bao nhiêu mặt phẳng chứa $a$ và song song với $b$?",
+            options: ["0 mặt phẳng.", "Đúng 1 mặt phẳng.", "Vô số mặt phẳng.", "2 mặt phẳng."],
+            correct: 1,
+            plotData: {
+                vertices: [[0,0,0], [4,0,0], [4,3,0], [0,3,0]],
+                edges: [[0,1], [1,2], [2,3], [3,0]],
+                points: {"(P)": [2,1.5,0], "a": [2,1.5,2.5]},
+                highlight_edges: [],
+                customTraces: [
+                    { type: 'scatter3d', mode: 'lines', x: [0.5, 3.5], y: [1.5, 1.5], z: [2.5, 2.5], line: { width: 6, color: '#ef4444' }, name: 'a' },
+                    { type: 'scatter3d', mode: 'lines', x: [1, 3], y: [0, 3], z: [0, 0], line: { width: 5, color: '#2563eb' }, name: 'b' },
+                    { type: 'scatter3d', mode: 'lines', x: [0.5, 3.5], y: [1.5, 1.5], z: [0, 0], line: { width: 3, color: '#10b981', dash: 'dash' }, name: 'a\' ∥ a' }
+                ]
+            },
+            analysis: "Áp dụng định lý về đường thẳng và mặt phẳng song song trong không gian.",
+            solution: "<p>Lấy điểm $M \\in a$. Qua $M$ kẻ đường thẳng $b'$ song song với $b$. Hai đường thẳng cắt nhau $a$ và $b'$ xác định duy nhất một mặt phẳng $(P)$. Vì $b \\parallel b'$ và $b' \\subset (P)$ nên $b \\parallel (P)$. Do đó, có <b>đúng 1</b> mặt phẳng chứa $a$ và song song với $b$.</p>",
+            mistakes: "<ul><li>'0 mặt phẳng': Sai, vì luôn dựng được mặt phẳng như trên.</li><li>'Vô số': Sai, vì $a$ và $b'$ chỉ xác định duy nhất một mặt phẳng.</li></ul>",
+            takeaway: "Định lý quan trọng: Qua một trong hai đường thẳng chéo nhau, có <b>duy nhất một</b> mặt phẳng song song với đường thẳng kia."
+        },
+        {
+            id: 3, type: "Lý thuyết", points: 0.25, knowledge: "Góc giữa 2 đường thẳng", skill: "Hiểu", difficulty: "Theory",
+            question: "Góc giữa hai đường thẳng chéo nhau $a$ và $b$ được định nghĩa là:",
+            options: ["Góc giữa $a$ và hình chiếu của $b$ lên $a$.", "Góc giữa hai đường thẳng lần lượt song song với $a$ và $b$ và cắt nhau.", "Góc nhọn tạo bởi $a$ và bất kỳ đường thẳng nào cắt cả hai.", "Góc giữa $a$ và mặt phẳng chứa $b$."],
+            correct: 1,
+            plotData: {
+                vertices: [],
+                edges: [],
+                points: {"O": [0,0,0]},
+                highlight_edges: [],
+                customTraces: [
+                    { type: 'scatter3d', mode: 'lines', x: [-2, 2], y: [0, 0], z: [1, 1], line: { width: 6, color: '#ef4444' }, name: 'a' },
+                    { type: 'scatter3d', mode: 'lines', x: [0, 0], y: [-2, 2], z: [-1, -1], line: { width: 6, color: '#2563eb' }, name: 'b' },
+                    { type: 'scatter3d', mode: 'lines', x: [-2, 2], y: [0, 0], z: [0, 0], line: { width: 4, color: '#ef4444', dash: 'dash' }, name: "a' ∥ a" },
+                    { type: 'scatter3d', mode: 'lines', x: [0, 0], y: [-2, 2], z: [0, 0], line: { width: 4, color: '#2563eb', dash: 'dash' }, name: "b' ∥ b" }
+                ]
+            },
+            analysis: "Khái niệm góc giữa hai đường thẳng chéo nhau được quy về góc giữa hai đường thẳng cắt nhau.",
+            solution: "<p>Theo định nghĩa, để tính góc giữa hai đường thẳng chéo nhau $a$ và $b$, ta lấy một điểm $O$ bất kỳ trong không gian, kẻ $a' \\parallel a$ và $b' \\parallel b$ qua $O$. Góc giữa $a$ và $b$ là góc giữa $a'$ và $b'$ (thường lấy góc nhọn hoặc vuông).</p>",
+            mistakes: "<ul><li>'Góc với hình chiếu': Sai, đây là khái niệm góc giữa đường thẳng và mặt phẳng.</li><li>'Bất kỳ đường thẳng nào': Sai, phải là đường thẳng song song để bảo toàn góc.</li></ul>",
+            takeaway: "Kỹ thuật 'Tịnh tiến': Luôn đưa hai đường thẳng chéo nhau về <b>cùng một điểm chung</b> bằng cách dựng các đường thẳng song song để đo góc."
+        },
+        {
+            id: 4, type: "Lý thuyết", points: 0.25, knowledge: "Đường vuông góc chung", skill: "Hiểu", difficulty: "Theory",
+            question: "Đường vuông góc chung của hai đường thẳng chéo nhau $a$ và $b$ là đường thẳng $c$ thỏa mãn:",
+            options: ["$c$ vuông góc với $a$ và $c$ vuông góc với $b$.", "$c$ cắt cả $a$ và $b$, và vuông góc với cả $a$ và $b$.", "$c$ nằm trong mặt phẳng trung trực của đoạn nối hai đường thẳng.", "$c$ là đường thẳng ngắn nhất nối một điểm trên $a$ và một điểm trên $b$."],
+            correct: 1,
+            plotData: {
+                vertices: [[0,0,0], [4,0,0], [4,3,0], [0,3,0]],
+                edges: [[0,1], [1,2], [2,3], [3,0]],
+                points: {},
+                highlight_edges: [],
+                customTraces: [
+                    { type: 'scatter3d', mode: 'lines', x: [0, 4], y: [1, 1], z: [2, 2], line: { width: 6, color: '#ef4444' }, name: 'a' },
+                    { type: 'scatter3d', mode: 'lines', x: [2, 2], y: [0, 3], z: [0, 0], line: { width: 6, color: '#2563eb' }, name: 'b' },
+                    { type: 'scatter3d', mode: 'lines', x: [2, 2], y: [1, 1], z: [0, 2], line: { width: 8, color: '#f59e0b' }, name: 'c (vuông góc chung)' }
+                ]
+            },
+            analysis: "Định nghĩa chính xác của đường vuông góc chung yêu cầu cả điều kiện vuông góc và điều kiện cắt nhau.",
+            solution: "<p>Đường vuông góc chung của hai đường thẳng chéo nhau là đường thẳng <b>cắt cả hai đường thẳng đó</b> và <b>vuông góc với cả hai</b>.</p>",
+            mistakes: "<ul><li>Chỉ 'vuông góc với cả hai': Sai, vì có vô số đường thẳng vuông góc với cả hai (chúng song song với nhau), nhưng chỉ có một đường cắt cả hai.</li></ul>",
+            takeaway: "Hai điều kiện bắt buộc: (1) Cắt cả hai, (2) Vuông góc với cả hai. Độ dài đoạn vuông góc chung chính là <b>khoảng cách</b> giữa hai đường thẳng chéo nhau."
+        },
+        {
+            id: 5, type: "Lý thuyết", points: 0.25, knowledge: "Điều kiện vectơ", skill: "Vận dụng", difficulty: "Theory",
+            question: "Trong không gian $Oxyz$, điều kiện cần và đủ để hai đường thẳng $d_1$ (đi qua $M_1$, có VTCP $\\vec{u_1}$) và $d_2$ (đi qua $M_2$, có VTCP $\\vec{u_2}$) chéo nhau là:",
+            options: ["$\\vec{u_1}$ và $\\vec{u_2}$ không cùng phương.", "$[\\vec{u_1}, \\vec{u_2}] \\cdot \\vec{M_1M_2} \\neq 0$.", "$[\\vec{u_1}, \\vec{u_2}] \\cdot \\vec{M_1M_2} = 0$.", "$\\vec{u_1} \\cdot \\vec{u_2} = 0$."],
+            correct: 1,
+            plotData: {
+                vertices: [],
+                edges: [],
+                points: {"M1": [-1, 0, 1], "M2": [1, 1, -1]},
+                highlight_edges: [],
+                customTraces: [
+                    { type: 'scatter3d', mode: 'lines', x: [-2, 2], y: [0, 0], z: [1, 1], line: { width: 6, color: '#ef4444' }, name: 'd1' },
+                    { type: 'scatter3d', mode: 'lines', x: [0, 2], y: [0, 2], z: [-1, -1], line: { width: 6, color: '#2563eb' }, name: 'd2' },
+                    { type: 'scatter3d', mode: 'lines+markers', x: [-1, 1], y: [0, 1], z: [1, -1], line: { width: 4, color: '#f59e0b', dash: 'dot' }, marker: {size: 6}, name: 'Vectơ M1M2' }
+                ]
+            },
+            analysis: "Sử dụng tích hỗn tạp (mixed product) để kiểm tra tính đồng phẳng của 3 vectơ.",
+            solution: "<p>Hai đường thẳng chéo nhau khi và chỉ khi ba vectơ $\\vec{u_1}, \\vec{u_2}, \\vec{M_1M_2}$ <b>không đồng phẳng</b>. Điều kiện đại số cho việc này là tích hỗn tạp của chúng khác 0: $[\\vec{u_1}, \\vec{u_2}] \\cdot \\vec{M_1M_2} \\neq 0$.</p>",
+            mistakes: "<ul><li>'$[\\vec{u_1}, \\vec{u_2}] \\cdot \\vec{M_1M_2} = 0$': Sai, đây là điều kiện để chúng đồng phẳng (cắt nhau hoặc song song).</li><li>'$\\vec{u_1} \\cdot \\vec{u_2} = 0$': Sai, đây chỉ là điều kiện vuông góc, không đảm bảo chéo nhau.</li></ul>",
+            takeaway: "Công thức vàng trong hình giải tích: <b>Chéo nhau ⇔ Tích hỗn tạp $\\neq 0$</b>."
+        },
+
+        // --- 5 CÂU BÀI TẬP DỄ ---
+        {
+            id: 6, type: "Bài tập dễ", points: 0.25, knowledge: "Tứ diện", skill: "Nhận biết", difficulty: "Easy",
+            question: "Cho tứ diện $ABCD$. Cặp đường thẳng nào sau đây chéo nhau?",
+            options: ["$AB$ và $AC$.", "$AB$ và $CD$.", "$AB$ và $AD$.", "$AC$ và $AD$."],
+            correct: 1,
+            plotData: {
+                vertices: [[0,0,0], [4,0,0], [2,3.5,0], [2,1.2,3]],
+                edges: [[0,1], [1,2], [2,0], [0,3], [1,3], [2,3]],
+                points: {"A": [0,0,0], "B": [4,0,0], "C": [2,3.5,0], "D": [2,1.2,3]},
+                highlight_edges: [[0,1], [2,3]]
+            },
+            analysis: "Xác định các cặp cạnh đối diện trong tứ diện.",
+            solution: "<p>Trong tứ diện $ABCD$, các cặp cạnh không có điểm chung và không cùng nằm trên một mặt bên là các cặp cạnh đối diện. Do đó, $AB$ và $CD$ là hai đường thẳng chéo nhau.</p>",
+            mistakes: "<ul><li>Các cặp còn lại ($AB$ và $AC$, $AB$ và $AD$, $AC$ và $AD$) đều cắt nhau tại các đỉnh $A$, nên chúng đồng phẳng.</li></ul>",
+            takeaway: "Trong tứ diện, <b>các cặp cạnh đối diện</b> luôn luôn chéo nhau."
+        },
+        {
+            id: 7, type: "Bài tập dễ", points: 0.25, knowledge: "Hình chóp", skill: "Nhận biết", difficulty: "Easy",
+            question: "Cho hình chóp $S.ABCD$ có đáy $ABCD$ là hình bình hành. Cặp đường thẳng nào sau đây chéo nhau?",
+            options: ["$SA$ và $SB$.", "$AB$ và $CD$.", "$SA$ và $BC$.", "$AC$ và $BD$."],
+            correct: 2,
+            plotData: {
+                vertices: [[0,0,0], [4,0,0], [5,3,0], [1,3,0], [2.5,1.5,4]],
+                edges: [[0,1], [1,2], [2,3], [3,0], [0,4], [1,4], [2,4], [3,4], [0,2], [1,3]],
+                points: {"A": [0,0,0], "B": [4,0,0], "C": [5,3,0], "D": [1,3,0], "S": [2.5,1.5,4]},
+                highlight_edges: [[0,4], [1,2]]
+            },
+            analysis: "Kiểm tra tính đồng phẳng của các cặp đường thẳng.",
+            solution: "<p>$SA$ đi qua đỉnh $S$ và đáy tại $A$. $BC$ nằm hoàn toàn trong mặt phẳng đáy $(ABCD)$ và không đi qua $A$. Do đó, $SA$ và $BC$ không đồng phẳng, nên chúng chéo nhau.</p>",
+            mistakes: "<ul><li>'$SA$ và $SB$': Cắt nhau tại $S$.</li><li>'$AB$ và $CD$': Song song (do đáy là hình bình hành).</li><li>'$AC$ và $BD$': Cắt nhau tại tâm đáy.</li></ul>",
+            takeaway: "Một đường thẳng đi qua đỉnh chóp và một đường thẳng ở đáy không đi qua chân đường thẳng kia thường là <b>chéo nhau</b>."
+        },
+        {
+            id: 8, type: "Bài tập dễ", points: 0.25, knowledge: "Hình lập phương", skill: "Nhận biết", difficulty: "Easy",
+            question: "Cho hình lập phương $ABCD.A'B'C'D'$. Cặp đường thẳng nào sau đây chéo nhau?",
+            options: ["$AB$ và $A'B'$.", "$AB$ và $B'C'$.", "$AB$ và $CD$.", "$AA'$ và $BB'$."],
+            correct: 1,
+            plotData: {
+                vertices: [[0,0,0], [3,0,0], [3,3,0], [0,3,0], [0,0,3], [3,0,3], [3,3,3], [0,3,3]],
+                edges: [[0,1], [1,2], [2,3], [3,0], [4,5], [5,6], [6,7], [7,4], [0,4], [1,5], [2,6], [3,7]],
+                points: {"A": [0,0,0], "B": [3,0,0], "C": [3,3,0], "D": [0,3,0], "A'": [0,0,3], "B'": [3,0,3], "C'": [3,3,3], "D'": [0,3,3]},
+                highlight_edges: [[0,1], [5,6]]
+            },
+            analysis: "Quan sát vị trí tương đối của các cạnh trong hình lập phương.",
+            solution: "<p>$AB$ nằm trong mặt phẳng $(ABCD)$, còn $B'C'$ nằm trong mặt phẳng $(BCC'B')$ và $(A'B'C'D')$. Chúng không song song và không có điểm chung, do đó chúng chéo nhau.</p>",
+            mistakes: "<ul><li>'$AB$ và $A'B'$': Song song.</li><li>'$AB$ và $CD$': Song song.</li><li>'$AA'$ và $BB'$': Song song.</li></ul>",
+            takeaway: "Trong hình lập phương, các cặp cạnh không song song và không cắt nhau (ví dụ: cạnh đáy và cạnh bên không cùng mặt) là <b>chéo nhau</b>."
+        },
+        {
+            id: 9, type: "Bài tập dễ", points: 0.25, knowledge: "Trung điểm", skill: "Phân tích", difficulty: "Easy",
+            question: "Cho tứ diện $ABCD$. Gọi $M, N$ lần lượt là trung điểm của $AC$ và $BD$. Khẳng định nào đúng?",
+            options: ["$MN$ song song với $AB$.", "$MN$ cắt $AB$.", "$MN$ chéo nhau với $AB$ và $CD$.", "$MN$ nằm trong mặt phẳng $(ABD)$."],
+            correct: 2,
+            plotData: {
+                vertices: [[0,0,0], [4,0,0], [2,3.5,0], [2,1.2,3]],
+                edges: [[0,1], [1,2], [2,0], [0,3], [1,3], [2,3]],
+                points: {"A": [0,0,0], "B": [4,0,0], "C": [2,3.5,0], "D": [2,1.2,3], "M": [1,1.75,0], "N": [3,0.6,1.5]},
+                highlight_edges: [[4,5]]
+            },
+            analysis: "Xét vị trí của đoạn nối hai trung điểm của hai cạnh chéo nhau.",
+            solution: "<p>Nếu $MN$ đồng phẳng với $AB$, thì $M, N, A, B$ cùng thuộc một mặt phẳng, suy ra $C \\in (ABD)$ (vô lý). Tương tự với $CD$. Do đó, $MN$ chéo nhau với cả $AB$ và $CD$.</p>",
+            mistakes: "<ul><li>'Song song' hoặc 'cắt': Sai, vì nếu vậy sẽ dẫn đến mâu thuẫn về tính đồng phẳng của 4 đỉnh tứ diện.</li></ul>",
+            takeaway: "Đoạn nối trung điểm của hai cạnh chéo nhau trong tứ diện sẽ <b>chéo nhau</b> với chính hai cạnh đó."
+        },
+        {
+            id: 10, type: "Bài tập dễ", points: 0.25, knowledge: "Vị trí tương đối", skill: "Tổng hợp", difficulty: "Easy",
+            question: "Trong không gian, cho hai đường thẳng phân biệt $a$ và $b$ không song song với nhau. Mệnh đề nào sau đây đúng?",
+            options: ["$a$ và $b$ chắc chắn cắt nhau.", "$a$ và $b$ chắc chắn chéo nhau.", "$a$ và $b$ có thể cắt nhau hoặc chéo nhau.", "$a$ và $b$ vuông góc với nhau."],
+            correct: 2,
+            plotData: {
+                vertices: [],
+                edges: [],
+                points: {},
+                highlight_edges: [],
+                customTraces: [
+                    { type: 'scatter3d', mode: 'lines', x: [-2, 2], y: [-2, 2], z: [1, 1], line: { width: 6, color: '#ef4444' }, name: 'a' },
+                    { type: 'scatter3d', mode: 'lines', x: [-2, 2], y: [2, -2], z: [-1, -1], line: { width: 6, color: '#2563eb' }, name: 'b' }
+                ]
+            },
+            analysis: "Phân loại vị trí tương đối của hai đường thẳng khi biết chúng không song song.",
+            solution: "<p>Hai đường thẳng phân biệt trong không gian chỉ có thể: song song, cắt nhau, hoặc chéo nhau. Nếu loại trừ 'song song', thì hai trường hợp còn lại là <b>cắt nhau</b> (đồng phẳng) hoặc <b>chéo nhau</b> (không đồng phẳng).</p>",
+            mistakes: "<ul><li>'Chắc chắn cắt nhau': Sai, vì chúng có thể chéo nhau.</li><li>'Chắc chắn chéo nhau': Sai, vì chúng có thể cắt nhau.</li></ul>",
+            takeaway: "Không song song $\\Rightarrow$ <b>Cắt nhau hoặc Chéo nhau</b>. Đừng mặc định chúng cắt nhau như trong hình học phẳng."
+        },
+
+        // --- 5 CÂU BÀI TẬP TRUNG BÌNH ---
+        {
+            id: 11, type: "Bài tập trung bình", points: 0.5, knowledge: "Tứ diện đều", skill: "Vận dụng", difficulty: "Medium",
+            question: "Cho tứ diện $ABCD$ có $AB = CD = a$. Gọi $I, J$ lần lượt là trung điểm của $AB$ và $CD$. Khẳng định nào sau đây đúng về đường thẳng $IJ$?",
+            options: ["$IJ$ song song với $AC$.", "$IJ$ là đường vuông góc chung của $AB$ và $CD$.", "$IJ$ cắt $AC$ và $BD$.", "$IJ$ nằm trong mặt phẳng $(ACD)$."],
+            correct: 1,
+            plotData: {
+                vertices: [[0,0,0], [4,0,0], [2,3.46,0], [2,1.15,3.26]],
+                edges: [[0,1], [1,2], [2,0], [0,3], [1,3], [2,3]],
+                points: {"A": [0,0,0], "B": [4,0,0], "C": [2,3.46,0], "D": [2,1.15,3.26], "I": [2,0,0], "J": [2,2.3,1.63]},
+                highlight_edges: [[0,1], [2,3], [4,5]]
+            },
+            analysis: "Sử dụng tính chất tam giác cân để chứng minh vuông góc.",
+            solution: "<p>Xét tam giác $JAB$: $JA = JB$ (do hai tam giác vuông $JAD$ và $JBC$ bằng nhau). Vì $I$ là trung điểm $AB$ nên $JI \\perp AB$. Tương tự, xét tam giác $ICD$ cân tại $I$, ta có $IJ \\perp CD$. Vậy $IJ$ vuông góc với cả $AB$ và $CD$, đồng thời cắt cả hai, nên $IJ$ là đường vuông góc chung.</p>",
+            mistakes: "<ul><li>'Song song với $AC$': Sai, vì $IJ$ cắt mặt phẳng chứa $AC$.</li></ul>",
+            takeaway: "Trong tứ diện có các cặp cạnh đối diện bằng nhau, đoạn nối trung điểm của chúng chính là <b>đường vuông góc chung</b>."
+        },
+        {
+            id: 12, type: "Bài tập trung bình", points: 0.5, knowledge: "Hình chóp đáy thang", skill: "Vận dụng", difficulty: "Medium",
+            question: "Cho hình chóp $S.ABCD$ có đáy là hình thang với $AB \\parallel CD$ và $AB > CD$. Cặp đường thẳng nào sau đây chéo nhau?",
+            options: ["$AB$ và $CD$.", "$SA$ và $BC$.", "$SC$ và $SD$.", "$AC$ và $BD$."],
+            correct: 1,
+            plotData: {
+                vertices: [[0,0,0], [5,0,0], [4,3,0], [1,3,0], [2.5,1.5,4]],
+                edges: [[0,1], [1,2], [2,3], [3,0], [0,4], [1,4], [2,4], [3,4]],
+                points: {"A": [0,0,0], "B": [5,0,0], "C": [4,3,0], "D": [1,3,0], "S": [2.5,1.5,4]},
+                highlight_edges: [[0,4], [1,2]]
+            },
+            analysis: "Loại trừ các cặp đồng phẳng, tìm cặp không đồng phẳng.",
+            solution: "<p>$AB$ và $CD$ song song (giả thiết). $SC$ và $SD$ cắt nhau tại $S$. $AC$ và $BD$ cắt nhau tại tâm hình thang. Chỉ còn $SA$ và $BC$: $SA$ đi qua $S$ và $A$, $BC$ nằm trong đáy và không đi qua $A$, nên chúng không đồng phẳng $\\Rightarrow$ chéo nhau.</p>",
+            mistakes: "<ul><li>Chọn các cặp cạnh đáy hoặc cạnh bên cùng mặt: Sai, vì chúng hoặc song song hoặc cắt nhau.</li></ul>",
+            takeaway: "Phương pháp loại trừ: Kiểm tra xem 4 điểm của 2 đường thẳng có tạo thành một tứ diện (không đồng phẳng) hay không."
+        },
+        {
+            id: 13, type: "Bài tập trung bình", points: 0.5, knowledge: "Hình giải tích Oxyz", skill: "Tính toán", difficulty: "Medium",
+            question: "Trong không gian $Oxyz$, cho $d_1: \\frac{x-1}{1} = \\frac{y}{2} = \\frac{z+1}{-1}$ và $d_2: \\frac{x}{2} = \\frac{y-1}{-1} = \\frac{z-2}{1}$. Vị trí tương đối của $d_1$ và $d_2$ là:",
+            options: ["Cắt nhau.", "Song song.", "Chéo nhau.", "Trùng nhau."],
+            correct: 2,
+            plotData: {
+                vertices: [],
+                edges: [],
+                points: {"M1": [1, 0, -1], "M2": [0, 1, 2]},
+                highlight_edges: [],
+                customTraces: [
+                    { type: 'scatter3d', mode: 'lines', x: [-0.5, 2.5], y: [-3, 3], z: [0.5, -2.5], line: { width: 6, color: '#ef4444' }, name: 'd1' },
+                    { type: 'scatter3d', mode: 'lines', x: [-3, 3], y: [2.5, -0.5], z: [0.5, 3.5], line: { width: 6, color: '#2563eb' }, name: 'd2' }
+                ]
+            },
+            analysis: "Sử dụng tích hỗn tạp hoặc giải hệ phương trình tham số.",
+            solution: "<p>VTCP: $\\vec{u_1}=(1,2,-1)$, $\\vec{u_2}=(2,-1,1)$. Hai vectơ này không cùng phương.<br>Lấy $M_1(1,0,-1) \\in d_1$, $M_2(0,1,2) \\in d_2 \\Rightarrow \\vec{M_1M_2} = (-1, 1, 3)$.<br>Tích hỗn tạp: $[\\vec{u_1}, \\vec{u_2}] = (1, -3, -5)$.<br>$[\\vec{u_1}, \\vec{u_2}] \\cdot \\vec{M_1M_2} = 1(-1) + (-3)(1) + (-5)(3) = -1 - 3 - 15 = -19 \\neq 0$.<br>Vậy $d_1$ và $d_2$ chéo nhau.</p>",
+            mistakes: "<ul><li>'Cắt nhau': Sai, vì tích hỗn tạp khác 0.</li><li>'Song song': Sai, vì VTCP không cùng phương.</li></ul>",
+            takeaway: "Quy trình chuẩn: (1) Kiểm tra cùng phương, (2) Tính tích hỗn tạp. Nếu $\\neq 0$ thì <b>chéo nhau</b>."
+        },
+        {
+            id: 14, type: "Bài tập trung bình", points: 0.5, knowledge: "Hình lăng trụ", skill: "Vận dụng", difficulty: "Medium",
+            question: "Cho hình lăng trụ tam giác $ABC.A'B'C'$. Gọi $M, N$ lần lượt là trung điểm của $AA'$ và $BB'$. Khẳng định nào đúng?",
+            options: ["$MC$ và $A'N$ song song.", "$MC$ và $A'N$ chéo nhau.", "$MC$ và $A'N$ cắt nhau.", "$MC$ và $AB$ song song."],
+            correct: 1,
+            plotData: {
+                vertices: [[0,0,0], [4,0,0], [2,3.5,0], [0,0,4], [4,0,4], [2,3.5,4]],
+                edges: [[0,1], [1,2], [2,0], [3,4], [4,5], [5,3], [0,3], [1,4], [2,5]],
+                points: {"A": [0,0,0], "B": [4,0,0], "C": [2,3.5,0], "A'": [0,0,4], "B'": [4,0,4], "C'": [2,3.5,4], "M": [0,0,2], "N": [4,0,2]},
+                highlight_edges: [[2,6], [3,7]]
+            },
+            analysis: "Xác định mặt phẳng chứa các đường thẳng để kiểm tra tính đồng phẳng.",
+            solution: "<p>$MC$ nằm trong mặt phẳng $(AA'C'C)$. $A'N$ nằm trong mặt phẳng $(AA'B'B)$. Giao tuyến của hai mặt phẳng này là $AA'$. $MC$ cắt $AA'$ tại $M$, $A'N$ cắt $AA'$ tại $A'$. Vì $M \\neq A'$ nên hai đường thẳng này không cắt nhau trên giao tuyến, và chúng không song song. Do đó, chúng chéo nhau.</p>",
+            mistakes: "<ul><li>'Cắt nhau': Sai, vì giao điểm của chúng với giao tuyến hai mặt phẳng là khác nhau.</li></ul>",
+            takeaway: "Nếu hai đường thẳng nằm trong hai mặt phẳng cắt nhau, và chúng cắt giao tuyến tại hai điểm phân biệt, thì chúng <b>chéo nhau</b>."
+        },
+        {
+            id: 15, type: "Bài tập trung bình", points: 0.5, knowledge: "Đường vuông góc chung", skill: "Hiểu", difficulty: "Medium",
+            question: "Cho hai đường thẳng chéo nhau $a$ và $b$. Có bao nhiêu đường thẳng cắt cả $a$ và $b$ đồng thời vuông góc với cả $a$ và $b$?",
+            options: ["0 đường.", "Đúng 1 đường.", "2 đường.", "Vô số đường."],
+            correct: 1,
+            plotData: {
+                vertices: [],
+                edges: [],
+                points: {},
+                highlight_edges: [],
+                customTraces: [
+                    { type: 'scatter3d', mode: 'lines', x: [-2, 2], y: [1, 1], z: [1, 1], line: { width: 6, color: '#ef4444' }, name: 'a' },
+                    { type: 'scatter3d', mode: 'lines', x: [1, 1], y: [-2, 2], z: [-1, -1], line: { width: 6, color: '#2563eb' }, name: 'b' },
+                    { type: 'scatter3d', mode: 'lines', x: [1, 1], y: [1, 1], z: [-1, 1], line: { width: 8, color: '#f59e0b' }, name: 'Vuông góc chung' }
+                ]
+            },
+            analysis: "Đây chính là định nghĩa và tính chất tồn tại duy nhất của đường vuông góc chung.",
+            solution: "<p>Theo định lý trong hình học không gian, với hai đường thẳng chéo nhau bất kỳ, luôn tồn tại <b>duy nhất một</b> đường thẳng cắt cả hai và vuông góc với cả hai. Đường thẳng đó được gọi là đường vuông góc chung.</p>",
+            mistakes: "<ul><li>'Vô số': Sai, vì chỉ có duy nhất một đoạn vuông góc chung có độ dài ngắn nhất.</li><li>'0': Sai, vì định lý đảm bảo sự tồn tại.</li></ul>",
+            takeaway: "Hai đường thẳng chéo nhau luôn có <b>duy nhất một</b> đường vuông góc chung. Độ dài đoạn này chính là khoảng cách giữa hai đường thẳng."
+        },
+
+        // --- 5 CÂU BÀI TẬP KHÓ ---
+        {
+            id: 16, type: "Bài tập khó", points: 1.0, knowledge: "Khoảng cách", skill: "Vận dụng cao", difficulty: "Hard",
+            question: "Cho tứ diện đều $ABCD$ có cạnh bằng $a$. Khoảng cách giữa hai đường thẳng chéo nhau $AB$ và $CD$ là:",
+            options: ["$\\frac{a}{2}$.", "$\\frac{a\\sqrt{2}}{2}$.", "$\\frac{a\\sqrt{3}}{2}$.", "$a$."],
+            correct: 1,
+            plotData: {
+                vertices: [[0,0,0], [4,0,0], [2,3.46,0], [2,1.15,3.26]],
+                edges: [[0,1], [1,2], [2,0], [0,3], [1,3], [2,3]],
+                points: {"A": [0,0,0], "B": [4,0,0], "C": [2,3.46,0], "D": [2,1.15,3.26]},
+                highlight_edges: [[0,1], [2,3]]
+            },
+            analysis: "Xác định đường vuông góc chung của hai cạnh đối diện trong tứ diện đều.",
+            solution: "<p>Gọi $I, J$ là trung điểm của $AB$ và $CD$. Theo tính chất tứ diện đều, $IJ$ là đường vuông góc chung của $AB$ và $CD$.<br>Tam giác $ICD$ có $IC = ID = \\frac{a\\sqrt{3}}{2}$ (đường cao tam giác đều). $IJ$ là đường cao của tam giác cân $ICD$ tại $I$.<br>Áp dụng định lý Pythagoras: $IJ = \\sqrt{IC^2 - CJ^2} = \\sqrt{\\frac{3a^2}{4} - \\frac{a^2}{4}} = \\sqrt{\\frac{2a^2}{4}} = \\frac{a\\sqrt{2}}{2}$.</p>",
+            mistakes: "<ul><li>Chọn $\\frac{a\\sqrt{3}}{2}$: Sai, đây là độ dài đường cao của mặt bên, không phải khoảng cách giữa hai cạnh đối.</li></ul>",
+            takeaway: "Trong tứ diện đều cạnh $a$, khoảng cách giữa hai cạnh đối diện (đường vuông góc chung) luôn bằng <b>$\\frac{a\\sqrt{2}}{2}$</b>."
+        },
+        {
+            id: 17, type: "Bài tập khó", points: 1.0, knowledge: "Hình giải tích Oxyz", skill: "Tính toán", difficulty: "Hard",
+            question: "Trong không gian $Oxyz$, cho $A(1,0,0), B(0,1,0), C(0,0,1), D(1,1,1)$. Khoảng cách giữa hai đường thẳng chéo nhau $AB$ và $CD$ là:",
+            options: ["$1$.", "$\\sqrt{2}$.", "$\\frac{1}{\\sqrt{3}}$.", "$\\frac{2}{\\sqrt{3}}$."],
+            correct: 0,
+            plotData: {
+                vertices: [[1,0,0], [0,1,0], [0,0,1], [1,1,1], [0.5,0.5,0], [0.5,0.5,1]],
+                edges: [[0,1], [0,2], [0,3], [1,2], [1,3], [2,3]],
+                points: {"A": [1,0,0], "B": [0,1,0], "C": [0,0,1], "D": [1,1,1], "M": [0.5,0.5,0], "N": [0.5,0.5,1]},
+                highlight_edges: [[0,1], [2,3], [4,5]]
+            },
+            analysis: "Sử dụng công thức khoảng cách giữa hai đường thẳng chéo nhau bằng tích hỗn tạp hoặc tính chất hình học.",
+            solution: "<p>Ta có: $\\vec{AB} = (-1, 1, 0)$, $\\vec{CD} = (1, 1, 0)$.<br>Nhận thấy $\\vec{AB} \\cdot \\vec{CD} = 0$ nên $AB \\perp CD$.<br>Gọi $M, N$ lần lượt là trung điểm của $AB$ và $CD$.<br>$M(0.5, 0.5, 0)$, $N(0.5, 0.5, 1) \\Rightarrow \\vec{MN} = (0, 0, 1)$.<br>Dễ dàng kiểm tra $\\vec{MN} \\cdot \\vec{AB} = 0$ và $\\vec{MN} \\cdot \\vec{CD} = 0$.<br>Vậy $MN$ là đường vuông góc chung. Khoảng cách $d = |\\vec{MN}| = 1$.</p>",
+            mistakes: "<ul><li>Tính sai tọa độ trung điểm hoặc vectơ chỉ phương.</li><li>Áp dụng sai công thức khoảng cách dẫn đến kết quả phức tạp không cần thiết.</li></ul>",
+            takeaway: "Khi hai đường chéo nhau vuông góc với nhau, đoạn nối trung điểm của chúng thường là đường vuông góc chung, giúp tính khoảng cách nhanh chóng."
+        },
+        {
+            id: 18, type: "Bài tập khó", points: 1.0, knowledge: "Hình chóp vuông", skill: "Vận dụng cao", difficulty: "Hard",
+            question: "Cho hình chóp $S.ABCD$ có đáy là hình vuông cạnh $a$, $SA \\perp (ABCD)$ và $SA = a$. Khoảng cách giữa hai đường thẳng chéo nhau $SB$ và $AC$ là:",
+            options: ["$\\frac{a}{2}$.", "$\\frac{a\\sqrt{2}}{2}$.", "$\\frac{a\\sqrt{3}}{3}$.", "$\\frac{a\\sqrt{6}}{3}$."],
+            correct: 2,
+            plotData: {
+                vertices: [[0,0,0], [3,0,0], [3,3,0], [0,3,0], [0,0,3]],
+                edges: [[0,1], [1,2], [2,3], [3,0], [0,4], [1,4], [2,4], [3,4], [0,2]],
+                points: {"A": [0,0,0], "B": [3,0,0], "C": [3,3,0], "D": [0,3,0], "S": [0,0,3]},
+                highlight_edges: [[1,4], [0,2]]
+            },
+            analysis: "Dựng hình hoặc sử dụng phương pháp thể tích/tọa độ hóa để tìm khoảng cách.",
+            solution: "<p>Tọa độ hóa: $A(0,0,0), B(a,0,0), C(a,a,0), S(0,0,a)$.<br>$\\vec{SB} = (a, 0, -a) \\sim (1, 0, -1)$. $\\vec{AC} = (a, a, 0) \\sim (1, 1, 0)$.<br>$\\vec{AS} = (0, 0, a)$.<br>$[\\vec{SB}, \\vec{AC}] = (1, -1, 1)$.<br>$d = \\frac{|(1)(0) + (-1)(0) + (1)(a)|}{\\sqrt{1^2+(-1)^2+1^2}} = \\frac{a}{\\sqrt{3}} = \\frac{a\\sqrt{3}}{3}$.</p>",
+            mistakes: "<ul><li>'$\\frac{a\\sqrt{2}}{2}$': Sai, đây là khoảng cách từ A đến SB, không phải khoảng cách giữa SB và AC.</li></ul>",
+            takeaway: "Với hình chóp có cạnh bên vuông góc đáy, <b>tọa độ hóa</b> là phương pháp an toàn và nhanh nhất để tính khoảng cách giữa hai đường chéo nhau."
+        },
+        {
+            id: 19, type: "Bài tập khó", points: 1.0, knowledge: "Hình lập phương", skill: "Vận dụng cao", difficulty: "Hard",
+            question: "Cho hình lập phương $ABCD.A'B'C'D'$ cạnh $a$. Góc giữa hai đường thẳng chéo nhau $AC$ và $B'D'$ là:",
+            options: ["$30^\\circ$.", "$45^\\circ$.", "$60^\\circ$.", "$90^\\circ$."],
+            correct: 3,
+            plotData: {
+                vertices: [[0,0,0], [3,0,0], [3,3,0], [0,3,0], [0,0,3], [3,0,3], [3,3,3], [0,3,3]],
+                edges: [[0,1], [1,2], [2,3], [3,0], [4,5], [5,6], [6,7], [7,4], [0,4], [1,5], [2,6], [3,7]],
+                points: {"A": [0,0,0], "C": [3,3,0], "B'": [3,0,3], "D'": [0,3,3]},
+                highlight_edges: [[0,2], [5,7]]
+            },
+            analysis: "Tịnh tiến một đường thẳng để đưa góc về cùng một đỉnh.",
+            solution: "<p>Ta có $B'D' \\parallel BD$. Do đó, góc giữa $AC$ và $B'D'$ bằng góc giữa $AC$ và $BD$.<br>Mà $ABCD$ là hình vuông, nên hai đường chéo $AC$ và $BD$ vuông góc với nhau.<br>Vậy góc giữa $AC$ và $B'D'$ là $90^\\circ$.</p>",
+            mistakes: "<ul><li>Chọn $60^\\circ$: Sai, đây là góc giữa $AC$ và $A'B$ (tạo thành tam giác đều).</li></ul>",
+            takeaway: "Kỹ thuật 'Tịnh tiến': Luôn tìm đường thẳng <b>song song</b> để đưa hai đường chéo nhau về cùng một mặt phẳng quen thuộc (ở đây là đáy hình vuông)."
+        },
+        {
+            id: 20, type: "Bài tập khó", points: 1.0, knowledge: "Tứ diện và trọng tâm", skill: "Vận dụng cao", difficulty: "Hard",
+            question: "Cho tứ diện $ABCD$. Gọi $G$ là trọng tâm tam giác $BCD$. Khẳng định nào sau đây <b>sai</b>?",
+            options: ["$AG$ và $BC$ chéo nhau.", "$AG$ và $CD$ chéo nhau.", "$AG$ và $BD$ chéo nhau.", "$AG$ và $BC$ cắt nhau."],
+            correct: 3,
+            plotData: {
+                vertices: [[0,0,0], [4,0,0], [2,3.5,0], [2,1.2,3]],
+                edges: [[0,1], [1,2], [2,0], [0,3], [1,3], [2,3]],
+                points: {"A": [0,0,0], "B": [4,0,0], "C": [2,3.5,0], "D": [2,1.2,3], "G": [2.67,1.17,0]},
+                highlight_edges: [[0,4]]
+            },
+            analysis: "Xét vị trí tương đối của đường nối đỉnh với trọng tâm mặt đối diện và các cạnh của mặt đó.",
+            solution: "<p>$G$ nằm trong mặt phẳng $(BCD)$. Đường thẳng $AG$ đi qua $A \\notin (BCD)$ và $G \\in (BCD)$.<br>Do đó, $AG$ cắt mặt phẳng $(BCD)$ tại duy nhất điểm $G$.<br>Vì $G$ không nằm trên bất kỳ cạnh nào của tam giác $BCD$ (G là trọng tâm), nên $AG$ không thể cắt $BC, CD$, hay $BD$.<br>Vậy $AG$ chéo nhau với cả $BC, CD, BD$. Khẳng định '$AG$ và $BC$ cắt nhau' là sai.</p>",
+            mistakes: "<ul><li>Cho rằng $AG$ cắt $BC$: Sai, vì nếu cắt thì $A$ phải thuộc mặt phẳng $(BCD)$, mâu thuẫn với giả thiết tứ diện.</li></ul>",
+            takeaway: "Đường nối một đỉnh với trọng tâm mặt đối diện trong tứ diện luôn <b>chéo nhau</b> với tất cả các cạnh của mặt đối diện đó."
+        }
+    ];
+ 
+    let currentQ = 0;
+    let userAnswers = new Array(quizData.length).fill(null);
+    let timerInterval;
+    let seconds = 0;
+    let isSubmitted = false;
+    let studentName = '';
+    let autoAdvanceTimeout = null;
+    let mathJaxReady = false;
+ 
+    function typesetMath() {
+        if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+            return MathJax.typesetPromise().catch(function(err) { console.warn('MathJax typeset error:', err); });
+        }
+        return Promise.resolve();
+    }
+    
+    function render3DPlot(plotData) {
+        const container = document.getElementById('plot-container');
+        container.innerHTML = '';
+        if (!plotData) return;
+        
+        const vertices = plotData.vertices || [];
+        const edges = plotData.edges || [];
+        const points = plotData.points || {};
+        const highlightEdges = plotData.highlight_edges || [];
+        const customTraces = plotData.customTraces || [];
+        
+        const edgeTraces = [];
+        edges.forEach((edge, idx) => {
+            const isHighlight = highlightEdges.some(h => (h[0] === edge[0] && h[1] === edge[1]) || (h[0] === edge[1] && h[1] === edge[0]));
+            edgeTraces.push({
+                type: 'scatter3d', mode: 'lines',
+                x: [vertices[edge[0]][0], vertices[edge[1]][0]],
+                y: [vertices[edge[0]][1], vertices[edge[1]][1]],
+                z: [vertices[edge[0]][2], vertices[edge[1]][2]],
+                line: { width: isHighlight ? 8 : 3, color: isHighlight ? '#ef4444' : '#475569' },
+                hoverinfo: 'none'
+            });
+        });
+        
+        const pointLabels = Object.keys(points);
+        const pointCoords = Object.values(points);
+        const pointTrace = pointLabels.length > 0 ? {
+            type: 'scatter3d', mode: 'markers+text',
+            x: pointCoords.map(p => p[0]), y: pointCoords.map(p => p[1]), z: pointCoords.map(p => p[2]),
+            text: pointLabels, textposition: 'top center',
+            marker: { size: 6, color: '#2563eb', symbol: 'circle' },
+            textfont: { size: 14, color: '#0f172a', family: 'Arial, sans-serif', weight: 700 },
+            hoverinfo: 'text'
+        } : null;
+        
+        const layout = {
+            margin: { l: 0, r: 0, b: 0, t: 0 },
+            scene: {
+                xaxis: { visible: false }, yaxis: { visible: false }, zaxis: { visible: false },
+                camera: { eye: { x: 1.8, y: 1.8, z: 1.2 } },
+                bgcolor: 'rgba(0,0,0,0)', aspectmode: 'data'
+            },
+            paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)', showlegend: false
+        };
+        
+        const traces = [...edgeTraces];
+        if (pointTrace) traces.push(pointTrace);
+        traces.push(...customTraces);
+        
+        Plotly.newPlot(container, traces, layout, { responsive: true, displayModeBar: false });
+    }
+ 
+    const APP_VERSION = "2.1";
+    let learningProfile = {
+        appVersion: APP_VERSION,
+        student: { name: "", id: "", class: "", school: "" },
+        exam: { title: "", subject: "", totalQuestions: 0, score: 0, percent: 0, correct: 0, wrong: 0, time: 0, submitTime: "" },
+        statistics: {}, wrongQuestions: [], correctQuestions: [], weaknesses: [], strengths: [], aiPrompt: ""
+    };
+ 
+    function buildLearningProfile() {
+        learningProfile.student.name = studentName;
+        learningProfile.exam.title = document.title;
+        learningProfile.exam.subject = "Hình học không gian: Hai đường thẳng chéo nhau";
+        learningProfile.exam.totalQuestions = quizData.length;
+    }
+ 
+    function collectCorrectQuestions() {
+        learningProfile.correctQuestions = [];
+        quizData.forEach((q, index) => {
+            if (userAnswers[index] === q.correct) {
+                learningProfile.correctQuestions.push({
+                    id: q.id, type: q.type, knowledge: q.knowledge || "", skill: q.skill || "",
+                    difficulty: q.difficulty || "", question: q.question, options: q.options,
+                    correctAnswer: q.correct, studentAnswer: userAnswers[index]
+                });
+            }
+        });
+    }
+ 
+    function collectWrongQuestions() {
+        learningProfile.wrongQuestions = [];
+        quizData.forEach((q, index) => {
+            if (userAnswers[index] !== q.correct) {
+                learningProfile.wrongQuestions.push({
+                    id: q.id, type: q.type, knowledge: q.knowledge || "", skill: q.skill || "",
+                    difficulty: q.difficulty || "", question: q.question, options: q.options,
+                    correctAnswer: q.correct, studentAnswer: userAnswers[index],
+                    analysis: q.analysis, solution: q.solution, mistakes: q.mistakes, takeaway: q.takeaway
+                });
+            }
+        });
+    }
+ 
+    function analyzeWeaknesses() {
+        const map = {};
+        learningProfile.wrongQuestions.forEach(item => {
+            const key = item.knowledge || "Chưa phân loại";
+            if (!map[key]) map[key] = { topic: key, wrong: 0 };
+            map[key].wrong++;
+        });
+        learningProfile.weaknesses = Object.values(map);
+        learningProfile.weaknesses.sort((a, b) => b.wrong - a.wrong);
+    }
+ 
+    function analyzeStrengths() {
+        const map = {};
+        learningProfile.correctQuestions.forEach(item => {
+            const key = item.knowledge || "Chưa phân loại";
+            if (!map[key]) map[key] = { topic: key, correct: 0 };
+            map[key].correct++;
+        });
+        learningProfile.strengths = Object.values(map);
+        learningProfile.strengths.sort((a, b) => b.correct - a.correct);
+    }
+ 
+    function buildStatistics() {
+        const stats = {};
+        quizData.forEach((q, index) => {
+            const key = q.knowledge || "Chưa phân loại";
+            if (!stats[key]) stats[key] = { total: 0, correct: 0, wrong: 0 };
+            stats[key].total++;
+            if (userAnswers[index] === q.correct) stats[key].correct++;
+            else stats[key].wrong++;
+        });
+        learningProfile.statistics = stats;
+    }
+ 
+    function buildAIPrompt() {
+        learningProfile.aiPrompt = `Bạn là một giáo viên Toán THPT có trên 20 năm kinh nghiệm. Dựa vào Learning Profile của học sinh dưới đây, hãy xây dựng một chương trình ôn tập cá nhân hóa về chủ đề "Hai đường thẳng chéo nhau", tập trung vào các lỗ hổng kiến thức được liệt kê trong weaknesses.`;
+    }
+ 
+    function downloadLearningProfile() {
+        try {
+            const fileName = (studentName || "HocSinh").replace(/\s+/g, "_") + "_LearningProfile.json";
+            const json = JSON.stringify(learningProfile, null, 4);
+            const blob = new Blob([json], { type: "application/json;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url; a.download = fileName;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } catch (e) { console.error("Lỗi khi tải Learning Profile:", e); }
+    }
+ 
+    function saveStudentName() {
+        const input = document.getElementById('studentNameInput');
+        const name = input.value.trim();
+        if (name) {
+            studentName = name;
+            document.getElementById('studentNameStrong').textContent = studentName;
+            document.getElementById('studentNameDisplay').style.display = 'inline-block';
+            input.style.borderColor = 'var(--success)';
+            try { localStorage.setItem('quizStudentName', studentName); } catch (e) {}
+            setTimeout(() => input.style.borderColor = 'var(--border)', 1000);
+        } else { alert('Vui lòng nhập tên của bạn!'); }
+    }
+ 
+    function init() {
+        try {
+            const savedName = localStorage.getItem('quizStudentName');
+            if (savedName) {
+                studentName = savedName;
+                document.getElementById('studentNameInput').value = studentName;
+                document.getElementById('studentNameStrong').textContent = studentName;
+                document.getElementById('studentNameDisplay').style.display = 'inline-block';
+            }
+        } catch (e) {}
+        startTimer();
+        if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+            mathJaxReady = true; renderQuestion();
+        } else {
+            const checkMathJax = setInterval(function() {
+                if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+                    clearInterval(checkMathJax); mathJaxReady = true; renderQuestion();
+                }
+            }, 100);
+            setTimeout(function() { if (!mathJaxReady) renderQuestion(); }, 10000);
+        }
+    }
+ 
+    function startTimer() {
+        timerInterval = setInterval(() => {
+            seconds++;
+            const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const secs = (seconds % 60).toString().padStart(2, '0');
+            document.getElementById('timer').textContent = `${mins}:${secs}`;
+        }, 1000);
+    }
+ 
+    function renderQuestion() {
+        const q = quizData[currentQ];
+        document.getElementById('q-type').textContent = q.type;
+        document.getElementById('q-point').textContent = `${q.points} điểm`;
+        document.getElementById('q-text').innerHTML = `Câu ${currentQ + 1}: ${q.question}`;
+        document.getElementById('q-counter').textContent = `Câu ${currentQ + 1} / ${quizData.length}`;
+        
+        render3DPlot(q.plotData);
+ 
+        const optionsContainer = document.getElementById('options-container');
+        optionsContainer.innerHTML = '';
+        const labels = ['A', 'B', 'C', 'D'];
+        q.options.forEach((opt, index) => {
+            const div = document.createElement('div');
+            div.className = 'option';
+            if (userAnswers[currentQ] === index) div.classList.add('selected');
+            if (isSubmitted) {
+                if (index === q.correct) div.classList.add('correct');
+                else if (userAnswers[currentQ] === index) div.classList.add('incorrect');
+            }
+            div.innerHTML = `<div class="option-key">${labels[index]}</div><div>${opt}</div>`;
+            div.onclick = () => selectOption(index);
+            optionsContainer.appendChild(div);
+        });
+ 
+        document.getElementById('sol-analysis').innerHTML = q.analysis;
+        document.getElementById('sol-solution').innerHTML = q.solution;
+        document.getElementById('sol-mistakes').innerHTML = q.mistakes;
+        document.getElementById('sol-takeaway').innerHTML = q.takeaway;
+        document.getElementById('solution-content').style.display = 'none';
+        document.getElementById('toggle-text').textContent = 'Hiện lời giải chi tiết';
+        if (isSubmitted) {
+            document.getElementById('solution-panel').classList.add('visible');
+            document.getElementById('solution-content').style.display = 'block';
+            document.getElementById('toggle-text').textContent = 'Ẩn lời giải chi tiết';
+        }
+        document.getElementById('btn-prev').disabled = currentQ === 0;
+        if (currentQ === quizData.length - 1) {
+            document.getElementById('btn-next').style.display = 'none';
+            document.getElementById('btn-submit').style.display = 'inline-block';
+        } else {
+            document.getElementById('btn-next').style.display = 'inline-block';
+            document.getElementById('btn-submit').style.display = 'none';
+        }
+        const navButtonsContainer = document.getElementById('nav-buttons');
+        navButtonsContainer.innerHTML = '';
+        for (let i = 0; i < quizData.length; i++) {
+            const btn = document.createElement('button');
+            btn.textContent = i + 1; btn.className = 'nav-btn';
+            if (i === currentQ) btn.classList.add('current');
+            else if (userAnswers[i] !== null) btn.classList.add('answered');
+            else btn.classList.add('not-answered');
+            btn.onclick = () => { currentQ = i; renderQuestion(); };
+            navButtonsContainer.appendChild(btn);
+        }
+        typesetMath();
+    }
+ 
+    function selectOption(index) {
+        if (isSubmitted) return;
+        userAnswers[currentQ] = index; renderQuestion();
+        const autoAdvance = document.getElementById('auto-advance').checked;
+        if (autoAdvance && currentQ < quizData.length - 1) {
+            if (autoAdvanceTimeout) clearTimeout(autoAdvanceTimeout);
+            autoAdvanceTimeout = setTimeout(() => { if (userAnswers[currentQ] === index) nextQuestion(); }, 1500);
+        }
+    }
+ 
+    function nextQuestion() { if (currentQ < quizData.length - 1) { currentQ++; renderQuestion(); } }
+    function prevQuestion() { if (currentQ > 0) { currentQ--; renderQuestion(); } }
+ 
+    function toggleSolution() {
+        const content = document.getElementById('solution-content');
+        const text = document.getElementById('toggle-text');
+        if (content.style.display === 'none') {
+            content.style.display = 'block'; text.textContent = 'Ẩn lời giải chi tiết'; typesetMath();
+        } else {
+            content.style.display = 'none'; text.textContent = 'Hiện lời giải chi tiết';
+        }
+    }
+ 
+    function submitQuiz() {
+        if (!studentName) {
+            const input = document.getElementById('studentNameInput');
+            const name = input.value.trim();
+            if (name) {
+                studentName = name;
+                document.getElementById('studentNameStrong').textContent = studentName;
+                document.getElementById('studentNameDisplay').style.display = 'inline-block';
+                try { localStorage.setItem('quizStudentName', studentName); } catch (e) {}
+            } else {
+                alert('Vui lòng nhập tên của bạn trước khi nộp bài!');
+                document.getElementById('studentNameInput').focus(); return;
+            }
+        }
+        if (!confirm('Bạn có chắc chắn muốn nộp bài?')) return;
+        buildLearningProfile(); clearInterval(timerInterval); isSubmitted = true;
+        let correctCount = 0, totalPoints = 0;
+        quizData.forEach((q, index) => {
+            if (userAnswers[index] === q.correct) { correctCount++; totalPoints += q.points; }
+        });
+        const wrongCount = quizData.length - correctCount;
+        const percent = Math.round((correctCount / quizData.length) * 100);
+        learningProfile.exam.score = totalPoints; learningProfile.exam.percent = percent;
+        learningProfile.exam.correct = correctCount; learningProfile.exam.wrong = wrongCount;
+        learningProfile.exam.time = seconds; learningProfile.exam.submitTime = new Date().toLocaleString();
+        collectCorrectQuestions(); collectWrongQuestions();
+        analyzeWeaknesses(); analyzeStrengths(); buildStatistics(); buildAIPrompt();
+        downloadLearningProfile();
+        document.getElementById('final-score').textContent = totalPoints.toFixed(1);
+        document.getElementById('stat-correct').textContent = correctCount;
+        document.getElementById('stat-wrong').textContent = wrongCount;
+        document.getElementById('stat-percent').textContent = `${percent}%`;
+        document.getElementById('resultStudentName').innerHTML = `👤 <strong>${studentName}</strong>`;
+        renderCertificate(studentName, totalPoints, correctCount, percent);
+        document.getElementById('quiz-area').style.display = 'none';
+        document.getElementById('header').style.display = 'flex';
+        document.getElementById('result-screen').classList.add('visible');
+        typesetMath(); window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+ 
+    function renderCertificate(name, score, correct, percent) {
+        const container = document.getElementById('certificate-container');
+        let emoji = '🌟', achievement = 'Xuất sắc', message = 'Bạn đã thể hiện kiến thức vượt trội!', color = '#b8865b';
+        if (percent >= 90) { emoji = '🏆'; achievement = 'Tuyệt vời'; message = 'Bạn là một học sinh xuất sắc!'; color = '#c9a84c'; }
+        else if (percent >= 75) { emoji = '🌟'; achievement = 'Giỏi'; message = 'Bạn đã nắm vững kiến thức!'; color = '#b8865b'; }
+        else if (percent >= 50) { emoji = '📚'; achievement = 'Khá'; message = 'Cần ôn tập thêm một chút!'; color = '#8a7a6a'; }
+        else { emoji = '💪'; achievement = 'Cần cố gắng'; message = 'Hãy xem lại lời giải chi tiết để rút kinh nghiệm!'; color = '#b07a6a'; }
+        
+        const certificateHTML = `
+            <div style="position: relative; width: 100%; max-width: 560px; margin: 0 auto; background: #fefcf5; background-image: repeating-linear-gradient(45deg, rgba(215, 190, 160, 0.05) 0px, rgba(215, 190, 160, 0.05) 20px, transparent 20px, transparent 40px); border: 18px double #bc9b7a; border-radius: 40px 12px 40px 12px; padding: 32px 24px; box-shadow: 0 20px 40px rgba(100, 70, 40, 0.25); text-align: center;">
+                <div style="font-size: 2.5rem; font-weight: 600; letter-spacing: 6px; color: #7a5a3a; font-family: 'Georgia', serif; margin-bottom: 12px;">${emoji} GIẤY KHEN ${emoji}</div>
+                <div style="font-size: 1rem; color: #a18163; border-top: 1px solid #dcc9b2; border-bottom: 1px solid #dcc9b2; display: inline-block; padding: 6px 24px; letter-spacing: 3px; margin-bottom: 24px;">✨ THÀNH TÍCH ${achievement.toUpperCase()} ✨</div>
+                <div style="margin-bottom: 16px; font-size: 1.1rem; color: #5d3f27;"><strong>👤 Học sinh:</strong> <span style="font-weight: 600; color: #3f2c1b;">${name}</span></div>
+                <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; flex-wrap: wrap;">
+                    <div style="background: rgba(245, 235, 220, 0.5); padding: 10px 20px; border-radius: 12px; border: 1px solid #dcc9b2;"><div style="font-size: 0.8rem; color: #a18163;">Điểm số</div><div style="font-size: 1.8rem; font-weight: 700; color: ${color};">${score.toFixed(1)}</div></div>
+                    <div style="background: rgba(245, 235, 220, 0.5); padding: 10px 20px; border-radius: 12px; border: 1px solid #dcc9b2;"><div style="font-size: 0.8rem; color: #a18163;">Đúng / Tổng</div><div style="font-size: 1.8rem; font-weight: 700; color: ${color};">${correct}/${quizData.length}</div></div>
+                    <div style="background: rgba(245, 235, 220, 0.5); padding: 10px 20px; border-radius: 12px; border: 1px solid #dcc9b2;"><div style="font-size: 0.8rem; color: #a18163;">Tỷ lệ</div><div style="font-size: 1.8rem; font-weight: 700; color: ${color};">${percent}%</div></div>
+                </div>
+                <div style="margin-top: 20px; font-size: 1.1rem; color: #6e4d2e; font-family: 'Georgia', serif; font-style: italic; border-top: 2px dotted #dac9b4; padding-top: 20px;">🎉 ${message} 🎉</div>
+            </div>
+        `;
+        container.innerHTML = certificateHTML;
+    }
+ 
+    function showReview() {
+        document.getElementById('result-screen').classList.remove('visible');
+        document.getElementById('header').style.display = 'flex';
+        document.getElementById('quiz-area').style.display = 'block';
+        document.getElementById('nameInputCard').style.display = 'none';
+        currentQ = 0; renderQuestion();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+ 
+    init();
+</script>
+</body>
+</html>
