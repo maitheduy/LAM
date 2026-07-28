@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đề thi trắc nghiệm - Ứng dụng phương trình đẳng thức trong giải toán</title>
+    <script>
+        MathJax = {
+            tex: { 
+                inlineMath: [['$', '$'], ['\\(', '\\)']], 
+                displayMath: [['$$', '$$'], ['\\[', '\\]']] 
+            },
+            svg: { fontCache: 'global' },
+            options: { skipHtmlTypes: 'script' }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        :root {
+            --primary: #2563eb; --primary-hover: #1d4ed8; --success: #10b981;
+            --error: #ef4444; --bg: #f4f6f8; --card-bg: #ffffff;
+            --text: #1f2937; --text-light: #6b7280; --border: #e5e7eb;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .header { background: var(--card-bg); padding: 16px 24px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border: 1px solid var(--border); flex-wrap: wrap; gap: 10px; }
+        .header h1 { font-size: 1.15rem; font-weight: 600; }
+        .header-right { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+        .timer { font-family: monospace; font-size: 1.1rem; font-weight: 600; color: var(--primary); background: #eff6ff; padding: 6px 12px; border-radius: 6px; }
+        .student-name-display { font-size: 0.95rem; color: var(--text-light); background: #f3f4f6; padding: 4px 12px; border-radius: 6px; }
+        .student-name-display strong { color: var(--text); }
+        #quiz-area { display: flex; gap: 20px; }
+        .main-content { flex: 1; min-width: 0; }
+        .navigation-panel { flex: 0 0 260px; background: var(--card-bg); border-radius: 12px; padding: 16px; border: 1px solid var(--border); height: fit-content; position: sticky; top: 20px; }
+        .card { background: var(--card-bg); border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 24px; margin-bottom: 20px; border: 1px solid var(--border); }
+        .question-meta { display: flex; gap: 12px; margin-bottom: 16px; font-size: 0.875rem; }
+        .badge { padding: 4px 10px; border-radius: 20px; font-weight: 500; }
+        .badge-type { background: #dbeafe; color: #1e40af; }
+        .badge-point { background: #f3f4f6; color: #4b5563; }
+        .question-text { font-size: 1.1rem; font-weight: 500; margin-bottom: 20px; }
+        .options { display: flex; flex-direction: column; gap: 12px; }
+        .option { display: flex; align-items: center; padding: 14px 16px; border: 2px solid var(--border); border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fff; }
+        .option:hover { border-color: var(--primary); background: #eff6ff; }
+        .option.selected { border-color: var(--primary); background: #eff6ff; }
+        .option.correct { border-color: var(--success); background: #ecfdf5; }
+        .option.incorrect { border-color: var(--error); background: #fef2f2; }
+        .option-key { width: 28px; height: 28px; border-radius: 50%; background: #f3f4f6; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.875rem; margin-right: 12px; flex-shrink: 0; }
+        .option.selected .option-key { background: var(--primary); color: white; }
+        .option.correct .option-key { background: var(--success); color: white; }
+        .option.incorrect .option-key { background: var(--error); color: white; }
+        .nav-title { font-weight: 600; font-size: 1.1rem; margin-bottom: 12px; }
+        #nav-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
+        .nav-btn { width: 100%; padding: 8px; border-radius: 6px; border: none; cursor: pointer; font-weight: 500; transition: all 0.2s; font-size: 0.9rem; }
+        .nav-btn.current { background: var(--primary); color: white; box-shadow: 0 2px 4px rgba(37,99,235,0.3); }
+        .nav-btn.answered { background: var(--success); color: white; }
+        .nav-btn.not-answered { background: var(--border); color: var(--text-light); }
+        .legend { margin-top: 16px; font-size: 0.8rem; color: var(--text-light); }
+        .legend-item { display: inline-block; width: 16px; height: 16px; border-radius: 4px; margin-right: 6px; vertical-align: middle; }
+        .legend-item.current { background: var(--primary); }
+        .legend-item.answered { background: var(--success); }
+        .legend-item.not-answered { background: var(--border); }
+        .nav-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); flex-wrap: wrap; gap: 10px; }
+        .btn { padding: 10px 20px; border-radius: 8px; border: none; font-weight: 500; cursor: pointer; transition: all 0.2s; font-size: 0.95rem; }
+        .btn-secondary { background: #f3f4f6; color: var(--text); }
+        .btn-secondary:hover { background: #e5e7eb; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-download { background: #8b5cf6; color: white; }
+        .btn-download:hover { background: #7c3aed; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .auto-advance { display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: var(--text-light); }
+        .solution-panel { margin-top: 24px; border-top: 2px dashed var(--border); padding-top: 20px; display: none; }
+        .solution-panel.visible { display: block; }
+        .solution-toggle { display: flex; align-items: center; gap: 8px; color: var(--primary); font-weight: 600; cursor: pointer; margin-bottom: 16px; user-select: none; }
+        .solution-toggle:hover { color: var(--primary-hover); }
+        .pedagogy-section { margin: 16px 0; padding: 16px; background: #fff; border-radius: 8px; border: 1px solid var(--border); border-left: 4px solid var(--primary); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .pedagogy-section.mistakes { border-left-color: var(--error); }
+        .pedagogy-section.takeaway { border-left-color: var(--success); }
+        .pedagogy-section h4 { font-size: 0.95rem; color: var(--primary); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+        .pedagogy-section ul { margin-left: 20px; margin-bottom: 8px; }
+        .pedagogy-section li { margin-bottom: 6px; }
+        .result-screen { display: none; text-align: center; }
+        .result-screen.visible { display: block; }
+        .score-circle { width: 120px; height: 120px; border-radius: 50%; background: var(--primary); color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 2rem; font-weight: 700; }
+        .score-circle span { font-size: 0.875rem; font-weight: 400; opacity: 0.9; }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+        .stat-box { background: var(--card-bg); padding: 16px; border-radius: 8px; border: 1px solid var(--border); }
+        .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+        .stat-label { font-size: 0.875rem; color: var(--text-light); margin-top: 4px; }
+        .download-section { margin: 16px 0 24px; padding: 20px; background: #f8f7ff; border-radius: 12px; border: 2px dashed #c4b5fd; }
+        @media (max-width: 768px) {
+            #quiz-area { flex-direction: column; }
+            .navigation-panel { flex: 0 0 auto; position: static; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .nav-controls { flex-direction: column; gap: 12px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header" id="header">
+        <h1>📐 Đề thi: Ứng dụng phương trình đẳng thức trong giải toán</h1>
+        <div class="header-right">
+            <span class="student-name-display" id="studentNameDisplay" style="display:none;">👤 <strong id="studentNameStrong">Học sinh</strong></span>
+            <div class="timer" id="timer">00:00</div>
+        </div>
+    </div>
+    <div id="quiz-area">
+        <div class="main-content">
+            <div class="card" id="nameInputCard">
+                <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+                    <label style="font-weight:600;">👤 Họ và tên:</label>
+                    <input type="text" id="studentNameInput" placeholder="Nhập tên của bạn..." style="flex:1;min-width:200px;padding:10px 16px;border:2px solid var(--border);border-radius:8px;font-size:1rem;outline:none;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
+                    <button class="btn btn-primary" onclick="saveStudentName()">Lưu tên</button>
+                </div>
+                <div style="margin-top:8px;font-size:0.875rem;color:var(--text-light);">💡 Vui lòng nhập tên trước khi làm bài!</div>
+            </div>
+            <div class="card">
+                <div id="geometry-container" style="width:100%;height:380px;margin-bottom:16px;border:1px solid var(--border);border-radius:8px;background:#fafbfc;display:none;"></div>
+                <div class="question-meta">
+                    <span class="badge badge-type" id="q-type">Lý thuyết</span>
+                    <span class="badge badge-point" id="q-point">0.25 điểm</span>
+                </div>
+                <div class="question-text" id="q-text"></div>
+                <div class="options" id="options-container"></div>
+                <div class="solution-panel" id="solution-panel">
+                    <div class="solution-toggle" onclick="toggleSolution()">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        <span id="toggle-text">Ẩn lời giải chi tiết</span>
+                    </div>
+                    <div id="solution-content" style="display:block;">
+                        <div class="pedagogy-section"><h4>🔍 Phân tích cấu trúc</h4><p id="sol-analysis"></p></div>
+                        <div class="pedagogy-section"><h4>📝 Lời giải chi tiết</h4><div id="sol-solution"></div></div>
+                        <div class="pedagogy-section mistakes"><h4>⚠️ Vì sao sai</h4><div id="sol-mistakes"></div></div>
+                        <div class="pedagogy-section takeaway"><h4>💡 Ghi nhớ kỹ năng</h4><p id="sol-takeaway"></p></div>
+                    </div>
+                </div>
+            </div>
+            <div class="nav-controls">
+                <button class="btn btn-secondary" id="btn-prev" onclick="prevQuestion()">⬅ Câu trước</button>
+                <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+                    <span id="q-counter" style="font-weight:600;color:var(--text-light);">Câu 1 / 22</span>
+                    <div class="auto-advance"><input type="checkbox" id="auto-advance" checked><label for="auto-advance">Tự chuyển sau 2.5s</label></div>
+                </div>
+                <button class="btn btn-primary" id="btn-next" onclick="nextQuestion()">Câu tiếp ➡</button>
+                <button class="btn btn-primary" id="btn-submit" onclick="submitQuiz()" style="display:none;background:var(--success);">📝 Nộp bài</button>
+            </div>
+        </div>
+        <div class="navigation-panel">
+            <h3 class="nav-title">📋 Bảng điều hướng</h3>
+            <div id="nav-buttons"></div>
+            <div class="legend">
+                <div><span class="legend-item current"></span> Hiện tại</div>
+                <div><span class="legend-item answered"></span> Đã trả lời</div>
+                <div><span class="legend-item not-answered"></span> Chưa trả lời</div>
+            </div>
+        </div>
+    </div>
+    <div class="result-screen card" id="result-screen">
+        <h2 style="margin-bottom:24px;">🎉 Kết quả bài thi 🎉</h2>
+        <div id="resultStudentName" style="font-size:1.3rem;color:var(--text-light);margin-bottom:16px;"></div>
+        <div class="score-circle"><div id="final-score">0</div><span>điểm</span></div>
+        <div class="stats-grid">
+            <div class="stat-box"><div class="stat-value" id="stat-correct">0</div><div class="stat-label">Câu đúng</div></div>
+            <div class="stat-box"><div class="stat-value" id="stat-wrong">0</div><div class="stat-label">Câu sai</div></div>
+            <div class="stat-box"><div class="stat-value" id="stat-percent">0%</div><div class="stat-label">Tỷ lệ đúng</div></div>
+        </div>
+        <div class="download-section">
+            <div style="font-size:0.95rem;color:var(--text-light);margin-bottom:12px;">📥 Tải báo cáo học tập (Learning Profile)</div>
+            <button class="btn btn-download" onclick="downloadLearningProfile()">⬇️ Tải JSON</button>
+        </div>
+        <div style="display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;">
+            <button class="btn btn-secondary" onclick="location.reload()">🔄 Làm lại</button>
+            <button class="btn btn-primary" onclick="showReview()">📖 Xem đáp án</button>
+        </div>
+    </div>
+</div>
+<script>
+// ============================================================
+// TỌA ĐỘ CHUẨN: Tứ diện đều cạnh 3
+// A=(0,0,0), B=(3,0,0), C=(1.5, 2.598, 0), D=(1.5, 0.866, 2.449)
+// ============================================================
+const T = {
+    A: [0, 0, 0], B: [3, 0, 0], C: [1.5, 2.598, 0], D: [1.5, 0.866, 2.449],
+    // Trung điểm
+    midAB: [1.5, 0, 0], midAC: [0.75, 1.299, 0], midAD: [0.75, 0.433, 1.225],
+    midBC: [2.25, 1.299, 0], midBD: [2.25, 0.433, 1.225], midCD: [1.5, 1.732, 1.225],
+    // Điểm 1/3
+    thirdAB: [1, 0, 0], twoThirdAB: [2, 0, 0],
+    thirdAC: [0.5, 0.866, 0], twoThirdAC: [1, 1.732, 0],
+    // Điểm đối xứng D qua C: J = 2C - D
+    J_symC: [1.5, 4.33, -2.449],
+    // Điểm đối xứng D qua B: K = 2B - D
+    K_symB: [4.5, -0.866, -2.449],
+    // Trọng tâm tam giác BCD
+    G_BCD: [2, 1.155, 0.816],
+    // Trọng tâm tam giác ABC
+    G_ABC: [1.5, 0.866, 0],
+};
+
+// Các cạnh tứ diện chuẩn
+const tetraEdges = [
+    { p1:"A", p2:"B", style:"solid", color:"#94a3b8" },
+    { p1:"A", p2:"C", style:"solid", color:"#94a3b8" },
+    { p1:"A", p2:"D", style:"solid", color:"#94a3b8" },
+    { p1:"B", p2:"C", style:"solid", color:"#94a3b8" },
+    { p1:"C", p2:"D", style:"solid", color:"#94a3b8" },
+    { p1:"B", p2:"D", style:"solid", color:"#94a3b8" }
+];
+
+const quizData = [
+{
+    id:1, type:"Lý thuyết", points:0.25, knowledge:"Tiên đề hình học", skill:"Nhận biết", difficulty:"Dễ",
+    question:"Có bao nhiêu đường thẳng đi qua hai điểm phân biệt cho trước?",
+    options:["0","1","2","vô số"], correct:1,
+    geometryConfig:{ points:{A:[-1.5,0,0],B:[1.5,0,0]}, lines:[{p1:"A",p2:"B",style:"solid",color:"#2563eb",highlight:true}] },
+    analysis:"🔍 Hai điểm phân biệt xác định duy nhất một đường thẳng.",
+    solution:"<p>Qua hai điểm phân biệt $A$ và $B$, có <b>một và chỉ một</b> đường thẳng đi qua.</p>",
+    mistakes:"<ul><li>Chọn 'vô số' do nhầm với đường cong.</li></ul>",
+    takeaway:"💡 2 điểm phân biệt → duy nhất 1 đường thẳng."
+},
+{
+    id:2, type:"Lý thuyết", points:0.25, knowledge:"Xác định mặt phẳng", skill:"Nhận biết", difficulty:"Dễ",
+    question:"Một mặt phẳng hoàn toàn xác định khi đi qua:",
+    options:["Hai điểm phân biệt.","Ba điểm phân biệt.","Ba điểm không thẳng hàng.","Bốn điểm phân biệt."], correct:2,
+    geometryConfig:{ points:{A:[-1,-1,0],B:[1,-1,0],C:[0,1,0]}, lines:[{p1:"A",p2:"B",style:"solid",color:"#1f2937"},{p1:"B",p2:"C",style:"solid",color:"#1f2937"},{p1:"C",p2:"A",style:"solid",color:"#1f2937"}] },
+    analysis:"🔍 Mặt phẳng cần 3 điểm không thẳng hàng để xác định duy nhất.",
+    solution:"<p>Có một và chỉ một mặt phẳng đi qua <b>ba điểm không thẳng hàng</b>.</p>",
+    mistakes:"<ul><li>Chọn 'ba điểm phân biệt' mà quên 'không thẳng hàng'.</li></ul>",
+    takeaway:"💡 3 điểm không thẳng hàng → duy nhất 1 mặt phẳng."
+},
+{
+    id:3, type:"Lý thuyết", points:0.25, knowledge:"Vị trí tương đối hai mặt phẳng", skill:"Phân tích", difficulty:"Dễ",
+    question:"Khẳng định nào sau đây là <b>sai</b>?",
+    options:["Hai mặt phẳng có thể không có điểm chung.","Hai mặt phẳng có thể chỉ có một điểm chung.","Hai mặt phẳng có thể chung nhau một đường thẳng.","Hai mặt phẳng có thể có vô số điểm chung."], correct:1,
+    geometryConfig:{ points:{P1:[-1,0,1],P2:[1,0,1],Q1:[-1,0,-1],Q2:[1,0,-1]}, lines:[{p1:"P1",p2:"P2",style:"solid",color:"#2563eb"},{p1:"Q1",p2:"Q2",style:"solid",color:"#ef4444"}] },
+    analysis:"🔍 Hai mặt phẳng phân biệt nếu có 1 điểm chung thì có cả một đường thẳng chung.",
+    solution:"<p>Nếu hai mặt phẳng phân biệt có một điểm chung thì chúng có một đường thẳng chung duy nhất. 'Chỉ có một điểm chung' là <b>sai</b>.</p>",
+    mistakes:"<ul><li>Áp dụng sai tư duy 2D (đường thẳng cắt tại 1 điểm) sang 3D.</li></ul>",
+    takeaway:"💡 2 mặt phẳng: song song (0 điểm) hoặc cắt nhau (đường thẳng)."
+},
+{
+    id:4, type:"Vận dụng", points:0.5, knowledge:"Giao tuyến hai mặt phẳng", skill:"Vận dụng", difficulty:"Trung bình",
+    question:"Cho hình chóp $S.ABCD$, đáy $ABCD$ là hình bình hành tâm $O$. Giao tuyến của $(SAC)$ và $(SAD)$ là:",
+    options:["$SO$","$SD$","$SA$","$SB$"], correct:2,
+    geometryConfig:{ points:{S:[0,0,2],A:[-1,-1,0],B:[1,-1,0],C:[1,1,0],D:[-1,1,0],O:[0,0,0]}, lines:[{p1:"S",p2:"A",style:"solid",color:"#ef4444",highlight:true},{p1:"S",p2:"B",style:"solid",color:"#2563eb"},{p1:"S",p2:"C",style:"solid",color:"#2563eb"},{p1:"S",p2:"D",style:"solid",color:"#2563eb"},{p1:"A",p2:"B",style:"solid",color:"#1f2937"},{p1:"B",p2:"C",style:"solid",color:"#1f2937"},{p1:"C",p2:"D",style:"solid",color:"#1f2937"},{p1:"D",p2:"A",style:"solid",color:"#1f2937"},{p1:"A",p2:"C",style:"dash",color:"#6b7280"},{p1:"B",p2:"D",style:"dash",color:"#6b7280"}] },
+    analysis:"🔍 $(SAC)$ và $(SAD)$ cùng chứa $S$ và $A$.",
+    solution:"<p>$S \\in (SAC) \\cap (SAD)$ và $A \\in (SAC) \\cap (SAD)$. Vậy $(SAC) \\cap (SAD) = SA$.</p>",
+    mistakes:"<ul><li>Chọn $SO$ hoặc $SB$ do nhìn nhầm.</li></ul>",
+    takeaway:"💡 Tìm 2 điểm chung → nối thành giao tuyến."
+},
+{
+    id:5, type:"Vận dụng", points:0.5, knowledge:"Giao tuyến hai mặt phẳng", skill:"Vận dụng", difficulty:"Trung bình",
+    question:"Cho hình chóp $S.ABCD$. Gọi $O = AC \\cap BD$. Giao tuyến của $(SAC)$ và $(SBD)$ là:",
+    options:["$SM$","$SO$","$SN$","$MN$"], correct:1,
+    geometryConfig:{ points:{S:[0,0,2],A:[-1,-1,0],B:[1,-1,0],C:[1,1,0],D:[-1,1,0],O:[0,0,0]}, lines:[{p1:"S",p2:"O",style:"solid",color:"#ef4444",highlight:true},{p1:"S",p2:"A",style:"solid",color:"#2563eb"},{p1:"S",p2:"B",style:"solid",color:"#2563eb"},{p1:"S",p2:"C",style:"solid",color:"#2563eb"},{p1:"S",p2:"D",style:"solid",color:"#2563eb"},{p1:"A",p2:"B",style:"solid",color:"#1f2937"},{p1:"B",p2:"C",style:"solid",color:"#1f2937"},{p1:"C",p2:"D",style:"solid",color:"#1f2937"},{p1:"D",p2:"A",style:"solid",color:"#1f2937"},{p1:"A",p2:"C",style:"dash",color:"#6b7280"},{p1:"B",p2:"D",style:"dash",color:"#6b7280"}] },
+    analysis:"🔍 $S$ chung, $O = AC \\cap BD$ là điểm chung thứ hai.",
+    solution:"<p>$S$ là điểm chung thứ nhất. $O \\in AC \\subset (SAC)$ và $O \\in BD \\subset (SBD)$ là điểm chung thứ hai. Vậy $(SAC) \\cap (SBD) = SO$.</p>",
+    mistakes:"<ul><li>Chọn $MN$ nhầm với giao tuyến của cặp mặt phẳng khác.</li></ul>",
+    takeaway:"💡 Tìm đường thẳng trong mỗi mặt phẳng, giao điểm của chúng là chìa khóa."
+},
+{
+    id:6, type:"Vận dụng", points:0.5, knowledge:"Giao điểm đường thẳng và mặt phẳng", skill:"Vận dụng", difficulty:"Trung bình",
+    question:"Cho hình chóp $S.ABCD$ đáy hình bình hành tâm $O$. $M$ trung điểm $SB$. Giao điểm của $DM$ và $(SAC)$ là:",
+    options:["Giao điểm của $DM$ và $SA$","Giao điểm của $DM$ và $SC$","Giao điểm của $DM$ và $SO$","Giao điểm của $DM$ và $BD$"], correct:2,
+    geometryConfig:{ points:{S:[0,0,2],A:[-1,-1,0],B:[1,-1,0],C:[1,1,0],D:[-1,1,0],O:[0,0,0],M:[0.5,-0.5,1]}, lines:[{p1:"D",p2:"M",style:"solid",color:"#ef4444",highlight:true},{p1:"S",p2:"O",style:"dash",color:"#10b981",highlight:true},{p1:"S",p2:"A",style:"solid",color:"#2563eb"},{p1:"S",p2:"B",style:"solid",color:"#2563eb"},{p1:"S",p2:"C",style:"solid",color:"#2563eb"},{p1:"S",p2:"D",style:"solid",color:"#2563eb"},{p1:"A",p2:"B",style:"solid",color:"#1f2937"},{p1:"B",p2:"C",style:"solid",color:"#1f2937"},{p1:"C",p2:"D",style:"solid",color:"#1f2937"},{p1:"D",p2:"A",style:"solid",color:"#1f2937"},{p1:"A",p2:"C",style:"dash",color:"#6b7280"},{p1:"B",p2:"D",style:"dash",color:"#6b7280"}] },
+    analysis:"🔍 Mặt phẳng phụ $(SBD)$ chứa $DM$, cắt $(SAC)$ theo $SO$.",
+    solution:"<p>Trong $(SBD)$, gọi $I = SO \\cap DM$. $I \\in DM$ và $I \\in SO \\subset (SAC)$. Vậy $I = DM \\cap (SAC)$.</p>",
+    mistakes:"<ul><li>Không dùng mặt phẳng trung gian $(SBD)$.</li></ul>",
+    takeaway:"💡 'Bắc cầu': Tìm mp phụ chứa đường thẳng → giao tuyến với mp đích."
+},
+{
+    id:7, type:"Vận dụng", points:0.5, knowledge:"Giao điểm đường thẳng và mặt phẳng", skill:"Vận dụng", difficulty:"Trung bình",
+    question:"[Mức độ 1] Cho $S,A,B,C$ không đồng phẳng. $H \\in SA$, $K \\in SC$, $HK \\not\\parallel AC$. $I$ trung điểm $BC$. Giao điểm của $BK$ và $(SAI)$ là:",
+    options:["$J = SI \\cap BK$","$J = SI \\cap BH$","$J = SI \\cap HK$","$J = AI \\cap BK$"], correct:0,
+    geometryConfig:{ points:{S:[0,0,2],A:[-1,-1,0],B:[1,-1,0],C:[1,1,0],I:[1,0,0],H:[-0.5,-0.5,1],K:[0.5,0.5,1]}, lines:[{p1:"S",p2:"I",style:"dash",color:"#10b981",highlight:true},{p1:"B",p2:"K",style:"solid",color:"#ef4444",highlight:true},{p1:"S",p2:"A",style:"solid",color:"#2563eb"},{p1:"S",p2:"B",style:"solid",color:"#2563eb"},{p1:"S",p2:"C",style:"solid",color:"#2563eb"},{p1:"A",p2:"B",style:"solid",color:"#1f2937"},{p1:"B",p2:"C",style:"solid",color:"#1f2937"},{p1:"C",p2:"A",style:"solid",color:"#1f2937"}] },
+    analysis:"🔍 $BK \\subset (SBC)$, $(SAI) \\cap (SBC) = SI$.",
+    solution:"<p>Trong $(SBC)$, gọi $J = BK \\cap SI$. $J \\in BK$ và $J \\in SI \\subset (SAI)$.</p>",
+    mistakes:"<ul><li>Chọn giao điểm không cùng mặt phẳng.</li></ul>",
+    takeaway:"💡 Thu hẹp về mặt phẳng trung gian chứa cả đường thẳng và giao tuyến."
+},
+{
+    id:8, type:"Vận dụng cao", points:1.0, knowledge:"Ba đường thẳng đồng quy", skill:"Vận dụng cao", difficulty:"Khó",
+    question:"[Mức độ 1] Cho hình chóp $S.ABCD$ đáy hình bình hành. $M \\in SC$, $SM=3MC$. $N = SD \\cap (MAB)$. $O = AC \\cap BD$. Ba đường thẳng nào đồng quy?",
+    options:["$AB, MN, CD$","$SO, BD, AM$","$SO, AM, BN$","$SO, AC, BN$"], correct:2,
+    geometryConfig:{ points:{S:[0,0,2],A:[-1,-1,0],B:[1,-1,0],C:[1,1,0],D:[-1,1,0],O:[0,0,0],M:[0.75,0.75,0.5],N:[-0.5,0.5,1]}, lines:[{p1:"S",p2:"O",style:"dash",color:"#10b981",highlight:true},{p1:"A",p2:"M",style:"solid",color:"#ef4444",highlight:true},{p1:"B",p2:"N",style:"solid",color:"#8b5cf6",highlight:true},{p1:"S",p2:"A",style:"solid",color:"#2563eb"},{p1:"S",p2:"B",style:"solid",color:"#2563eb"},{p1:"S",p2:"C",style:"solid",color:"#2563eb"},{p1:"S",p2:"D",style:"solid",color:"#2563eb"},{p1:"A",p2:"B",style:"solid",color:"#1f2937"},{p1:"B",p2:"C",style:"solid",color:"#1f2937"},{p1:"C",p2:"D",style:"solid",color:"#1f2937"},{p1:"D",p2:"A",style:"solid",color:"#1f2937"}] },
+    analysis:"🔍 $I = BN \\cap AM$ thuộc cả $(SBD)$ và $(SAC)$, nên $I \\in SO$.",
+    solution:"<p>$I = BN \\cap AM$. $I \\in BN \\subset (SBD)$ và $I \\in AM \\subset (SAC)$. Suy ra $I \\in (SBD) \\cap (SAC) = SO$.</p>",
+    mistakes:"<ul><li>Chọn bộ ba không có giao tuyến chung rõ ràng.</li></ul>",
+    takeaway:"💡 Giao điểm của 2 đường thuộc 2 mặt phẳng → nằm trên giao tuyến."
+},
+{
+    id:9, type:"Vận dụng cao", points:1.0, knowledge:"Định lý Desargues", skill:"Vận dụng cao", difficulty:"Khó",
+    question:"[Mức độ 2] Cho hình chóp $S.ABC$. $M \\in SA, N \\in SB, P \\in SC$. $AB \\cap MN = D$, $BC \\cap NP = E$, $CA \\cap MP = F$. Kết luận về $D,E,F$:",
+    options:["$D,E,F$ thẳng hàng.","$D,E,F$ là tam giác.","$E$ là trung điểm $DF$.","$D,E,F$ không đồng phẳng."], correct:0,
+    geometryConfig:{ points:{S:[0,0,2],A:[-1,-1,0],B:[1,-1,0],C:[0,1,0],M:[-0.5,-0.5,1],N:[0.5,-0.5,1],P:[0,0.5,1]}, lines:[{p1:"S",p2:"A",style:"solid",color:"#2563eb"},{p1:"S",p2:"B",style:"solid",color:"#2563eb"},{p1:"S",p2:"C",style:"solid",color:"#2563eb"},{p1:"A",p2:"B",style:"solid",color:"#1f2937"},{p1:"B",p2:"C",style:"solid",color:"#1f2937"},{p1:"C",p2:"A",style:"solid",color:"#1f2937"},{p1:"M",p2:"N",style:"dash",color:"#ef4444"},{p1:"N",p2:"P",style:"dash",color:"#ef4444"},{p1:"P",p2:"M",style:"dash",color:"#ef4444"}] },
+    analysis:"🔍 Định lý Desargues: $D,E,F$ đều thuộc $(ABC) \\cap (MNP)$.",
+    solution:"<p>$D = AB \\cap MN \\Rightarrow D \\in (ABC) \\cap (MNP)$. Tương tự $E, F$. Do giao tuyến là đường thẳng nên $D,E,F$ thẳng hàng.</p>",
+    mistakes:"<ul><li>Không nhận ra các điểm đều nằm trên giao tuyến.</li></ul>",
+    takeaway:"💡 Các giao điểm của cặp đường thuộc 2 mặt phẳng → nằm trên giao tuyến."
+},
+{
+    id:10, type:"Vận dụng", points:0.5, knowledge:"Giao điểm đường thẳng và mặt phẳng", skill:"Vận dụng", difficulty:"Trung bình",
+    question:"[Mức độ 2] $A,B,C,D$ không đồng phẳng. $M,N$ trung điểm $AC,BC$. $P \\in BD$, $BP=2PD$. Giao điểm của $CD$ và $(MNP)$ là:",
+    options:["$CD \\cap NP$","$CD \\cap MN$","$CD \\cap MP$","$CD \\cap AP$"], correct:0,
+    geometryConfig:{ points:{A:[-1,-1,0],B:[1,-1,0],C:[1,1,0],D:[-1,1,2],M:[0,0,0],N:[1,0,0],P:[0.33,0.33,1.33]}, lines:[{p1:"C",p2:"D",style:"solid",color:"#ef4444",highlight:true},{p1:"N",p2:"P",style:"solid",color:"#10b981",highlight:true},{p1:"A",p2:"B",style:"solid",color:"#1f2937"},{p1:"B",p2:"C",style:"solid",color:"#1f2937"},{p1:"C",p2:"A",style:"solid",color:"#1f2937"},{p1:"A",p2:"D",style:"solid",color:"#2563eb"},{p1:"B",p2:"D",style:"solid",color:"#2563eb"}] },
+    analysis:"🔍 $CD$ và $NP$ cùng thuộc $(BCD)$.",
+    solution:"<p>Trong $(BCD)$, gọi $O = CD \\cap NP$. $NP \\subset (MNP)$ và $O \\in NP \\Rightarrow O \\in (MNP)$. Vậy $O = CD \\cap (MNP)$.</p>",
+    mistakes:"<ul><li>Chọn $MN$ vì không cùng mặt phẳng chứa $CD$.</li></ul>",
+    takeaway:"💡 Thu gọn về 2D: tìm mặt phẳng chứa cả đường thẳng và đường trong mp đích."
+},
+{
+    id:11, type:"Vận dụng", points:0.5, knowledge:"Giao điểm đường thẳng và mặt phẳng", skill:"Vận dụng", difficulty:"Trung bình",
+    question:"[Mức độ 2] Tứ diện $ABCD$. $E,F$ trung điểm $AB,CD$. $G$ trọng tâm $\\triangle BCD$. Giao điểm của $EG$ và $(ACD)$ là:",
+    options:["Điểm $F$","Giao điểm của $EG$ và $AC$","Giao điểm của $EG$ và $AF$","Giao điểm của $EG$ và $CD$"], correct:2,
+    geometryConfig:{ points:{A:[0,0,0],B:[3,0,0],C:[1.5,2.598,0],D:[1.5,0.866,2.449],E:[1.5,0,0],F:[1.5,1.732,1.225],G:[2,1.155,0.816]}, lines:[...tetraEdges,{p1:"E",p2:"G",style:"solid",color:"#ef4444",highlight:true},{p1:"A",p2:"F",style:"dash",color:"#10b981",highlight:true},{p1:"B",p2:"F",style:"dash",color:"#6b7280"}] },
+    analysis:"🔍 $G \\in BF$ (trung tuyến), $EG \\subset (ABF)$. Giao tuyến $(ABF) \\cap (ACD) = AF$.",
+    solution:"<p>$G$ trọng tâm $\\Rightarrow G \\in BF \\subset (ABF)$. $E \\in AB \\subset (ABF)$. Vậy $EG \\subset (ABF)$. Gọi $M = EG \\cap AF$, $AF \\subset (ACD) \\Rightarrow M \\in (ACD)$.</p>",
+    mistakes:"<ul><li>Không nhận ra $G \\in BF$, không tìm được mp trung gian.</li></ul>",
+    takeaway:"💡 Trọng tâm nằm trên trung tuyến → dùng để kéo điểm vào mặt phẳng mới."
+},
+{
+    id:12, type:"Vận dụng", points:0.5, knowledge:"Mệnh đề hình học", skill:"Phân tích", difficulty:"Trung bình",
+    question:"Cho tứ diện $ABCD$. Mệnh đề nào ĐÚNG?",
+    options:["$A \\in (BCD)$.","Có vô số mp chứa $A,B,C,D$.","$CD = (ACD) \\cap (BCD)$.","Tứ diện có 4 cạnh."], correct:2,
+    geometryConfig:{ points:{A:[0,0,2.449],B:[0,0,0],C:[3,0,0],D:[1.5,2.598,0]}, lines:[{p1:"A",p2:"B",style:"solid",color:"#2563eb"},{p1:"A",p2:"C",style:"solid",color:"#2563eb"},{p1:"A",p2:"D",style:"solid",color:"#2563eb"},{p1:"B",p2:"C",style:"solid",color:"#1f2937"},{p1:"C",p2:"D",style:"solid",color:"#ef4444",highlight:true},{p1:"D",p2:"B",style:"solid",color:"#1f2937"}] },
+    analysis:"🔍 Kiểm tra từng mệnh đề với định nghĩa tứ diện.",
+    solution:"<p>$A \\notin (BCD)$ → Sai. Không mp nào chứa 4 điểm không đồng phẳng → Sai. $CD$ là giao tuyến $(ACD)$ và $(BCD)$ → <b>Đúng</b>. Tứ diện có 6 cạnh → Sai.</p>",
+    mistakes:"<ul><li>Nhầm số cạnh tứ diện (6 chứ không phải 4).</li></ul>",
+    takeaway:"💡 Tứ diện: 4 đỉnh, 6 cạnh, 4 mặt."
+},
+
+// ==================== CÂU 13 - ĐÃ SỬA HÌNH VẼ ====================
+{
+    id:13, type:"Vận dụng", points:0.5, knowledge:"Giao tuyến mặt phẳng", skill:"Phân tích", difficulty:"Trung bình",
+    question:"Cho tứ diện $ABCD$. $I,J$ trung điểm $AD,BC$. $M \\in AB$, $N \\in AC$. Mệnh đề nào SAI?",
+    options:["$ND$ là giao tuyến của $(MND)$ và $(ADC)$.","$BI$ là giao tuyến của $(BCI)$ và $(ABD)$.","$IJ$ là giao tuyến của $(IBC)$ và $(JAD)$.","Giao tuyến của $(IBC)$ và $(DMN)$ song song với $IJ$."], correct:3,
+    geometryConfig:{ 
+        points:{ 
+            A: T.A, B: T.B, C: T.C, D: T.D,
+            I: T.midAD, J: T.midBC, M: T.thirdAB, N: T.thirdAC
+        }, 
+        lines:[
+            ...tetraEdges,
+            {p1:"I",p2:"J",style:"solid",color:"#ef4444",highlight:true},
+            {p1:"M",p2:"N",style:"dash",color:"#10b981"},
+            {p1:"D",p2:"N",style:"dash",color:"#8b5cf6"},
+            {p1:"B",p2:"I",style:"dash",color:"#8b5cf6"}
+        ] 
+    },
+    analysis:"🔍 Giao tuyến $(IBC) \\cap (DMN)$: tìm $E = DN \\cap CI$ và $F = DM \\cap BI$, giao tuyến là $EF$, và $EF$ cắt $IJ$ chứ không song song.",
+    solution:"<p>Gọi $E = DN \\cap CI \\in (DMN) \\cap (IBC)$ và $F = DM \\cap BI \\in (DMN) \\cap (IBC)$. Giao tuyến là $EF$. Trong không gian, $EF$ cắt $IJ$ → mệnh đề D <b>SAI</b>.</p>",
+    mistakes:"<ul><li>Giả định song song mà không chứng minh qua 2 điểm chung cụ thể.</li></ul>",
+    takeaway:"💡 Luôn tìm 2 điểm chung để xác định giao tuyến, tránh suy đoán."
+},
+
+{
+    id:14, type:"Vận dụng", points:0.5, knowledge:"Giao điểm đường thẳng và mặt phẳng", skill:"Vận dụng", difficulty:"Trung bình",
+    question:"Hình chóp $S.ABCD$ đáy tứ giác lồi, $O = AC \\cap BD$. Mệnh đề nào ĐÚNG?",
+    options:["Giao điểm $AB$ và $(SCD)$ = giao điểm $AD$ và $BC$.","Giao điểm $AC$ và $(SBD)$ là $O$.","$SE/ED = 1/3$.","Giao điểm $MN$ và $(SBD)$ là trung điểm $SO$."], correct:1,
+    geometryConfig:{ points:{S:[0,0,2],A:[-1,-1,0],B:[1,-1,0],C:[1,1,0],D:[-1,1,0],O:[0,0,0]}, lines:[{p1:"S",p2:"A",style:"solid",color:"#2563eb"},{p1:"S",p2:"B",style:"solid",color:"#2563eb"},{p1:"S",p2:"C",style:"solid",color:"#2563eb"},{p1:"S",p2:"D",style:"solid",color:"#2563eb"},{p1:"A",p2:"B",style:"solid",color:"#1f2937"},{p1:"B",p2:"C",style:"solid",color:"#1f2937"},{p1:"C",p2:"D",style:"solid",color:"#1f2937"},{p1:"D",p2:"A",style:"solid",color:"#1f2937"},{p1:"A",p2:"C",style:"dash",color:"#6b7280"},{p1:"B",p2:"D",style:"dash",color:"#6b7280"},{p1:"S",p2:"O",style:"dash",color:"#10b981"}] },
+    analysis:"🔍 $O \\in AC$ và $O \\in BD \\subset (SBD)$.",
+    solution:"<p>$O = AC \\cap BD$. $BD \\subset (SBD) \\Rightarrow O \\in (SBD)$. Mà $O \\in AC$ → $O$ là giao điểm của $AC$ và $(SBD)$. ĐÚNG.</p>",
+    mistakes:"<ul><li>Nhầm lẫn giao điểm các đường kéo dài.</li></ul>",
+    takeaway:"💡 Điểm thuộc đường thẳng và mặt phẳng → chính là giao điểm."
+},
+
+// ==================== CÂU 15 - ĐÃ SỬA HÌNH VẼ ====================
+{
+    id:15, type:"Vận dụng cao", points:1.0, knowledge:"Định lý Menelaus", skill:"Vận dụng cao", difficulty:"Khó",
+    question:"Tứ diện $ABCD$. $E \\in AB$ ($AB=3AE$), $F \\in AC$ ($AC=2AF$), $G \\in BD$ ($GB=4GD$). Mệnh đề nào SAI?",
+    options:["Giao tuyến $(EFG)$ và $(ABC)$ là $EF$.","Giao điểm $BC$ và $(EFG)$ là $M = EF \\cap BC$.","Nếu $H = CD \\cap (EFG)$ thì $H,G,M$ thẳng hàng.","$I = AD \\cap (EFG)$. Tỉ số $IA/ID = 7/3$."], correct:3,
+    geometryConfig:{ 
+        points:{ 
+            A: T.A, B: T.B, C: T.C, D: T.D,
+            // E trên AB: AB=3AE → AE = AB/3
+            E: T.thirdAB,
+            // F trên AC: AC=2AF → AF = AC/2 (trung điểm)
+            F: T.midAC,
+            // G trên BD: GB=4GD → G chia BD tỉ lệ BG:GD = 4:1 → G = B + 4/5*(D-B)
+            G: [1.8, 0.693, 1.959]
+        }, 
+        lines:[
+            ...tetraEdges,
+            {p1:"E",p2:"F",style:"solid",color:"#ef4444",highlight:true},
+            {p1:"F",p2:"G",style:"solid",color:"#ef4444",highlight:true},
+            {p1:"E",p2:"G",style:"dash",color:"#ef4444"}
+        ] 
+    },
+    analysis:"🔍 Menelaus cho $\\triangle ABD$ và cát tuyến $E-G-I$: $\\dfrac{BE}{EA} \\cdot \\dfrac{AI}{ID} \\cdot \\dfrac{DG}{GB} = 1$.",
+    solution:"<p>Kéo dài $EG$ cắt $AD$ tại $I$. Menelaus $\\triangle ABD$: $\\dfrac{BE}{EA} \\cdot \\dfrac{AI}{ID} \\cdot \\dfrac{DG}{GB} = 1 \\Leftrightarrow 2 \\cdot \\dfrac{AI}{ID} \\cdot \\dfrac{1}{4} = 1 \\Rightarrow \\dfrac{AI}{ID} = 2$. Vậy $IA/ID = 7/3$ là <b>SAI</b>.</p>",
+    mistakes:"<ul><li>Nhầm thứ tự đoạn thẳng trong Menelaus.</li></ul>",
+    takeaway:"💡 Menelaus: đi vòng từ đỉnh, qua điểm chia, đến đỉnh tiếp. Tích = 1."
+},
+
+// ==================== CÂU 16 - ĐÃ SỬA HÌNH VẼ ====================
+{
+    id:16, type:"Vận dụng cao", points:1.0, knowledge:"Tỉ số đoạn thẳng - Trọng tâm", skill:"Vận dụng cao", difficulty:"Khó",
+    question:"Tứ diện đều $ABCD$ cạnh $a$. $I$ trung điểm $AD$, $J$ đối xứng $D$ qua $C$, $K$ đối xứng $D$ qua $B$. $d = (IJK) \\cap (ABC)$. $E,F = d \\cap AB, AC$. Tính $\\dfrac{AE}{BE}$.",
+    options:["1","2","3","4"], correct:1,
+    geometryConfig:{ 
+        points:{ 
+            A: T.A, B: T.B, C: T.C, D: T.D,
+            I: T.midAD,
+            // E = trọng tâm △ADK trên AB: E = (A+D+K)/3 = (0+1.5+4.5, 0+0.866-0.866, 0+2.449-2.449)/3 = (2, 0, 0)
+            E: T.twoThirdAB,
+            // P = trọng tâm △ADJ trên AC: P = (A+D+J)/3 = (0+1.5+1.5, 0+0.866+4.33, 0+2.449-2.449)/3 = (1, 1.732, 0)
+            P: T.twoThirdAC
+        }, 
+        lines:[
+            ...tetraEdges,
+            // Đường giao tuyến d = EP nằm trên mặt phẳng ABC
+            {p1:"E",p2:"P",style:"solid",color:"#ef4444",highlight:true},
+            // Từ I đến E và P (thể hiện mặt phẳng IJK cắt)
+            {p1:"I",p2:"E",style:"dash",color:"#10b981"},
+            {p1:"I",p2:"P",style:"dash",color:"#10b981"},
+            // Đánh dấu AE và BE
+            {p1:"A",p2:"E",style:"solid",color:"#f59e0b",highlight:true}
+        ] 
+    },
+    analysis:"🔍 Trong $\\triangle ADK$: $I$ trung điểm $AD$, $B$ trung điểm $DK$ (do $K$ đối xứng $D$ qua $B$). $AB$ và $IK$ là hai trung tuyến → cắt tại trọng tâm $E$. $AE/BE = 2$.",
+    solution:"<p>$IK \\cap AB = E$. Trong $\\triangle ADK$: $I$ trung điểm $AD$, $B$ trung điểm $DK$ ($K$ đối xứng $D$ qua $B$).<br>$AB, IK$ là hai trung tuyến → $E$ là trọng tâm → $\\dfrac{AE}{BE} = 2$.</p>",
+    mistakes:"<ul><li>Tính tọa độ phức tạp mà không nhận ra cấu trúc trung tuyến - trọng tâm.</li></ul>",
+    takeaway:"💡 Điểm đối xứng qua trung điểm → Trung tuyến → Trọng tâm."
+},
+
+{
+    id:17, type:"Vận dụng cao", points:1.0, knowledge:"Tỉ số đoạn thẳng", skill:"Vận dụng cao", difficulty:"Khó",
+    question:"Hình chóp $S.ABC$. $M,N$ trung điểm $SA,BC$. $P \\in AB$, $AP/AB = 1/3$. $Q = SC \\cap (MNP)$. $SQ/SC = a/b$ (tối giản). Tính $a+b$.",
+    options:["2","3","4","5"], correct:2,
+    geometryConfig:{ points:{S:[0,0,2],A:[-1,-1,0],B:[1,-1,0],C:[1,1,0],M:[-0.5,-0.5,1],N:[1,0,0],P:[0.33,-1,0]}, lines:[{p1:"S",p2:"A",style:"solid",color:"#2563eb"},{p1:"S",p2:"B",style:"solid",color:"#2563eb"},{p1:"S",p2:"C",style:"solid",color:"#2563eb"},{p1:"A",p2:"B",style:"solid",color:"#1f2937"},{p1:"B",p2:"C",style:"solid",color:"#1f2937"},{p1:"C",p2:"A",style:"solid",color:"#1f2937"},{p1:"M",p2:"N",style:"dash",color:"#ef4444"},{p1:"N",p2:"P",style:"dash",color:"#ef4444"},{p1:"P",p2:"M",style:"dash",color:"#ef4444"}] },
+    analysis:"🔍 Menelaus liên tiếp: $\\triangle ABC$ rồi $\\triangle SAC$.",
+    solution:"<p>$E = AC \\cap PN$. Menelaus $\\triangle ABC$: $\\dfrac{1}{2} \\cdot 1 \\cdot \\dfrac{CE}{EA} = 1 \\Rightarrow CE/EA = 2$.<br>Menelaus $\\triangle SAC$: $1 \\cdot \\dfrac{1}{2} \\cdot \\dfrac{CQ}{QS} = 1 \\Rightarrow CQ/QS = 2$. Vậy $SQ/SC = 1/3 \\Rightarrow a+b = 4$.</p>",
+    mistakes:"<ul><li>Menelaus sai thứ tự điểm.</li></ul>",
+    takeaway:"💡 Chuỗi Menelaus: tìm giao điểm trung gian rồi áp dụng liên tiếp."
+},
+
+// ==================== CÂU 18 - ĐÃ SỬA HÌNH VẼ ====================
+{
+    id:18, type:"Vận dụng cao", points:1.0, knowledge:"Đồng phẳng", skill:"Phân tích", difficulty:"Khó",
+    question:"Tứ diện $ABCD$. $E,F,G$ thuộc $AB,AC,AD$. $I,J$ trung điểm $BC, BD$. Bốn điểm $C,D,I,J$ có đồng phẳng không?",
+    options:["Có","Không","Không xác định","Chỉ khi ABCD đều"], correct:0,
+    geometryConfig:{ 
+        points:{ 
+            A: T.D,  // Đỉnh trên
+            B: T.A,  // Góc dưới trái
+            C: T.B,  // Góc dưới phải
+            D: T.C,  // Góc sau
+            // I = trung điểm BC = trung điểm T.A-T.B
+            I: T.midAB,
+            // J = trung điểm BD = trung điểm T.A-T.C
+            J: T.midAC
+        }, 
+        lines:[
+            // Các cạnh từ đỉnh A(=T.D) xuống đáy
+            {p1:"A",p2:"B",style:"solid",color:"#2563eb"},
+            {p1:"A",p2:"C",style:"solid",color:"#2563eb"},
+            {p1:"A",p2:"D",style:"solid",color:"#2563eb"},
+            // Tam giác đáy BCD (mặt phẳng z=0)
+            {p1:"B",p2:"C",style:"solid",color:"#1f2937"},
+            {p1:"C",p2:"D",style:"solid",color:"#1f2937"},
+            {p1:"D",p2:"B",style:"solid",color:"#1f2937"},
+            // I, J trên đáy - highlight
+            {p1:"B",p2:"I",style:"solid",color:"#ef4444",highlight:true},
+            {p1:"I",p2:"C",style:"solid",color:"#ef4444",highlight:true},
+            {p1:"B",p2:"J",style:"solid",color:"#10b981",highlight:true},
+            {p1:"J",p2:"D",style:"solid",color:"#10b981",highlight:true},
+            {p1:"I",p2:"J",style:"dash",color:"#8b5cf6"},
+            {p1:"C",p2:"D",style:"solid",color:"#ef4444",highlight:true}
+        ] 
+    },
+    analysis:"🔍 $I \\in BC \\subset (BCD)$, $J \\in BD \\subset (BCD)$. Vậy $C,D,I,J$ đều thuộc mặt phẳng $(BCD)$.",
+    solution:"<p>$I$ trung điểm $BC \\Rightarrow I \\in (BCD)$. $J$ trung điểm $BD \\Rightarrow J \\in (BCD)$.<br>$C \\in (BCD)$, $D \\in (BCD)$.<br>Vậy 4 điểm $C,D,I,J$ cùng thuộc $(BCD)$ → <b>đồng phẳng</b>.</p>",
+    mistakes:"<ul><li>Bị nhiễu bởi dữ kiện thừa $E,F,G$ mà không đọc kỹ câu hỏi cuối.</li></ul>",
+    takeaway:"💡 'Lọc nhiễu': Đọc kỹ câu hỏi. Đôi khi đáp án chỉ cần nhận diện mặt phẳng chứa các điểm."
+},
+
+{
+    id:19, type:"Vận dụng cao", points:1.0, knowledge:"Tỉ số đoạn thẳng", skill:"Vận dụng cao", difficulty:"Khó",
+    question:"Hình chóp $S.ABC$, $G$ trọng tâm $\\triangle ABC$. $M,N$ trung điểm $SB,SC$. $(AMN)$ cắt $SG$ tại $I$. Tính $SI/IG$.",
+    options:["1","1.5","2","2.5"], correct:1,
+    geometryConfig:{ points:{S:[0,0,2],A:[-1,-1,0],B:[1,-1,0],C:[0,1,0],G:[0,-0.333,0],M:[0.5,-0.5,1],N:[0,0.5,1],K:[0.5,0,0]}, lines:[{p1:"S",p2:"A",style:"solid",color:"#2563eb"},{p1:"S",p2:"B",style:"solid",color:"#2563eb"},{p1:"S",p2:"C",style:"solid",color:"#2563eb"},{p1:"A",p2:"B",style:"solid",color:"#1f2937"},{p1:"B",p2:"C",style:"solid",color:"#1f2937"},{p1:"C",p2:"A",style:"solid",color:"#1f2937"},{p1:"S",p2:"G",style:"dash",color:"#ef4444",highlight:true},{p1:"M",p2:"N",style:"dash",color:"#10b981"}] },
+    analysis:"🔍 Gọi $K$ trung điểm $BC$. Trong $(SAK)$, giao tuyến là $AL$ với $L$ trung điểm $SK$.",
+    solution:"<p>Menelaus cho $\\triangle SGK$: $\\dfrac{KA}{AG} \\cdot \\dfrac{GI}{IS} \\cdot \\dfrac{SL}{LK} = 1$. Với $KA/AG = 3/2$, $SL/LK = 1$: $\\dfrac{3}{2} \\cdot \\dfrac{GI}{IS} = 1 \\Rightarrow SI/IG = 3/2 = 1.5$.</p>",
+    mistakes:"<ul><li>Không xác định được giao tuyến của $(AMN)$ và $(SAK)$.</li></ul>",
+    takeaway:"💡 Khi có trọng tâm, kẻ trung tuyến để đưa về mặt phẳng trung gian."
+},
+
+{
+    id:20, type:"Vận dụng cao", points:1.0, knowledge:"Tỉ số đoạn thẳng", skill:"Vận dụng cao", difficulty:"Khó",
+    question:"Hình chóp $S.ABCD$ đáy hình bình hành tâm $O$. $M$ trung điểm $SC$, $N$ trung điểm $OB$. $E = SD \\cap (AMN)$. Tỉ số $SE/SD$ bằng:",
+    options:["0.4","0.5","0.6","0.75"], correct:0,
+    geometryConfig:{ points:{S:[0,0,2],A:[-1,-1,0],B:[1,-1,0],C:[1,1,0],D:[-1,1,0],O:[0,0,0],M:[0.5,0.5,1],N:[0.5,-0.5,0]}, lines:[{p1:"S",p2:"A",style:"solid",color:"#2563eb"},{p1:"S",p2:"B",style:"solid",color:"#2563eb"},{p1:"S",p2:"C",style:"solid",color:"#2563eb"},{p1:"S",p2:"D",style:"solid",color:"#2563eb"},{p1:"A",p2:"B",style:"solid",color:"#1f2937"},{p1:"B",p2:"C",style:"solid",color:"#1f2937"},{p1:"C",p2:"D",style:"solid",color:"#1f2937"},{p1:"D",p2:"A",style:"solid",color:"#1f2937"},{p1:"A",p2:"M",style:"dash",color:"#ef4444"},{p1:"N",p2:"O",style:"dash",color:"#10b981"}] },
+    analysis:"🔍 $I = AM \\cap SO$. Menelaus $\\triangle SOD$: $SE/ED \\cdot DN/NO \\cdot OI/IS = 1$.",
+    solution:"<p>$SI/IO = 2$ (trọng tâm). $DN/NO = 3$. Menelaus: $\\dfrac{SE}{ED} \\cdot 3 \\cdot \\dfrac{1}{2} = 1 \\Rightarrow SE/ED = 2/3$. Suy ra $SE/SD = 2/5 = 0.4$.</p>",
+    mistakes:"<ul><li>Nhầm $SE/ED$ với $SE/SD$.</li></ul>",
+    takeaway:"💡 Chú ý chuyển đổi: $SE/ED = 2/3 \\Rightarrow SE/SD = 2/(2+3) = 2/5$."
+},
+
+// ==================== CÂU 21 - ĐÃ SỬA HÌNH VẼ ====================
+{
+    id:21, type:"Vận dụng cao", points:1.0, knowledge:"Diện tích thiết diện", skill:"Vận dụng cao", difficulty:"Khó",
+    question:"Tứ diện đều $ABCD$ cạnh 3. $I$ trung điểm $AD$, $J$ đối xứng $D$ qua $C$, $K$ đối xứng $D$ qua $B$. Giao tuyến $(IJK)$ với các mặt tạo hình phẳng. Diện tích?",
+    options:["1","1.5","2","2.5"], correct:1,
+    geometryConfig:{ 
+        points:{ 
+            A: T.A, B: T.B, C: T.C, D: T.D,
+            I: T.midAD,
+            // E = trọng tâm △ADK = (A+D+K)/3 = (2, 0, 0)
+            E: T.twoThirdAB,
+            // P = trọng tâm △ADJ = (A+D+J)/3 = (1, 1.732, 0)
+            P: T.twoThirdAC
+        }, 
+        lines:[
+            ...tetraEdges,
+            // Tam giác thiết diện IPE - highlight mạnh
+            {p1:"I",p2:"P",style:"solid",color:"#ef4444",highlight:true},
+            {p1:"P",p2:"E",style:"solid",color:"#ef4444",highlight:true},
+            {p1:"E",p2:"I",style:"solid",color:"#ef4444",highlight:true}
+        ] 
+    },
+    analysis:"🔍 Thiết diện là $\\triangle IPE$. $E,P$ là trọng tâm $\\triangle ADK, \\triangle ADJ$ → $AE = AP = 2$, $PE \\parallel BC$, $PE = 2$. Tính $IE$ bằng Cô-sin.",
+    solution:"<p>$AE = AP = 2$, $PE = \\dfrac{2}{3}BC = 2$.<br>Trong $\\triangle AEI$: $AI = 1.5$, $AE = 2$, $\\angle IAE = 60°$.<br>$IE^2 = 1.5^2 + 2^2 - 2(1.5)(2)\\cos 60° = \\dfrac{13}{4}$.<br>$S = \\dfrac{1}{2} \\cdot 2 \\cdot \\sqrt{\\dfrac{13}{4} - 1} = \\dfrac{3}{2} = 1.5$.</p>",
+    mistakes:"<ul><li>Không nhận ra $E,P$ là trọng tâm → không tính được độ dài cạnh.</li></ul>",
+    takeaway:"💡 Đối xứng qua đỉnh → trung tuyến → trọng tâm. Chìa khóa giải nén tỉ số."
+},
+
+{
+    id:22, type:"Vận dụng cao", points:1.0, knowledge:"Giao tuyến mặt phẳng", skill:"Vận dụng cao", difficulty:"Khó",
+    question:"Hình chóp $S.ABCD$ đáy hình bình hành. $M$ trung điểm $SC$. $(ABM)$ cắt $SD$ tại $N$. Mệnh đề đúng?",
+    options:["$MN \\parallel (ABCD)$","$MN \\subset (ABCD)$","$MN$ cắt $(ABCD)$","$MN \\parallel SA$"], correct:0,
+    geometryConfig:{ points:{S:[0,0,2],A:[-1,-1,0],B:[1,-1,0],C:[1,1,0],D:[-1,1,0],M:[0.5,0.5,1],N:[-0.5,0.5,1]}, lines:[{p1:"S",p2:"A",style:"solid",color:"#2563eb"},{p1:"S",p2:"B",style:"solid",color:"#2563eb"},{p1:"S",p2:"C",style:"solid",color:"#2563eb"},{p1:"S",p2:"D",style:"solid",color:"#2563eb"},{p1:"A",p2:"B",style:"solid",color:"#1f2937"},{p1:"B",p2:"C",style:"solid",color:"#1f2937"},{p1:"C",p2:"D",style:"solid",color:"#1f2937"},{p1:"D",p2:"A",style:"solid",color:"#1f2937"},{p1:"M",p2:"N",style:"solid",color:"#ef4444",highlight:true}] },
+    analysis:"🔍 $AB \\parallel CD$ → giao tuyến $(ABM) \\cap (SCD)$ qua $M$ song song $CD$.",
+    solution:"<p>$AB \\parallel CD$ → giao tuyến qua $M \\parallel CD$ cắt $SD$ tại $N$. $MN \\parallel CD \\subset (ABCD) \\Rightarrow MN \\parallel (ABCD)$.</p>",
+    mistakes:"<ul><li>Chọn 'nằm trong' sai vì $MN$ không có điểm chung với đáy.</li></ul>",
+    takeaway:"💡 Hai mp chứa 2 đường song song → giao tuyến song song với chúng."
+}
+];
+
+// ==================== ENGINE ====================
+let currentQ=0, userAnswers=new Array(quizData.length).fill(null), timerInterval, seconds=0, isSubmitted=false, studentName='', autoAdvanceTimeout=null, mathJaxReady=false;
+
+function typesetMath(){ if(typeof MathJax!=='undefined'&&MathJax.typesetPromise) return MathJax.typesetPromise().catch(e=>console.warn('MathJax:',e)); return Promise.resolve(); }
+
+function renderGeometry(config, containerId){
+    const c=document.getElementById(containerId); c.innerHTML='';
+    if(!config){c.style.display='none';return;}
+    c.style.display='block';
+    const pts=config.points, data=[];
+    const x=[],y=[],z=[],text=[];
+    for(const[k,v]of Object.entries(pts)){x.push(v[0]);y.push(v[1]);z.push(v[2]);text.push(k);}
+    data.push({type:'scatter3d',mode:'markers+text',x,y,z,text,textposition:'top center',marker:{size:6,color:'#1e293b',line:{width:1,color:'#fff'}},textfont:{size:11,color:'#1e293b'}});
+    config.lines.forEach(l=>{
+        const p1=pts[l.p1],p2=pts[l.p2];
+        if(!p1||!p2)return;
+        data.push({type:'scatter3d',mode:'lines',x:[p1[0],p2[0]],y:[p1[1],p2[1]],z:[p1[2],p2[2]],line:{color:l.color||'#1f2937',width:l.highlight?5:2,dash:l.style==='dash'?'dash':'solid'}});
+    });
+    // Tính bounding box để căn camera
+    let mx=Infinity,Mx=-Infinity,my=Infinity,My=-Infinity,mz=Infinity,Mz=-Infinity;
+    for(const v of Object.values(pts)){
+        mx=Math.min(mx,v[0]);Mx=Math.max(Mx,v[0]);
+        my=Math.min(my,v[1]);My=Math.max(My,v[1]);
+        mz=Math.min(mz,v[2]);Mz=Math.max(Mz,v[2]);
+    }
+    const cx=(mx+Mx)/2,cy=(my+My)/2,cz=(mz+Mz)/2;
+    const range=Math.max(Mx-mx,My-my,Mz-mz,2)*0.8;
+    Plotly.newPlot(containerId,data,{
+        margin:{l:0,r:0,b:0,t:0},
+        scene:{
+            xaxis:{visible:false,range:[cx-range,cx+range]},
+            yaxis:{visible:false,range:[cy-range,cy+range]},
+            zaxis:{visible:false,range:[cz-range,cz+range]},
+            aspectmode:'manual',aspectratio:{x:1,y:1,z:1},
+            camera:{eye:{x:1.6,y:1.6,z:1.0},center:{x:0,y:0,z:0}}
+        },
+        paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)'
+    },{responsive:true,displayModeBar:false});
+}
+
+const APP_VERSION="2.3";
+let learningProfile={appVersion:APP_VERSION,student:{name:"",id:"",class:"",school:""},exam:{title:"",subject:"",totalQuestions:0,score:0,percent:0,correct:0,wrong:0,time:0,submitTime:""},statistics:{},wrongQuestions:[],correctQuestions:[],weaknesses:[],strengths:[],aiPrompt:""};
+
+function buildLearningProfile(){learningProfile.student.name=studentName;learningProfile.exam.title=document.title;learningProfile.exam.subject="Hình học không gian";learningProfile.exam.totalQuestions=quizData.length;}
+function collectCorrectQuestions(){learningProfile.correctQuestions=quizData.filter((q,i)=>userAnswers[i]===q.correct).map(q=>({id:q.id,type:q.type,knowledge:q.knowledge,question:q.question,correctAnswer:q.correct}));}
+function collectWrongQuestions(){learningProfile.wrongQuestions=quizData.filter((q,i)=>userAnswers[i]!==q.correct).map(q=>({id:q.id,type:q.type,knowledge:q.knowledge,question:q.question,correctAnswer:q.correct,studentAnswer:userAnswers[q.id-1],analysis:q.analysis,solution:q.solution,mistakes:q.mistakes,takeaway:q.takeaway}));}
+function analyzeWeaknesses(){const m={};learningProfile.wrongQuestions.forEach(i=>{const k=i.knowledge||"Khác";if(!m[k])m[k]={topic:k,wrong:0};m[k].wrong++;});learningProfile.weaknesses=Object.values(m).sort((a,b)=>b.wrong-a.wrong);}
+function analyzeStrengths(){const m={};learningProfile.correctQuestions.forEach(i=>{const k=i.knowledge||"Khác";if(!m[k])m[k]={topic:k,correct:0};m[k].correct++;});learningProfile.strengths=Object.values(m).sort((a,b)=>b.correct-a.correct);}
+function buildStatistics(){const s={};quizData.forEach((q,i)=>{const k=q.knowledge||"Khác";if(!s[k])s[k]={total:0,correct:0,wrong:0};s[k].total++;if(userAnswers[i]===q.correct)s[k].correct++;else s[k].wrong++;});learningProfile.statistics=s;}
+function buildAIPrompt(){learningProfile.aiPrompt=`Giáo viên Toán THPT. Phân tích Learning Profile, tạo đề ôn tập cá nhân hóa.`;}
+function downloadLearningProfile(){try{const f=(studentName||"HS").replace(/\s+/g,"_")+"_Profile.json";const b=new Blob([JSON.stringify(learningProfile,null,4)],{type:"application/json"});const u=URL.createObjectURL(b);const a=document.createElement("a");a.href=u;a.download=f;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(u);}catch(e){}}
+function saveStudentName(){const i=document.getElementById('studentNameInput'),n=i.value.trim();if(n){studentName=n;document.getElementById('studentNameStrong').textContent=n;document.getElementById('studentNameDisplay').style.display='inline-block';i.style.borderColor='var(--success)';try{localStorage.setItem('qsn',n);}catch(e){}setTimeout(()=>i.style.borderColor='var(--border)',1000);}else alert('Vui lòng nhập tên!');}
+function init(){try{const s=localStorage.getItem('qsn');if(s){studentName=s;document.getElementById('studentNameInput').value=s;document.getElementById('studentNameStrong').textContent=s;document.getElementById('studentNameDisplay').style.display='inline-block';}}catch(e){}startTimer();if(typeof MathJax!=='undefined'&&MathJax.typesetPromise){mathJaxReady=true;renderQuestion();}else{const c=setInterval(()=>{if(typeof MathJax!=='undefined'&&MathJax.typesetPromise){clearInterval(c);mathJaxReady=true;renderQuestion();}},100);setTimeout(()=>{if(!mathJaxReady)renderQuestion();},10000);}}
+function startTimer(){timerInterval=setInterval(()=>{seconds++;document.getElementById('timer').textContent=`${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`;},1000);}
+
+function renderQuestion(){
+    const q=quizData[currentQ];
+    document.getElementById('q-type').textContent=q.type;
+    document.getElementById('q-point').textContent=`${q.points} điểm`;
+    document.getElementById('q-text').innerHTML=`<b>Câu ${currentQ+1}:</b> ${q.question}`;
+    document.getElementById('q-counter').textContent=`Câu ${currentQ+1} / ${quizData.length}`;
+    renderGeometry(q.geometryConfig,'geometry-container');
+    const oc=document.getElementById('options-container');oc.innerHTML='';
+    const labels=['A','B','C','D'];
+    q.options.forEach((opt,i)=>{
+        const d=document.createElement('div');d.className='option';
+        if(userAnswers[currentQ]===i)d.classList.add('selected');
+        if(isSubmitted||userAnswers[currentQ]!==null){if(i===q.correct)d.classList.add('correct');else if(userAnswers[currentQ]===i)d.classList.add('incorrect');}
+        d.innerHTML=`<div class="option-key">${labels[i]}</div><div>${opt}</div>`;
+        if(userAnswers[currentQ]===null&&!isSubmitted)d.onclick=()=>selectOption(i);
+        oc.appendChild(d);
+    });
+    document.getElementById('sol-analysis').innerHTML=q.analysis;
+    document.getElementById('sol-solution').innerHTML=q.solution;
+    document.getElementById('sol-mistakes').innerHTML=q.mistakes;
+    document.getElementById('sol-takeaway').innerHTML=q.takeaway;
+    if(userAnswers[currentQ]!==null||isSubmitted){document.getElementById('solution-panel').classList.add('visible');document.getElementById('solution-content').style.display='block';document.getElementById('toggle-text').textContent='Ẩn lời giải';}
+    else{document.getElementById('solution-panel').classList.remove('visible');document.getElementById('solution-content').style.display='none';}
+    document.getElementById('btn-prev').disabled=currentQ===0;
+    if(currentQ===quizData.length-1){document.getElementById('btn-next').style.display='none';document.getElementById('btn-submit').style.display='inline-block';}
+    else{document.getElementById('btn-next').style.display='inline-block';document.getElementById('btn-submit').style.display='none';}
+    const nb=document.getElementById('nav-buttons');nb.innerHTML='';
+    for(let i=0;i<quizData.length;i++){const b=document.createElement('button');b.textContent=i+1;b.className='nav-btn';if(i===currentQ)b.classList.add('current');else if(userAnswers[i]!==null)b.classList.add('answered');else b.classList.add('not-answered');b.onclick=()=>{currentQ=i;renderQuestion();};nb.appendChild(b);}
+    setTimeout(()=>typesetMath(),100);
+}
+function selectOption(i){if(isSubmitted||userAnswers[currentQ]!==null)return;userAnswers[currentQ]=i;renderQuestion();if(document.getElementById('auto-advance').checked&&currentQ<quizData.length-1){if(autoAdvanceTimeout)clearTimeout(autoAdvanceTimeout);autoAdvanceTimeout=setTimeout(()=>{if(userAnswers[currentQ]===i)nextQuestion();},2500);}}
+function nextQuestion(){if(currentQ<quizData.length-1){currentQ++;renderQuestion();}}
+function prevQuestion(){if(currentQ>0){currentQ--;renderQuestion();}}
+function toggleSolution(){const c=document.getElementById('solution-content'),t=document.getElementById('toggle-text');if(c.style.display==='none'){c.style.display='block';t.textContent='Ẩn lời giải';typesetMath();}else{c.style.display='none';t.textContent='Hiện lời giải';}}
+function submitQuiz(){
+    if(!studentName){const i=document.getElementById('studentNameInput'),n=i.value.trim();if(n){studentName=n;document.getElementById('studentNameStrong').textContent=n;document.getElementById('studentNameDisplay').style.display='inline-block';}else{alert('Vui lòng nhập tên!');i.focus();return;}}
+    if(!confirm('Nộp bài?'))return;
+    buildLearningProfile();clearInterval(timerInterval);isSubmitted=true;
+    let cc=0,tp=0;quizData.forEach((q,i)=>{if(userAnswers[i]===q.correct){cc++;tp+=q.points;}});
+    const wc=quizData.length-cc,pc=Math.round(cc/quizData.length*100);
+    learningProfile.exam.score=tp;learningProfile.exam.percent=pc;learningProfile.exam.correct=cc;learningProfile.exam.wrong=wc;learningProfile.exam.time=seconds;learningProfile.exam.submitTime=new Date().toLocaleString();
+    collectCorrectQuestions();collectWrongQuestions();analyzeWeaknesses();analyzeStrengths();buildStatistics();buildAIPrompt();downloadLearningProfile();
+    document.getElementById('final-score').textContent=tp.toFixed(1);document.getElementById('stat-correct').textContent=cc;document.getElementById('stat-wrong').textContent=wc;document.getElementById('stat-percent').textContent=`${pc}%`;document.getElementById('resultStudentName').innerHTML=`👤 <strong>${studentName}</strong>`;
+    document.getElementById('quiz-area').style.display='none';document.getElementById('result-screen').classList.add('visible');typesetMath();window.scrollTo({top:0,behavior:'smooth'});
+}
+function showReview(){document.getElementById('result-screen').classList.remove('visible');document.getElementById('quiz-area').style.display='block';document.getElementById('nameInputCard').style.display='none';currentQ=0;renderQuestion();window.scrollTo({top:0,behavior:'smooth'});}
+init();
+</script>
+</body>
+</html>
