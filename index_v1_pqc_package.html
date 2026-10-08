@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DUYMT PQC SIGNER — Post-Quantum Document Trust</title>
+<meta name="description" content="Post-Quantum Document Signing, Verifiable Identity and Audit Provenance">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --navy-deep:#070e1a; --navy:#0a1628; --navy-mid:#0f1f3a;
+  --blue-dark:#162746; --blue-mid:#1e3a5f;
+  --cyan:#06b6d4; --cyan-dim:#0e7490; --cyan-glow:rgba(6,182,212,.08);
+  --slate-900:#0f172a; --slate-800:#1e293b; --slate-700:#334155;
+  --slate-600:#475569; --slate-500:#64748b; --slate-400:#94a3b8;
+  --slate-300:#cbd5e1; --slate-200:#e2e8f0; --white:#fff;
+  --green:#22c55e; --green-dim:rgba(34,197,94,.12);
+  --amber:#f59e0b; --amber-dim:rgba(245,158,11,.12);
+  --red:#ef4444; --red-dim:rgba(239,68,68,.12);
+  --border:1px solid rgba(148,163,184,.10);
+  --border-hover:1px solid rgba(6,182,212,.28);
+  --radius:8px; --radius-lg:12px;
+  --shadow-md:0 4px 12px rgba(0,0,0,.3);
+  --shadow-lg:0 16px 48px rgba(0,0,0,.48);
+  --font-sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --font-mono:'JetBrains Mono','Fira Code','Cascadia Code',monospace;
+  --header-h:68px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{font-family:var(--font-sans);background:var(--navy-deep);color:var(--slate-300);line-height:1.6;min-height:100vh}
+button,input{font:inherit}
+button{cursor:pointer}
+button:disabled{cursor:not-allowed;opacity:.4}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.mono{font-family:var(--font-mono)}
+.text-xs{font-size:.68rem}.text-sm{font-size:.8rem}.text-slate{color:var(--slate-400)}
+.text-cyan{color:var(--cyan)}.text-green{color:var(--green)}
+.text-amber{color:var(--amber)}.text-red{color:var(--red)}
+.font-semibold{font-weight:600}.font-bold{font-weight:700}
+
+.header{
+  position:fixed;inset:0 0 auto;height:var(--header-h);z-index:1000;
+  display:flex;align-items:center;justify-content:space-between;padding:0 2rem;
+  background:rgba(10,22,40,.94);backdrop-filter:blur(18px);border-bottom:var(--border)
+}
+.header-left,.header-right{display:flex;align-items:center}
+.header-left{gap:.85rem}.header-right{gap:1rem}
+.header-logo{width:38px;height:38px}
+.header-brand{display:flex;flex-direction:column;line-height:1.12}
+.header-brand-name{font-size:1rem;font-weight:800;color:var(--white);letter-spacing:.055em}
+.header-brand-sub{font-size:.61rem;color:var(--slate-500);letter-spacing:.12em;text-transform:uppercase;margin-top:.18rem}
+.header-status{display:flex;align-items:center;gap:.45rem;color:var(--slate-400);font-size:.68rem;letter-spacing:.08em;font-weight:600}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 7px rgba(34,197,94,.55)}
+.header-version{font:500 .67rem var(--font-mono);color:var(--slate-500);background:rgba(148,163,184,.05);border:var(--border);padding:.28rem .55rem;border-radius:5px}
+.auth-chip{
+  display:flex;align-items:center;gap:.6rem;padding:.3rem .7rem .3rem .35rem;
+  background:var(--navy-mid);border:var(--border);border-radius:var(--radius)
+}
+.auth-avatar{width:29px;height:29px;border-radius:50%;display:grid;place-items:center;background:var(--cyan-glow);color:var(--cyan);font-size:.7rem;font-weight:800}
+.auth-copy{display:flex;flex-direction:column;line-height:1.2}
+.auth-title{font-size:.72rem;font-weight:600;color:var(--white)}
+.auth-sub{font-size:.61rem;color:var(--slate-600)}
+
+.main{margin-top:var(--header-h);min-height:calc(100vh - var(--header-h))}
+.hero{max-width:1320px;margin:auto;padding:3.2rem 2rem 2rem}
+.hero-kicker{display:inline-flex;align-items:center;gap:.45rem;color:var(--cyan);font:600 .66rem var(--font-mono);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.75rem}
+.hero-kicker::before{content:"";width:22px;height:1px;background:var(--cyan-dim)}
+.hero h1{font-size:2.25rem;line-height:1.12;letter-spacing:-.035em;color:var(--white);font-weight:800;margin-bottom:.7rem}
+.hero-sub{max-width:760px;font-size:1rem;color:var(--slate-400);margin-bottom:1rem}
+.hero-note{max-width:800px;padding:.85rem 1rem;border-left:2px solid var(--cyan-dim);background:rgba(148,163,184,.035);border-radius:0 var(--radius) var(--radius) 0;font-size:.8rem;color:var(--slate-500)}
+
+.layout{max-width:1320px;margin:auto;padding:0 2rem 1.5rem;display:grid;grid-template-columns:360px 1fr;gap:1.5rem;align-items:start}
+.card{background:var(--navy);border:var(--border);border-radius:var(--radius-lg);overflow:hidden}
+.card:hover{border-color:rgba(148,163,184,.17)}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.2rem;border-bottom:var(--border)}
+.card-title{display:flex;align-items:center;gap:.5rem;font-size:.86rem;font-weight:650;color:var(--white)}
+.card-title svg{width:16px;height:16px;color:var(--slate-500)}
+.card-body{padding:1.2rem}
+.badge{display:inline-flex;align-items:center;padding:.2rem .55rem;border-radius:4px;border:1px solid transparent;font-size:.61rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase}
+.badge-slate{color:var(--slate-400);background:rgba(148,163,184,.07);border-color:rgba(148,163,184,.11)}
+.badge-cyan{color:var(--cyan);background:rgba(6,182,212,.09);border-color:rgba(6,182,212,.18)}
+.badge-green{color:var(--green);background:var(--green-dim);border-color:rgba(34,197,94,.2)}
+.badge-amber{color:var(--amber);background:var(--amber-dim);border-color:rgba(245,158,11,.2)}
+.badge-red{color:var(--red);background:var(--red-dim);border-color:rgba(239,68,68,.2)}
+
+.identity-empty{text-align:center;padding:2rem 1.2rem}
+.identity-empty .empty-icon{width:42px;height:42px;margin:0 auto 1rem;color:var(--slate-600)}
+.identity-empty p{font-size:.82rem;color:var(--slate-500);line-height:1.55;margin-bottom:1.2rem}
+.identity-main{display:flex;align-items:flex-start;gap:.9rem;padding:1.2rem;border-bottom:var(--border)}
+.identity-avatar{width:48px;height:48px;border-radius:var(--radius);display:grid;place-items:center;background:linear-gradient(135deg,var(--blue-dark),var(--blue-mid));border:1px solid rgba(6,182,212,.16);flex-shrink:0}
+.identity-avatar svg{width:22px;height:22px;color:var(--cyan)}
+.identity-name{font-size:1rem;font-weight:700;color:var(--white);margin-bottom:.1rem}
+.identity-id{font:500 .7rem var(--font-mono);color:var(--slate-500);word-break:break-all}
+.identity-fields{padding:0 1.2rem}
+.field-row{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;padding:.72rem 0;border-bottom:var(--border)}
+.field-row:last-child{border-bottom:0}
+.field-label{font-size:.7rem;color:var(--slate-500);font-weight:500;white-space:nowrap}
+.field-value{font-size:.77rem;color:var(--slate-200);font-weight:500;text-align:right;word-break:break-word}
+.field-value.mono{font:.67rem var(--font-mono)}
+.nation-field{padding:1rem 1.2rem;background:rgba(6,182,212,.025);border-top:var(--border);border-bottom:var(--border)}
+.nation-row{display:flex;align-items:center;gap:.7rem;margin-bottom:.45rem}
+.nation-icon{width:28px;height:20px;border-radius:3px;overflow:hidden;border:1px solid rgba(148,163,184,.15)}
+.nation-icon svg{width:100%;height:100%}
+.nation-label{font-size:.62rem;color:var(--slate-500);text-transform:uppercase;letter-spacing:.09em}
+.nation-value{font-size:.86rem;font-weight:650;color:var(--white)}
+.nation-note{font-size:.64rem;color:var(--slate-600);line-height:1.5}
+.disclaimer{display:flex;gap:.5rem;padding:.75rem 1.2rem;background:rgba(245,158,11,.035);font-size:.64rem;color:var(--slate-500);line-height:1.5}
+.disclaimer svg{width:14px;height:14px;flex-shrink:0;color:var(--amber);margin-top:1px}
+
+.workflow{display:flex;padding:.55rem .4rem;overflow:auto}
+.workflow-step{flex:1;min-width:62px;text-align:center;position:relative;padding:.65rem .15rem}
+.workflow-step:not(:last-child)::after{content:"";position:absolute;top:23px;left:60%;width:80%;height:1px;background:rgba(148,163,184,.1)}
+.step-number{position:relative;z-index:1;width:30px;height:30px;margin:0 auto .42rem;border:2px solid;border-radius:50%;display:grid;place-items:center;font:700 .65rem var(--font-mono)}
+.step-label{font-size:.61rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.step-status{display:inline-block;margin-top:.18rem;padding:.12rem .35rem;border-radius:3px;font-size:.53rem;font-weight:700}
+.step-locked .step-number{border-color:var(--slate-800);color:var(--slate-700);background:rgba(148,163,184,.02)}
+.step-locked .step-label,.step-locked .step-status{color:var(--slate-700)}
+.step-locked .step-status{background:rgba(148,163,184,.04)}
+.step-ready .step-number{border-color:var(--cyan-dim);color:var(--cyan);background:rgba(6,182,212,.07)}
+.step-ready .step-label,.step-ready .step-status{color:var(--cyan)}
+.step-ready .step-status{background:rgba(6,182,212,.08)}
+.step-complete .step-number{border-color:var(--green);color:var(--green);background:var(--green-dim)}
+.step-complete .step-label,.step-complete .step-status{color:var(--green)}
+.step-complete .step-status{background:var(--green-dim)}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.48rem;padding:.65rem 1.1rem;border-radius:var(--radius);font-size:.78rem;font-weight:650;border:1px solid;transition:.2s}
+.btn svg{width:15px;height:15px}
+.btn-primary{background:var(--cyan-dim);border-color:rgba(6,182,212,.3);color:var(--white)}
+.btn-primary:hover:not(:disabled){background:var(--cyan);color:var(--navy-deep);box-shadow:0 0 22px rgba(6,182,212,.18)}
+.btn-secondary{background:rgba(148,163,184,.07);border-color:rgba(148,163,184,.15);color:var(--slate-300)}
+.btn-secondary:hover:not(:disabled){background:rgba(148,163,184,.13);color:var(--white)}
+.btn-danger{background:var(--red-dim);border-color:rgba(239,68,68,.2);color:var(--red)}
+.btn-full{width:100%}
+.actions{display:flex;gap:.7rem;flex-wrap:wrap;margin:1rem 0}
+.actions .btn{flex:1;min-width:160px}
+
+.download-panel{display:none;margin:1rem 0 0;padding:1rem;border:1px solid rgba(6,182,212,.18);background:rgba(6,182,212,.035);border-radius:var(--radius-lg)}
+.download-panel.visible{display:block}
+.download-header{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:.7rem}
+.download-title{font-size:.82rem;font-weight:700;color:var(--white)}
+.download-note{font-size:.66rem;color:var(--slate-500);line-height:1.5;margin-bottom:.8rem}
+.download-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.65rem}
+.download-btn{width:100%;justify-content:flex-start;background:rgba(148,163,184,.05);border-color:rgba(148,163,184,.13);color:var(--slate-300)}
+.download-btn:hover:not(:disabled){background:rgba(6,182,212,.08);border-color:rgba(6,182,212,.25);color:var(--white)}
+@media(max-width:760px){.download-grid{grid-template-columns:1fr}}
+
+.upload-area{position:relative;text-align:center;border:2px dashed rgba(148,163,184,.15);border-radius:var(--radius-lg);padding:2.4rem 1.5rem;background:rgba(148,163,184,.018);transition:.25s}
+.upload-area.enabled{cursor:pointer}
+.upload-area.enabled:hover,.upload-area.drag-over{border-color:var(--cyan-dim);background:var(--cyan-glow)}
+.upload-area.locked{opacity:.48;cursor:not-allowed}
+.upload-icon{width:42px;height:42px;margin:0 auto .8rem;color:var(--slate-600)}
+.upload-title{font-size:.92rem;font-weight:650;color:var(--slate-300);margin-bottom:.25rem}
+.upload-sub{font-size:.76rem;color:var(--slate-600)}
+.upload-formats{margin-top:.65rem;font:500 .61rem var(--font-mono);color:var(--slate-700)}
+.upload-input{position:absolute;inset:0;opacity:0;width:100%;height:100%}
+.upload-input:disabled{pointer-events:none}
+
+.doc-info{display:none}
+.doc-info.visible{display:block}
+.doc-grid{display:grid;grid-template-columns:1fr 1fr;border:var(--border);border-radius:var(--radius);overflow:hidden}
+.doc-item{padding:.75rem 1rem;border-bottom:var(--border)}
+.doc-item:nth-child(odd){border-right:var(--border)}
+.doc-item.full{grid-column:1/-1;border-right:0}
+.doc-grid .doc-item:nth-last-child(-n+2){border-bottom:0}
+.doc-label{font-size:.61rem;color:var(--slate-500);font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.18rem}
+.doc-value{font-size:.76rem;color:var(--slate-200);font-weight:500}
+.doc-value.mono{font:.64rem var(--font-mono);word-break:break-all}
+
+.verify-result{display:none;padding:1.15rem;border:1px solid rgba(34,197,94,.2);background:var(--green-dim);border-radius:var(--radius);margin-bottom:1rem}
+.verify-result.visible{display:block}
+.verify-result.failed{background:var(--red-dim);border-color:rgba(239,68,68,.2)}
+.verify-header{display:flex;align-items:center;gap:.65rem;margin-bottom:.9rem}
+.verify-header svg{width:21px;height:21px;color:var(--green)}
+.verify-result.failed .verify-header svg{color:var(--red)}
+.verify-title{font-size:.9rem;font-weight:700;color:var(--white)}
+.verify-result.failed .verify-title{color:var(--red)}
+.verify-grid{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
+.verify-label{font-size:.61rem;color:var(--slate-500);font-weight:700;text-transform:uppercase;margin-bottom:.18rem}
+.verify-value{font:.65rem var(--font-mono);color:var(--slate-200);word-break:break-all}
+
+.audit-table{width:100%;border-collapse:collapse}
+.audit-table tr{border-bottom:var(--border)}
+.audit-table tr:last-child{border-bottom:0}
+.audit-table td{padding:.62rem 1.15rem;font-size:.76rem;vertical-align:top}
+.audit-table td:first-child{width:190px;color:var(--slate-500);font-weight:500;white-space:nowrap}
+.audit-table td:last-child{color:var(--slate-300);font:.64rem var(--font-mono);word-break:break-all}
+.audit-empty{color:var(--slate-700)!important;font-family:var(--font-sans)!important;font-style:italic}
+.future-tag{display:inline-block;margin-left:.35rem;padding:.08rem .3rem;border-radius:3px;background:rgba(148,163,184,.08);color:var(--slate-600);font-size:.52rem;font-weight:700}
+
+.full-section{max-width:1320px;margin:auto;padding:0 2rem 1.5rem}
+.future-grid{display:grid;grid-template-columns:repeat(4,1fr);border:var(--border);border-radius:var(--radius);overflow:hidden}
+.future-field{padding:.75rem 1rem;background:rgba(148,163,184,.018);border-right:var(--border);border-bottom:var(--border)}
+.future-field-label{font-size:.61rem;color:var(--slate-600);font-weight:600;margin-bottom:.18rem}
+.future-field-value{font:.63rem var(--font-mono);color:var(--slate-700)}
+
+.footer{border-top:var(--border);margin-top:1rem;padding:1.8rem 2rem;text-align:center}
+.footer-brand{font-size:.82rem;font-weight:750;color:var(--slate-400);letter-spacing:.06em}
+.footer-sub{font-size:.62rem;color:var(--slate-600);margin:.2rem 0 .65rem}
+.footer-meta{display:flex;justify-content:center;gap:1.4rem;flex-wrap:wrap}
+.footer-meta span{font:500 .6rem var(--font-mono);color:var(--slate-700)}
+
+.modal-overlay{display:none;position:fixed;inset:0;z-index:2000;align-items:center;justify-content:center;padding:1rem;background:rgba(7,14,26,.88);backdrop-filter:blur(6px)}
+.modal-overlay.active{display:flex}
+.modal{width:min(520px,100%);background:var(--navy);border:var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);overflow:hidden}
+.modal-header{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.2rem;border-bottom:var(--border)}
+.modal-title{font-size:.9rem;font-weight:700;color:var(--white)}
+.modal-close{width:30px;height:30px;border:0;background:transparent;color:var(--slate-500);border-radius:5px;display:grid;place-items:center}
+.modal-close:hover{background:rgba(148,163,184,.08);color:var(--white)}
+.modal-body{padding:1.25rem;font-size:.8rem;color:var(--slate-400);line-height:1.65}
+.modal-footer{display:flex;justify-content:flex-end;padding:.85rem 1.2rem;border-top:var(--border)}
+.modal-form{padding:1.2rem}
+.form-group{margin-bottom:.9rem}
+.form-label{display:block;font-size:.67rem;color:var(--slate-400);font-weight:700;margin-bottom:.38rem}
+.form-input{width:100%;padding:.7rem .75rem;border:1px solid var(--slate-700);border-radius:6px;background:var(--navy-mid);color:var(--white);font-size:.8rem}
+.form-input:focus{border-color:var(--cyan-dim);outline:none;box-shadow:0 0 0 2px rgba(6,182,212,.08)}
+.form-help{margin-top:.3rem;font-size:.6rem;color:var(--slate-600)}
+.form-notice{padding:.7rem;border:1px solid rgba(6,182,212,.14);background:rgba(6,182,212,.04);border-radius:6px;font-size:.66rem;color:var(--slate-500);line-height:1.5;margin:1rem 0}
+.modal-actions{display:flex;justify-content:flex-end;gap:.65rem}
+
+.toast-container{position:fixed;right:1.3rem;bottom:1.3rem;z-index:3000;display:flex;flex-direction:column;gap:.45rem}
+.toast{max-width:390px;display:flex;gap:.55rem;align-items:flex-start;padding:.75rem 1rem;border:var(--border);border-radius:var(--radius);background:var(--blue-dark);box-shadow:var(--shadow-md);font-size:.74rem;color:var(--slate-300);animation:toastIn .25s ease}
+.toast svg{width:16px;height:16px;flex-shrink:0;margin-top:1px}.toast.info svg{color:var(--cyan)}.toast.warning svg{color:var(--amber)}.toast.error svg{color:var(--red)}.toast.success svg{color:var(--green)}
+@keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:1024px){
+  .layout{grid-template-columns:1fr}.hero{padding-top:2.5rem}
+}
+@media(max-width:768px){
+  .header{padding:0 1rem}.header-status,.auth-sub,.header-version{display:none}
+  .hero,.layout,.full-section{padding-left:1rem;padding-right:1rem}
+  .hero h1{font-size:1.7rem}.verify-grid{grid-template-columns:1fr}
+  .future-grid{grid-template-columns:1fr 1fr}.actions{flex-direction:column}.actions .btn{width:100%}
+  .doc-grid{grid-template-columns:1fr}.doc-item:nth-child(odd){border-right:0}.doc-item.full{grid-column:auto}
+}
+@media(max-width:480px){
+  .header-brand-name{font-size:.85rem}.header-left{gap:.55rem}.header-logo{width:32px}
+  .hero h1{font-size:1.5rem}.future-grid{grid-template-columns:1fr}
+  .audit-table td:first-child{width:125px}
+}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--slate-700);border-radius:3px}
+</style>
+</head>
+
+<body>
+<header class="header">
+  <div class="header-left">
+    <div class="header-logo" aria-hidden="true">
+      <svg viewBox="0 0 40 40" fill="none">
+        <path d="M20 3L5 10v10c0 9.33 6.4 18.06 15 20 8.6-1.94 15-10.67 15-20V10L20 3z" stroke="#0e7490" stroke-width="1.5" fill="rgba(6,182,212,.06)"/>
+        <rect x="15" y="17" width="10" height="9" rx="1.5" stroke="#06b6d4" stroke-width="1.5"/>
+        <path d="M17 17v-3a3 3 0 016 0v3" stroke="#06b6d4" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="20" cy="22" r="1.2" fill="#06b6d4"/>
+      </svg>
+    </div>
+    <div class="header-brand">
+      <span class="header-brand-name">DUYMT <span style="color:var(--cyan-dim);font-weight:500">PQC SIGNER</span></span>
+      <span class="header-brand-sub">Post-Quantum Document Trust</span>
+    </div>
+  </div>
+
+  <div class="header-right">
+    <div class="header-status"><span class="status-dot"></span><span>LOCAL BACKEND</span></div>
+    <div class="auth-chip" title="Google authentication is reserved for deployment">
+      <div class="auth-avatar">G</div>
+      <div class="auth-copy">
+        <span class="auth-title">Authentication</span>
+        <span class="auth-sub">Google OAuth — deployment</span>
+      </div>
+    </div>
+    <span class="header-version">v1.1 PQC Prototype</span>
+  </div>
+</header>
+
+<main class="main">
+  <section class="hero">
+    <div class="hero-kicker">Cryptographic Document Trust</div>
+    <h1>Post-Quantum Document Signing</h1>
+    <p class="hero-sub">Cryptographic integrity for documents and verifiable identity for the next generation of AI systems.</p>
+    <p class="hero-note">Create a signer identity, generate or use its ML-DSA-65 key, sign a prepared PDF through the secure backend, verify the signature independently, and preserve an auditable provenance record.</p>
+  </section>
+
+  <div class="layout">
+    <aside>
+      <section class="card" aria-label="PQC identity">
+        <div class="card-header">
+          <h2 class="card-title">
+            <svg viewBox="0 0 16 16" fill="none"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zM2 14a6 6 0 0112 0" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            My PQC Identity
+          </h2>
+          <span class="badge badge-slate" id="identity-status-badge">No Identity</span>
+        </div>
+
+        <div id="identity-empty-state" class="identity-empty">
+          <svg class="empty-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/><path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <p>No PQC Identity found.<br>Create your cryptographic identity before signing a document.</p>
+          <button class="btn btn-primary btn-full" id="btn-create-identity" onclick="createIdentity()">
+            <svg viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Create Identity
+          </button>
+        </div>
+
+        <div id="identity-active-state" style="display:none">
+          <div class="identity-main">
+            <div class="identity-avatar">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M12 12a4 4 0 100-8 4 4 0 000 8zM4 20a8 8 0 0116 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <div>
+              <div class="identity-name" id="active-display-name">—</div>
+              <div class="identity-id" id="active-signer-id">—</div>
+            </div>
+          </div>
+
+          <div class="identity-fields">
+            <div class="field-row"><span class="field-label">Identity Type</span><span class="field-value" id="active-identity-type">—</span></div>
+            <div class="field-row"><span class="field-label">Algorithm</span><span class="field-value mono" id="active-algorithm">ML-DSA-65</span></div>
+            <div class="field-row"><span class="field-label">Status</span><span class="field-value"><span class="badge badge-amber" id="active-status">SELF-DECLARED</span></span></div>
+            <div class="field-row" style="flex-direction:column;align-items:flex-start">
+              <span class="field-label">Public Key Fingerprint</span>
+              <span class="field-value mono" id="active-fingerprint" style="text-align:left">—</span>
+            </div>
+          </div>
+
+          <div class="nation-field">
+            <div class="nation-row">
+              <div class="nation-icon">
+                <svg viewBox="0 0 28 20" fill="none"><rect width="28" height="20" rx="2" fill="#da251d"/><polygon points="14,3 15.8,8.5 21.5,8.5 16.8,11.8 18.6,17.3 14,13.8 9.4,17.3 11.2,11.8 6.5,8.5 12.2,8.5" fill="#ffff00"/></svg>
+              </div>
+              <div><div class="nation-label">Verifiable Nation</div><div class="nation-value" id="active-nation">—</div></div>
+            </div>
+            <p class="nation-note">The nation field is an identity claim. National verification requires an authorized identity authority.</p>
+          </div>
+
+          <div class="disclaimer">
+            <svg viewBox="0 0 16 16" fill="none"><path d="M8 1l7 13H1L8 1z" stroke="currentColor" stroke-width="1.2"/><path d="M8 6v3M8 11.5v.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            <span>Self-declared identity. This prototype does not claim government or national verification.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="margin-top:1.5rem">
+        <div class="card-header"><h2 class="card-title">Workflow Status</h2></div>
+        <nav class="workflow" aria-label="Signing workflow">
+          <div class="workflow-step step-locked" id="step-1"><div class="step-number">01</div><div class="step-label">Identity</div><div class="step-status">Locked</div></div>
+          <div class="workflow-step step-locked" id="step-2"><div class="step-number">02</div><div class="step-label">Document</div><div class="step-status">Locked</div></div>
+          <div class="workflow-step step-locked" id="step-3"><div class="step-number">03</div><div class="step-label">Sign</div><div class="step-status">Locked</div></div>
+          <div class="workflow-step step-locked" id="step-4"><div class="step-number">04</div><div class="step-label">Verify</div><div class="step-status">Locked</div></div>
+          <div class="workflow-step step-locked" id="step-5"><div class="step-number">05</div><div class="step-label">Audit</div><div class="step-status">Locked</div></div>
+        </nav>
+      </section>
+    </aside>
+
+    <section>
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">
+            <svg viewBox="0 0 16 16" fill="none"><path d="M4 2h5l4 4v8a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.3"/><path d="M9 2v4h4" stroke="currentColor" stroke-width="1.3"/></svg>
+            Document to Sign
+          </h2>
+          <span class="badge badge-slate" id="doc-status-badge">No Document</span>
+        </div>
+
+        <div class="card-body">
+          <div class="upload-area locked" id="upload-area">
+            <input class="upload-input" id="file-input" type="file" accept=".pdf,application/pdf" disabled>
+            <div class="upload-icon"><svg viewBox="0 0 48 48" fill="none"><rect x="8" y="4" width="24" height="32" rx="3" stroke="currentColor" stroke-width="2"/><path d="M24 4v8h8" stroke="currentColor" stroke-width="2"/><path d="M14 24h12M14 29h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M36 28v10M32 34l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="upload-title">Create Identity first</div>
+            <div class="upload-sub">PDF upload becomes available after identity creation</div>
+            <div class="upload-formats">Accepted: .pdf only</div>
+          </div>
+
+          <div class="doc-info" id="doc-info">
+            <div class="doc-grid">
+              <div class="doc-item"><div class="doc-label">Filename</div><div class="doc-value" id="doc-filename">—</div></div>
+              <div class="doc-item"><div class="doc-label">File Size</div><div class="doc-value" id="doc-filesize">—</div></div>
+              <div class="doc-item"><div class="doc-label">Pages</div><div class="doc-value" id="doc-pages">—</div></div>
+              <div class="doc-item"><div class="doc-label">SHA-256</div><div class="doc-value mono" id="doc-sha256">—</div></div>
+              <div class="doc-item full"><div class="doc-label">Document Status</div><div class="doc-value" id="doc-status-text"><span class="badge badge-amber">Uploaded</span></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" id="btn-sign" onclick="signDocument()" disabled>
+          <svg viewBox="0 0 16 16" fill="none"><path d="M11.5 1.5l3 3L5 14H2v-3L11.5 1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+          Sign PDF
+        </button>
+        <button class="btn btn-secondary" id="btn-verify" onclick="verifySignature()" disabled>
+          <svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Verify Signature
+        </button>
+      </div>
+
+      <div class="verify-result" id="verify-result">
+        <div class="verify-header">
+          <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5"/><path d="M6 10l2.5 2.5L14.5 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="verify-title" id="verify-title">Cryptographic Signature Valid</span>
+        </div>
+        <div class="verify-grid">
+          <div><div class="verify-label">Algorithm</div><div class="verify-value" id="verify-algorithm">—</div></div>
+          <div><div class="verify-label">Document SHA-256</div><div class="verify-value" id="verify-doc-hash">—</div></div>
+          <div><div class="verify-label">Signature SHA-256</div><div class="verify-value" id="verify-sig-hash">—</div></div>
+          <div><div class="verify-label">Public Key Fingerprint</div><div class="verify-value" id="verify-fingerprint">—</div></div>
+        </div>
+      </div>
+
+      <div class="download-panel" id="download-panel">
+        <div class="download-header">
+          <div>
+            <div class="download-title">PQC Signing Package — V1</div>
+            <div style="margin-top:6px;color:var(--green);font-weight:700;font-size:13px;letter-spacing:.04em;">
+              ✓ SIGNED &amp; VERIFIED — ML-DSA-65
+            </div>
+          </div>
+          <span class="badge badge-green">READY</span>
+        </div>
+        <div class="download-note">
+          V1 packages the original PDF, the detached ML-DSA-65 signature, and the audit manifest
+          into one ZIP archive. The PQC signature is <strong>not embedded inside the PDF</strong> in V1.
+        </div>
+        <div class="download-grid" style="grid-template-columns:1fr;">
+          <button class="btn download-btn" id="btn-download-package" type="button"
+                  style="justify-content:center;font-weight:700;">
+            <svg viewBox="0 0 16 16" fill="none"><path d="M8 2v8M5 7l3 3 3-3M3 13h10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Download PQC Signing Package (.zip)
+          </button>
+        </div>
+        <div class="download-note" style="margin-top:12px;">
+          Package contents: <code>document/</code> + <code>signature/</code> + <code>audit/</code>.
+          Use the independent Verify function to validate the detached signature.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">
+            <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M5 6h6M5 8.5h6M5 11h3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            Audit &amp; Provenance
+          </h2>
+          <span class="badge badge-slate" id="audit-status-badge">Pending</span>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="audit-table">
+            <tbody>
+              <tr><td>Document</td><td id="audit-doc" class="audit-empty">—</td></tr>
+              <tr><td>Document SHA-256</td><td id="audit-doc-sha" class="audit-empty">—</td></tr>
+              <tr><td>Signer</td><td id="audit-signer">—</td></tr>
+              <tr><td>Signer ID</td><td id="audit-signer-id">—</td></tr>
+              <tr><td>Identity Status</td><td id="audit-identity-status"><span class="badge badge-slate">—</span></td></tr>
+              <tr><td>Algorithm</td><td id="audit-algorithm">ML-DSA-65</td></tr>
+              <tr><td>Public Key Fingerprint</td><td id="audit-fingerprint" class="audit-empty">—</td></tr>
+              <tr><td>Signature SHA-256</td><td id="audit-sig" class="audit-empty">—</td></tr>
+              <tr><td>Timestamp</td><td id="audit-ts" class="audit-empty">—</td></tr>
+              <tr><td>Verification Result</td><td id="audit-verify" class="audit-empty">—</td></tr>
+              <tr><td>Audit Manifest</td><td id="audit-file" class="audit-empty">—</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section class="full-section">
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">
+          <svg viewBox="0 0 16 16" fill="none"><rect x="3" y="3" width="10" height="10" rx="2" stroke="currentColor" stroke-width="1.3"/><circle cx="6.5" cy="7" r="1" fill="currentColor"/><circle cx="9.5" cy="7" r="1" fill="currentColor"/><path d="M6 10h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          Future: AI Agent Identity
+        </h2>
+        <span class="badge badge-slate">Future Extension</span>
+      </div>
+      <div class="card-body">
+        <p style="font-size:.78rem;color:var(--slate-500);margin-bottom:1rem">The document signer is designed to evolve into a verifiable AI Agent identity. These fields are intentionally visible as the future provenance model, but are not fabricated by the current prototype.</p>
+        <div class="future-grid">
+          <div class="future-field"><div class="future-field-label">Agent ID</div><div class="future-field-value">FUTURE</div></div>
+          <div class="future-field"><div class="future-field-label">Agent Version</div><div class="future-field-value">FUTURE</div></div>
+          <div class="future-field"><div class="future-field-label">Model</div><div class="future-field-value">FUTURE</div></div>
+          <div class="future-field"><div class="future-field-label">Pipeline Version</div><div class="future-field-value">FUTURE</div></div>
+          <div class="future-field"><div class="future-field-label">Git Commit</div><div class="future-field-value">FUTURE</div></div>
+          <div class="future-field"><div class="future-field-label">Input Hash</div><div class="future-field-value">FUTURE</div></div>
+          <div class="future-field"><div class="future-field-label">Output Hash</div><div class="future-field-value">FUTURE</div></div>
+          <div class="future-field"><div class="future-field-label">Prompt Hash</div><div class="future-field-value">FUTURE</div></div>
+          <div class="future-field"><div class="future-field-label">Tool Chain</div><div class="future-field-value">FUTURE</div></div>
+          <div class="future-field"><div class="future-field-label">Timestamp</div><div class="future-field-value">FUTURE</div></div>
+          <div class="future-field"><div class="future-field-label">Public Key Fingerprint</div><div class="future-field-value">FUTURE</div></div>
+          <div class="future-field"><div class="future-field-label">Signature Algorithm</div><div class="future-field-value">ML-DSA-65</div></div>
+          <div class="future-field"><div class="future-field-label">Verification Result</div><div class="future-field-value">FUTURE</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="footer-brand">DUYMT PQC SIGNER</div>
+  <div class="footer-sub">Post-Quantum Document Trust</div>
+  <div class="footer-meta">
+    <span>ML-DSA-65</span><span>Self-Declared Identity</span><span>Local Prototype</span>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title" id="modal-title">Information</h3>
+      <button class="modal-close" id="modal-close" aria-label="Close">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="modal-message"></div>
+    <div class="modal-footer"><button class="btn btn-secondary" id="modal-ok">Understood</button></div>
+  </div>
+</div>
+
+<div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+<script>
+"use strict";
+
+/* --------------------------------------------------------------------------
+   BACKEND CONTRACT
+   -------------------------------------------------------------------------- */
+const API = Object.freeze({
+  createIdentity: "/api/identity/create",
+  sign: "/api/document/sign",
+  verify: "/api/document/verify",
+  audit: "/api/document/audit"
+});
+
+const state = {
+  identityCreated: false,
+  identity: null,
+  documentUploaded: false,
+  documentSigned: false,
+  file: null,
+  signatureBytes: null,
+  signatureBase64: null,
+  signatureResult: null,
+  auditManifest: null
+};
+
+/* --------------------------------------------------------------------------
+   GENERIC HELPERS
+   -------------------------------------------------------------------------- */
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&","&amp;").replaceAll("<","&lt;")
+    .replaceAll(">","&gt;").replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+async function readJson(response) {
+  const text = await response.text();
+  let data = {};
+  try { data = text ? JSON.parse(text) : {}; }
+  catch { data = { detail: text || `HTTP ${response.status}` }; }
+
+  if (!response.ok) {
+    const detail = typeof data.detail === "string"
+      ? data.detail
+      : JSON.stringify(data.detail ?? data);
+    throw new Error(detail || `Request failed: HTTP ${response.status}`);
+  }
+  return data;
+}
+
+function setButtonLoading(button, label) {
+  button.disabled = true;
+  button.dataset.originalHtml = button.innerHTML;
+  button.innerHTML = `<svg viewBox="0 0 16 16" fill="none" style="animation:spin 1s linear infinite">
+    <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="2" stroke-dasharray="30" stroke-linecap="round"/>
+  </svg>${label}`;
+}
+
+function restoreButton(button, label) {
+  button.disabled = false;
+  button.innerHTML = button.dataset.originalHtml || label;
+}
+
+function formatFileSize(bytes) {
+  if (!bytes) return "0 B";
+  const units = ["B","KB","MB","GB"];
+  const i = Math.min(Math.floor(Math.log(bytes)/Math.log(1024)), units.length-1);
+  return `${(bytes / Math.pow(1024,i)).toFixed(i ? 2 : 0)} ${units[i]}`;
+}
+
+async function sha256Hex(blob) {
+  const buffer = await blob.arrayBuffer();
+  const digest = await crypto.subtle.digest("SHA-256", buffer);
+  return [...new Uint8Array(digest)].map(b => b.toString(16).padStart(2,"0")).join("");
+}
+
+function base64ToBytes(base64) {
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i=0;i<binary.length;i++) bytes[i] = binary.charCodeAt(i);
+  return bytes;
+}
+
+function bytesToFile(bytes, name) {
+  return new File([bytes], name, {type:"application/octet-stream"});
+}
+
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function downloadText(text, filename) {
+  downloadBlob(
+    new Blob([text], {type:"application/json;charset=utf-8"}),
+    filename
+  );
+}
+
+/* --------------------------------------------------------------------------
+   MODAL / TOAST
+   -------------------------------------------------------------------------- */
+function showModal(title, html) {
+  document.getElementById("modal-title").textContent = title;
+  document.getElementById("modal-message").innerHTML = html;
+  document.getElementById("modal-overlay").classList.add("active");
+}
+function closeModal() {
+  document.getElementById("modal-overlay").classList.remove("active");
+}
+document.getElementById("modal-close").addEventListener("click", closeModal);
+document.getElementById("modal-ok").addEventListener("click", closeModal);
+document.getElementById("modal-overlay").addEventListener("click", e => {
+  if (e.target.id === "modal-overlay") closeModal();
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
+
+function showToast(message, type="info") {
+  const container = document.getElementById("toast-container");
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+  const icon = type === "success"
+    ? '<svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.2"/><path d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>'
+    : type === "warning"
+    ? '<svg viewBox="0 0 16 16" fill="none"><path d="M8 1l7 13H1L8 1z" stroke="currentColor" stroke-width="1.2"/><path d="M8 6v3M8 11.5v.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>'
+    : type === "error"
+    ? '<svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.2"/><path d="M8 5v3.5M8 10.5v.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>'
+    : '<svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.2"/><path d="M8 5v3.5M8 10.5v.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>';
+  toast.innerHTML = icon + `<span>${escapeHtml(message)}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    toast.style.transform = "translateY(8px)";
+    toast.style.transition = ".25s";
+    setTimeout(() => toast.remove(), 250);
+  }, 4200);
+}
+
+function updateStep(n, status) {
+  const el = document.getElementById(`step-${n}`);
+  if (!el) return;
+  el.className = `workflow-step step-${status}`;
+  const statusEl = el.querySelector(".step-status");
+  if (statusEl) statusEl.textContent =
+    status === "complete" ? "Complete" :
+    status === "ready" ? "Ready" : "Locked";
+}
+
+/* --------------------------------------------------------------------------
+   IDENTITY
+   -------------------------------------------------------------------------- */
+function createIdentity() {
+  if (document.getElementById("identity-form-overlay")) return;
+
+  const overlay = document.createElement("div");
+  overlay.id = "identity-form-overlay";
+  overlay.className = "modal-overlay active";
+
+  overlay.innerHTML = `
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="identity-form-title">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title" id="identity-form-title">Create Cryptographic Identity</h3>
+          <div style="font-size:.62rem;color:var(--slate-600);margin-top:.15rem">Identity is distinct from Google authentication.</div>
+        </div>
+        <button class="modal-close" type="button" id="identity-cancel-top">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+
+      <form class="modal-form" id="identity-create-form">
+        <div class="form-group">
+          <label class="form-label" for="identity-display-name">Display Name</label>
+          <input class="form-input" id="identity-display-name" required value="S.S. Duymt">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="identity-signer-id">Signer ID</label>
+          <input class="form-input mono" id="identity-signer-id" required value="ss-duymt-signer" pattern="[A-Za-z0-9_-]+">
+          <div class="form-help">Stable identifier for this signing identity.</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="identity-nation">Verifiable Nation</label>
+          <input class="form-input" id="identity-nation" required value="Vietnam (VN)">
+          <div class="form-help">This is a self-declared field in the prototype.</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="identity-type">Identity Type</label>
+          <input class="form-input" id="identity-type" required value="Human-Controlled Document Signer">
+        </div>
+
+        <div class="form-notice">
+          <strong class="text-cyan">Algorithm:</strong> ML-DSA-65<br>
+          <strong class="text-amber">Identity Status:</strong> SELF-DECLARED<br>
+          The private key is generated and retained by the backend. It is never placed in this page or browser storage.
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn btn-secondary" type="button" id="identity-cancel">Cancel</button>
+          <button class="btn btn-primary" type="submit" id="identity-submit">Create Identity</button>
+        </div>
+      </form>
+    </div>`;
+
+  document.body.appendChild(overlay);
+
+  const close = () => overlay.remove();
+  document.getElementById("identity-cancel").onclick = close;
+  document.getElementById("identity-cancel-top").onclick = close;
+
+  document.getElementById("identity-create-form").addEventListener("submit", async e => {
+    e.preventDefault();
+    const submit = document.getElementById("identity-submit");
+    setButtonLoading(submit, "Creating...");
+
+    try {
+      const payload = {
+        display_name: document.getElementById("identity-display-name").value.trim(),
+        signer_id: document.getElementById("identity-signer-id").value.trim(),
+        verifiable_nation: document.getElementById("identity-nation").value.trim(),
+        identity_type: document.getElementById("identity-type").value.trim()
+      };
+
+      const response = await fetch(API.createIdentity, {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify(payload)
+      });
+      const identity = await readJson(response);
+
+      state.identityCreated = true;
+      state.identity = identity;
+      overlay.remove();
+
+      document.getElementById("identity-empty-state").style.display = "none";
+      document.getElementById("identity-active-state").style.display = "block";
+      document.getElementById("identity-status-badge").textContent = "Active";
+      document.getElementById("identity-status-badge").className = "badge badge-green";
+
+      document.getElementById("active-display-name").textContent = identity.display_name || payload.display_name;
+      document.getElementById("active-signer-id").textContent = identity.signer_id || payload.signer_id;
+      document.getElementById("active-identity-type").textContent = identity.identity_type || payload.identity_type;
+      document.getElementById("active-algorithm").textContent = identity.algorithm || "ML-DSA-65";
+      document.getElementById("active-status").textContent = identity.identity_status || "SELF-DECLARED";
+      document.getElementById("active-nation").textContent = identity.verifiable_nation || payload.verifiable_nation;
+      document.getElementById("active-fingerprint").textContent = identity.public_key_fingerprint || "—";
+
+      document.getElementById("audit-signer").textContent = identity.display_name || payload.display_name;
+      document.getElementById("audit-signer-id").textContent = identity.signer_id || payload.signer_id;
+      document.getElementById("audit-identity-status").innerHTML =
+        `<span class="badge badge-amber">${escapeHtml(identity.identity_status || "SELF-DECLARED")}</span>`;
+
+      const upload = document.getElementById("upload-area");
+      const input = document.getElementById("file-input");
+      upload.classList.remove("locked");
+      upload.classList.add("enabled");
+      input.disabled = false;
+      upload.querySelector(".upload-title").textContent = "Drop PDF document here";
+      upload.querySelector(".upload-sub").textContent = "or click to browse";
+
+      updateStep(1,"complete");
+      updateStep(2,"ready");
+
+      const createButton = document.getElementById("btn-create-identity");
+      if (createButton) {
+        createButton.disabled = true;
+        createButton.innerHTML = '<svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Identity Ready';
+      }
+
+      showToast("PQC Identity created successfully.", "success");
+      showModal(
+        "Identity Ready",
+        `Cryptographic identity created successfully.<br><br>
+         <strong>Signer:</strong> ${escapeHtml(identity.display_name || payload.display_name)}<br>
+         <strong>Signer ID:</strong> <span class="mono">${escapeHtml(identity.signer_id || payload.signer_id)}</span><br>
+         <strong>Algorithm:</strong> ${escapeHtml(identity.algorithm || "ML-DSA-65")}<br>
+         <strong>Status:</strong> ${escapeHtml(identity.identity_status || "SELF-DECLARED")}<br><br>
+         <strong>Public Key Fingerprint</strong><br>
+         <span class="mono" style="font-size:.68rem;word-break:break-all">${escapeHtml(identity.public_key_fingerprint || "—")}</span>`
+      );
+    } catch (error) {
+      restoreButton(submit, "Create Identity");
+      showToast(`Identity creation failed: ${error.message}`, "error");
+    }
+  });
+}
+
+/* --------------------------------------------------------------------------
+   DOCUMENT
+   -------------------------------------------------------------------------- */
+const uploadArea = document.getElementById("upload-area");
+const fileInput = document.getElementById("file-input");
+const btnSign = document.getElementById("btn-sign");
+const btnVerify = document.getElementById("btn-verify");
+const downloadPanel = document.getElementById("download-panel");
+const btnDownloadPackage = document.getElementById("btn-download-package");
+
+async function handleFile(file) {
+  if (!state.identityCreated) {
+    showToast("Create a PQC Identity before uploading a document.", "warning");
+    return;
+  }
+  if (!file) return;
+
+  if (file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) {
+    showToast("Only PDF files are accepted.", "error");
+    return;
+  }
+
+  state.file = file;
+  state.documentUploaded = true;
+  state.documentSigned = false;
+  state.signatureBytes = null;
+  state.signatureBase64 = null;
+  state.signatureResult = null;
+  state.auditManifest = null;
+  downloadPanel.classList.remove("visible");
+
+  document.getElementById("doc-filename").textContent = file.name;
+  document.getElementById("doc-filesize").textContent = formatFileSize(file.size);
+  document.getElementById("doc-pages").textContent = "Backend processing on sign";
+  document.getElementById("doc-sha256").textContent = "Calculating…";
+  document.getElementById("doc-info").classList.add("visible");
+  uploadArea.style.display = "none";
+
+  document.getElementById("doc-status-badge").textContent = "Uploaded";
+  document.getElementById("doc-status-badge").className = "badge badge-amber";
+  document.getElementById("doc-status-text").innerHTML = '<span class="badge badge-amber">Uploaded — Ready to Sign</span>';
+
+  btnSign.disabled = false;
+  btnVerify.disabled = true;
+  updateStep(2,"ready");
+  updateStep(3,"locked");
+  updateStep(4,"locked");
+  updateStep(5,"locked");
+
+  try {
+    const hash = await sha256Hex(file);
+    document.getElementById("doc-sha256").textContent = hash;
+    document.getElementById("audit-doc-sha").textContent = hash;
+    document.getElementById("audit-doc-sha").classList.remove("audit-empty");
+  } catch {
+    document.getElementById("doc-sha256").textContent = "Unavailable in browser";
+  }
+
+  document.getElementById("audit-doc").textContent = file.name;
+  document.getElementById("audit-doc").classList.remove("audit-empty");
+  showToast(`PDF loaded: ${file.name}`, "info");
+}
+
+fileInput.addEventListener("change", e => {
+  if (e.target.files.length) handleFile(e.target.files[0]);
+});
+uploadArea.addEventListener("click", e => {
+  if (!state.identityCreated || fileInput.disabled) return;
+  if (e.target !== fileInput) fileInput.click();
+});
+uploadArea.addEventListener("dragover", e => {
+  if (!state.identityCreated) return;
+  e.preventDefault(); uploadArea.classList.add("drag-over");
+});
+uploadArea.addEventListener("dragleave", () => uploadArea.classList.remove("drag-over"));
+uploadArea.addEventListener("drop", e => {
+  if (!state.identityCreated) return;
+  e.preventDefault(); uploadArea.classList.remove("drag-over");
+  if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+});
+
+/* --------------------------------------------------------------------------
+   SIGN — REAL BACKEND
+   -------------------------------------------------------------------------- */
+async function signDocument() {
+  if (!state.identityCreated || !state.identity) {
+    showToast("Create a PQC Identity first.", "warning");
+    return;
+  }
+  if (!state.file) {
+    showToast("Upload a PDF document first.", "warning");
+    return;
+  }
+
+  setButtonLoading(btnSign, "Signing...");
+
+  try {
+    const formData = new FormData();
+    formData.append("file", state.file, state.file.name);
+
+    const response = await fetch(API.sign, {method:"POST", body:formData});
+    const result = await readJson(response);
+
+    if (!result.signature_base64) {
+      throw new Error("Backend signed the document but returned no signature data.");
+    }
+
+    state.documentSigned = true;
+    state.signatureResult = result;
+    state.signatureBase64 = result.signature_base64;
+    state.signatureBytes = base64ToBytes(result.signature_base64);
+    state.auditManifest = null;
+
+    document.getElementById("doc-status-badge").textContent = "Signed";
+    document.getElementById("doc-status-badge").className = "badge badge-green";
+    document.getElementById("doc-status-text").innerHTML = '<span class="badge badge-green">Signed Successfully</span>';
+
+    if (result.data_sha256) {
+      document.getElementById("doc-sha256").textContent = result.data_sha256;
+      document.getElementById("audit-doc-sha").textContent = result.data_sha256;
+    }
+    if (result.public_key_fingerprint) {
+      document.getElementById("active-fingerprint").textContent = result.public_key_fingerprint;
+      document.getElementById("verify-fingerprint").textContent = result.public_key_fingerprint;
+      document.getElementById("audit-fingerprint").textContent = result.public_key_fingerprint;
+      document.getElementById("audit-fingerprint").classList.remove("audit-empty");
+    }
+    if (result.signature_sha256) {
+      document.getElementById("audit-sig").textContent = result.signature_sha256;
+      document.getElementById("audit-sig").classList.remove("audit-empty");
+    }
+    if (result.audit_file) {
+      document.getElementById("audit-file").textContent = result.audit_file;
+      document.getElementById("audit-file").classList.remove("audit-empty");
+    }
+
+    // Fetch the authoritative audit manifest immediately after signing.
+    const auditName = state.file.name.replace(/\.[^.]+$/, "");
+    const auditResponse = await fetch(`${API.audit}/${encodeURIComponent(auditName)}`);
+    if (auditResponse.ok) {
+      state.auditManifest = await auditResponse.json();
+      populateAudit(state.auditManifest);
+    }
+
+    downloadPanel.classList.add("visible");
+
+    updateStep(2,"complete");
+    updateStep(3,"complete");
+    updateStep(4,"ready");
+    btnVerify.disabled = false;
+
+    restoreButton(btnSign, "Sign PDF");
+    btnSign.disabled = true;
+    showToast("Document signed by the backend with ML-DSA-65.", "success");
+  } catch (error) {
+    restoreButton(btnSign, "Sign PDF");
+    showToast(`Signing failed: ${error.message}`, "error");
+  }
+}
+
+function populateAudit(audit) {
+  if (!audit) return;
+
+  if (audit.document_filename) {
+    document.getElementById("audit-doc").textContent = audit.document_filename;
+    document.getElementById("audit-doc").classList.remove("audit-empty");
+  }
+  if (audit.document_sha256) {
+    document.getElementById("audit-doc-sha").textContent = audit.document_sha256;
+    document.getElementById("audit-doc-sha").classList.remove("audit-empty");
+  }
+  if (audit.signer_display_name) document.getElementById("audit-signer").textContent = audit.signer_display_name;
+  if (audit.signer_id) document.getElementById("audit-signer-id").textContent = audit.signer_id;
+  if (audit.identity_status) {
+    document.getElementById("audit-identity-status").innerHTML = `<span class="badge badge-amber">${escapeHtml(audit.identity_status)}</span>`;
+  }
+  if (audit.algorithm) document.getElementById("audit-algorithm").textContent = audit.algorithm;
+  if (audit.public_key_fingerprint) document.getElementById("audit-fingerprint").textContent = audit.public_key_fingerprint;
+  if (audit.signature_sha256) document.getElementById("audit-sig").textContent = audit.signature_sha256;
+  if (audit.timestamp) document.getElementById("audit-ts").textContent = audit.timestamp;
+  if (audit.verification_result !== undefined) {
+    document.getElementById("audit-verify").innerHTML = audit.verification_result
+      ? '<span class="badge badge-green">VALID</span>'
+      : '<span class="badge badge-red">INVALID</span>';
+  }
+  if (state.signatureResult && state.signatureResult.audit_file) {
+    document.getElementById("audit-file").textContent = state.signatureResult.audit_file;
+  }
+
+  document.getElementById("audit-status-badge").textContent = audit.verification_result ? "Signed + Verified" : "Signed";
+  document.getElementById("audit-status-badge").className = audit.verification_result ? "badge badge-green" : "badge badge-amber";
+}
+
+
+/* --------------------------------------------------------------------------
+   VERIFY — REAL ML-DSA-65 BACKEND
+   -------------------------------------------------------------------------- */
+async function verifySignature() {
+  if (!state.documentSigned || !state.file || !state.signatureBytes) {
+    showToast("No backend-generated signature is available to verify.", "warning");
+    return;
+  }
+
+  setButtonLoading(btnVerify, "Verifying...");
+
+  const verifyBox = document.getElementById("verify-result");
+  verifyBox.classList.remove("visible","failed");
+
+  try {
+    const formData = new FormData();
+    // Backend contract: parameter name is `file`.
+    formData.append("file", state.file, state.file.name);
+    formData.append("signature", bytesToFile(state.signatureBytes, `${state.file.name}.signature`));
+
+    const response = await fetch(API.verify, {method:"POST", body:formData});
+    const result = await readJson(response);
+
+    const verified = result.verified === true;
+
+    verifyBox.classList.add("visible");
+    if (!verified) verifyBox.classList.add("failed");
+
+    document.getElementById("verify-title").textContent =
+      verified ? "Cryptographic Signature Valid" : "Cryptographic Signature INVALID";
+    document.getElementById("verify-algorithm").textContent = result.algorithm || "ML-DSA-65";
+    document.getElementById("verify-doc-hash").textContent = result.data_sha256 || "—";
+    document.getElementById("verify-sig-hash").textContent = result.signature_sha256 || "—";
+    document.getElementById("verify-fingerprint").textContent =
+      result.public_key_fingerprint || state.identity.public_key_fingerprint || "—";
+
+    document.getElementById("audit-doc-sha").textContent = result.data_sha256 || "—";
+    document.getElementById("audit-sig").textContent = result.signature_sha256 || "—";
+    document.getElementById("audit-fingerprint").textContent =
+      result.public_key_fingerprint || state.identity.public_key_fingerprint || "—";
+    document.getElementById("audit-ts").textContent = new Date().toISOString();
+    document.getElementById("audit-verify").innerHTML = verified
+      ? '<span class="badge badge-green">VALID</span>'
+      : '<span class="badge badge-red">INVALID</span>';
+    document.getElementById("audit-ts").classList.remove("audit-empty");
+
+    if (verified) {
+      document.getElementById("audit-status-badge").textContent = "Verified";
+      document.getElementById("audit-status-badge").className = "badge badge-green";
+      updateStep(4,"complete");
+      updateStep(5,"ready");
+      showToast("ML-DSA-65 verification succeeded.", "success");
+      btnVerify.disabled = true;
+      btnVerify.innerHTML = '<svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Verified';
+    } else {
+      document.getElementById("audit-status-badge").textContent = "Invalid";
+      document.getElementById("audit-status-badge").className = "badge badge-red";
+      showToast("Signature verification returned INVALID.", "error");
+      restoreButton(btnVerify, "Verify Signature");
+    }
+
+    // Refresh from the authoritative audit manifest.
+    try {
+      const auditName = state.file.name.replace(/\.[^.]+$/, "");
+      const auditResponse = await fetch(`${API.audit}/${encodeURIComponent(auditName)}`);
+      if (auditResponse.ok) {
+        state.auditManifest = await auditResponse.json();
+        populateAudit(state.auditManifest);
+      }
+    } catch {
+      // Cryptographic verification remains authoritative.
+    }
+  } catch (error) {
+    verifyBox.classList.add("visible","failed");
+    document.getElementById("verify-title").textContent = "Verification Request Failed";
+    document.getElementById("audit-verify").innerHTML = '<span class="badge badge-red">ERROR</span>';
+    showToast(`Verification failed: ${error.message}`, "error");
+    restoreButton(btnVerify, "Verify Signature");
+  }
+}
+
+// --------------------------------------------------------------------------
+// V1 DOWNLOADS
+// --------------------------------------------------------------------------
+btnDownloadPackage.addEventListener("click", async () => {
+  if (!state.documentSigned || !state.signatureResult?.document_id || !state.file) {
+    showToast("No completed PQC signing package is available.", "warning");
+    return;
+  }
+
+  const originalHtml = btnDownloadPackage.innerHTML;
+  btnDownloadPackage.disabled = true;
+  btnDownloadPackage.innerHTML = "Preparing PQC Signing Package…";
+
+  try {
+    const documentId = encodeURIComponent(state.signatureResult.document_id);
+    const response = await fetch(`/api/document/package/${documentId}`);
+
+    if (!response.ok) {
+      const responseText = await response.text();
+      let detail = responseText || `HTTP ${response.status}`;
+      try {
+        const data = JSON.parse(responseText);
+        detail = typeof data.detail === "string"
+          ? data.detail
+          : JSON.stringify(data.detail ?? data);
+      } catch {}
+      throw new Error(detail);
+    }
+
+    const blob = await response.blob();
+    const baseName = state.file.name.replace(/\.[^.]+$/, "");
+    downloadBlob(blob, `${baseName} - PQC Signing Package V1.zip`);
+    showToast("PQC Signing Package downloaded.", "success");
+  } catch (error) {
+    showToast(`Package download failed: ${error.message}`, "error");
+  } finally {
+    btnDownloadPackage.disabled = false;
+    btnDownloadPackage.innerHTML = originalHtml;
+  }
+});
+
+</script>
+</body>
+</html>
